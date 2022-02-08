@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ArenaFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity">
+
+        <LinearLayout
+            android:id="@+id/linearLayout2"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+
+            <LinearLayout
+                android:layout_width="278dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Obstacle" />
+
+                <ListView
+                    android:id="@+id/obstacleList"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:id="@+id/robotStatusLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/directionLayout"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="7dp">
+
+                    <TextView
+                        android:id="@+id/robotStatusTitle"
+                        android:layout_width="110dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:background="@drawable/roundedbutton"
+                        android:gravity="center_horizontal"
+                        android:text="Robot Status"
+                        android:textAlignment="center"
+                        android:textColor="@android:color/white"
+                        android:textSize="15dp" />
+
+                    <TextView
+                        android:id="@+id/robotStatusText"
+                        android:layout_width="110dp"
+                        android:layout_height="70dp"
+                        android:layout_marginTop="50dp"
+                        android:background="@drawable/roundedbutton"
+                        android:gravity="center"
+                        android:text="Not Available"
+                        android:textAlignment="center"
+                        android:textColor="@android:color/white"
+                        android:textSize="15dp" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/directionLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <RelativeLayout
+                        android:id="@+id/subDirectionLayout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/roundedbutton"
+                        android:padding="5dp"
+                        android:textColor="@android:color/white">
+
+                        <TextView
+                            android:id="@+id/DirectionTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="5dp"
+                            android:text="Direction :"
+                            android:textColor="@android:color/white"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/directionValue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="75dp"
+                            android:layout_marginTop="5dp"
+                            android:text="None"
+                            android:textColor="@android:color/white" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/xyDirectionLayout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/subDirectionLayout"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/roundedbutton"
+                        android:padding="2dp"
+                        android:textColor="@android:color/white">
+
+                        <TextView
+                            android:id="@+id/xTitle"
+                            android:layout_width="30dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginLeft="28dp"
+                            android:layout_marginEnd="15dp"
+                            android:gravity="center_horizontal"
+                            android:text="X :"
+                            android:textColor="@android:color/white"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/xValue"
+                            android:layout_width="45dp"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@id/xTitle"
+                            android:text="0"
+                            android:textAlignment="center"
+                            android:textColor="@android:color/white"
+                            android:textSize="15sp" />
+
+                        <TextView
+                            android:id="@+id/yTitle"
+                            android:layout_width="30dp"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/xTitle"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginLeft="28dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="15dp"
+                            android:gravity="center_horizontal"
+                            android:text="Y :"
+                            android:textColor="@android:color/white"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/yValue"
+                            android:layout_width="45dp"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/xValue"
+                            android:layout_marginTop="8dp"
+                            android:layout_toRightOf="@+id/yTitle"
+                            android:text="0"
+                            android:textAlignment="center"
+                            android:textColor="@android:color/white"
+                            android:textSize="15sp" />
+
+
+                    </RelativeLayout>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/obstacleDetailsLayout"
+                    android:layout_width="164dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="4dp">
+
+                    <ToggleButton
+                        android:id="@+id/setObstacleToggleBtn"
+                        android:layout_width="190dp"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="7dp"
+                        android:background="@drawable/roundedbutton"
+                        android:textColor="@android:color/white"
+                        android:textOff="Set Obstacle"
+                        android:textOn="Cancel"
+                        android:textSize="15sp" />
+
+
+                    <ToggleButton
+                        android:id="@+id/setObstacleDirectionToggleBtn"
+                        android:layout_width="190dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/setObstacleToggleBtn"
+                        android:layout_marginTop="3dp"
+                        android:layout_marginEnd="4dp"
+                        android:layout_marginRight="16dp"
+                        android:layout_marginBottom="20dp"
+                        android:background="@drawable/roundedbutton"
+                        android:textColor="@android:color/white"
+                        android:textOff="Set Obstacle Direction"
+                        android:textOn="Cancel"
+                        android:textSize="15sp"
+                        app:layout_constraintEnd_toEndOf="parent" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/controlsLayout"
+                    android:layout_width="190dp"
+                    android:layout_height="150dp"
+                    android:layout_below="@id/obstacleDetailsLayout"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="1dp"
+                    android:layout_marginEnd="10dp">
+
+
+                    <ImageButton
+                        android:id="@+id/forwardImageBtn"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="70dp"
+                        android:layout_marginBottom="15dp"
+                        android:layout_toEndOf="@+id/forwardLeftBtn"
+                        android:background="@drawable/roundedbutton"
+                        android:elevation="5dp"
+                        android:padding="5dp"
+                        app:srcCompat="@drawable/arrow_up" />
+
+                    <ImageButton
+                        android:id="@+id/forwardRightBtn"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="15dp"
+                        android:background="@drawable/roundedbutton"
+                        android:elevation="5dp"
+                        android:padding="5dp"
+                        android:rotation="45"
+                        app:srcCompat="@drawable/arrow_up" />
+
+                    <ImageButton
+                        android:id="@+id/backLeftBtn"
+                        android:layout_width="52dp"
+                        android:layout_height="57dp"
+                        android:layout_below="@+id/forwardLeftBtn"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginLeft="0dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginRight="40dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/roundedbutton"
+                        android:elevation="5dp"
+                        android:rotation="315"
+                        app:srcCompat="@drawable/arrow_left" />
+
+                    <ImageButton
+
+                        android:id="@+id/forwardLeftBtn"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="9dp"
+                        android:layout_marginLeft="0dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginRight="40dp"
+                        android:layout_marginBottom="15dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/roundedbutton"
+                        android:elevation="5dp"
+                        android:rotation="45"
+                        app:srcCompat="@drawable/arrow_left" />
+
+                    <ImageButton
+                        android:id="@+id/backRightBtn"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_below="@+id/forwardRightBtn"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="40dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginRight="8dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/roundedbutton"
+                        android:elevation="5dp"
+                        android:rotation="45"
+                        app:srcCompat="@drawable/arrow_right" />
+
+                    <ImageButton
+                        android:id="@+id/backImageBtn"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_below="@+id/forwardImageBtn"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginEnd="70dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_toEndOf="@+id/backLeftBtn"
+                        android:background="@drawable/roundedbutton"
+                        android:elevation="5dp"
+                        android:rotation="180"
+                        app:srcCompat="@drawable/arrow_up" />
+
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="450dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <view
+                android:id="@+id/MapView"
+                class="com.example.androidmdp2022.GridMap"
+                android:layout_width="450dp"
+                android:layout_height="450dp"
+                android:layout_marginTop="10dp" />
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ToggleButton
+                    android:id="@+id/startingPointButton"
+                    style="@style/toggleButton"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_below="@+id/resetButton"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginStart="48dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="52dp"
+                    android:background="@drawable/ic_toggle_bg" />
+                android:text="ToggleButton" />
+
+
+                <ImageButton
+                    android:id="@+id/resetButton"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_below="@+id/timerButton"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="52dp"
+                    android:background="@drawable/roundedbutton"
+
+                    app:srcCompat="@drawable/reset_30" />
+
+                <ImageButton
+                    android:id="@+id/timerButton"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="49dp"
+                    android:layout_marginTop="253dp"
+                    android:layout_marginEnd="51dp"
+                    android:background="@drawable/roundedbutton"
+                    app:srcCompat="@drawable/timer_32" />
+            </RelativeLayout>
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>
