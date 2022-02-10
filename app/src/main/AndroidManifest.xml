@@ -2,6 +2,35 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.androidmdp2022">
 
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+
+    <!-- Android 11 (SDK 30) or higher rmb to on location -->
+
+    <!-- The app uses the device's Bluetooth features,
+    usually to communicate with other Bluetooth-enabled devices -->
+    <uses-feature android:name="android.hardware.bluetooth" />
+
+    <!-- Allows applications to connect to paired bluetooth devices -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+
+    <!--  Bluetooth scan can gather information about the location of the user for API 28 lower Android 9
+    (access approximate location)-->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <!-- Allows applications to discover and pair bluetooth devices. -->
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+
+    <!--  Bluetooth scan can gather information about the location of the user
+    (access approximate location)-->
+    <!-- Is a dangerous permission API 29 and above-->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
+    <!-- Discover Bluetooth devices, Required Android 10 and above (access location in the background) -->
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+
+    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -12,12 +41,11 @@
         <activity
             android:name=".MainActivity"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+    </activity>
     </application>
 
 </manifest>
