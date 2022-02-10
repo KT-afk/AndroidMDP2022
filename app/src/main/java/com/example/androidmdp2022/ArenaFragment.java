@@ -81,8 +81,8 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
 
     TextView btStatus;
 
-    private ListView mBluetoothMessages;
-    private static ArrayAdapter<String> mBluetoothMessagesListAdapter;
+    private ListView mObstacleList;
+    private static ArrayAdapter<String> mObstacleListAdapter;
 
     private Sensor mSensor;
     private SensorManager mSensorManager;
@@ -631,9 +631,9 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
 //            }
 //        });
         //TODO Bluetooth
-//        mBluetoothMessages = view.findViewById(R.id.bluetooth_messages_in_arena);
-//        mBluetoothMessagesListAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1);
-//        mBluetoothMessages.setAdapter(mBluetoothMessagesListAdapter);
+        mObstacleList = view.findViewById(R.id.obstacleList);
+        mObstacleListAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1);
+        mObstacleList.setAdapter(mObstacleListAdapter);
 
 
 //        mStartingPiontFAB.setOnClickListener(new View.OnClickListener() {
@@ -715,10 +715,10 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
 
     }
     // Note ArenaBTMessage change to printing obstacle coordinate
-//    public static void updateArenaBTMessage(String message)
-//    {
-//        mBluetoothMessagesListAdapter.add(message);
-//    }
+    public static void updateObstacleList(String message)
+    {
+        mObstacleListAdapter.add(message);
+    }
 
 
     private void showLog(String message) {
