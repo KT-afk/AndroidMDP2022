@@ -359,7 +359,8 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                     gridMap.moveRobot("forward");
                     gridMap.moveRobot("right");
                     gridMap.moveRobot("forward");
-                    gridMap.moveRobot("left");
+                    gridMap.moveRobot("forward");
+                    gridMap.moveRobot("forward");
                     // TODO: uncommand for bluetooth and send command to RPI
                     //BluetoothFragment.printMessage("tl");
                     refreshLabel();
@@ -383,7 +384,9 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                     gridMap.moveRobot("forward");
                     gridMap.moveRobot("left");
                     gridMap.moveRobot("forward");
-                    gridMap.moveRobot("right");
+                    gridMap.moveRobot("forward");
+                    gridMap.moveRobot("forward");
+                    gridMap.moveRobot("forward");
                     // TODO: uncommand for bluetooth and send command to RPI
                     //BluetoothFragment.printMessage("tl");
                     refreshLabel();
@@ -408,7 +411,9 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                     gridMap.moveRobot("back");
                     gridMap.moveRobot("left");
                     gridMap.moveRobot("back");
-                    gridMap.moveRobot("right");
+                    gridMap.moveRobot("back");
+                    gridMap.moveRobot("back");
+                    gridMap.moveRobot("back");
                     // TODO: uncommand for bluetooth and send command to RPI
                     //BluetoothFragment.printMessage("cmd:right");
                     //BluetoothFragment.printMessage("tr");
@@ -457,14 +462,15 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                     gridMap.moveRobot("back");
                     gridMap.moveRobot("right");
                     gridMap.moveRobot("back");
-                    gridMap.moveRobot("left");
+                    gridMap.moveRobot("back");
+                    gridMap.moveRobot("back");
+                    gridMap.moveRobot("back");
                     // TODO: uncommand for bluetooth and send command to RPI
                     //BluetoothFragment.printMessage("tl");
                     refreshLabel();
                     updateStatus("turning back left");
                     //"A" is used for communication with AMDTOOL
 //                    MainActivity.printMessage("A");
-
                 }
                 else
                     updateStatus("Please press 'STARTING POINT'");
