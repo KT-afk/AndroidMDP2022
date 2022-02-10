@@ -1736,7 +1736,61 @@ public class GridMap extends View {
         showLog("Exiting updateMapInformation");
         this.invalidate();
     }
-
+    public void changeDirection(String direction){
+        showLog("Entering changeDirection");
+        String robotDirection = getRobotDirection();
+        String backupDirection = robotDirection;
+        switch(robotDirection){
+            case "up":
+                switch(direction){
+                    case "forward right":
+                    case "back right":
+                        robotDirection = "right";
+                        break;
+                    case "forward left":
+                    case "back left":
+                        robotDirection = "left";
+                        break;
+                }
+                break;
+            case "right":
+                switch(direction){
+                    case "forward right":
+                    case "back right":
+                        robotDirection = "down";
+                        break;
+                    case "forward left":
+                    case "back left":
+                        robotDirection = "up";
+                        break;
+                }
+                break;
+            case "left":
+                switch(direction){
+                    case "forward right":
+                    case "back right":
+                        robotDirection = "up";
+                        break;
+                    case "forward left":
+                    case "back left":
+                        robotDirection = "down";
+                        break;
+                }
+                break;
+            case "down":
+                switch(direction){
+                    case "forward right":
+                    case "back right":
+                        robotDirection = "left";
+                        break;
+                    case "forward left":
+                    case "back left":
+                        robotDirection = "right";
+                        break;
+                }
+                break;
+        }
+    }
     // TODO: need find a way to make the turn like a car using angle (clock)
     public void moveRobot(String direction) {
         showLog("Entering moveRobot");
