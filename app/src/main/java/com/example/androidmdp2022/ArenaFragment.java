@@ -59,7 +59,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
     ImageButton directionChangeImageBtn, exploredImageBtn, obstacleImageBtn, clearImageBtn;
     ToggleButton setStartPointToggleBtn, setWaypointToggleBtn, setObstacleToggleBtn, setObstacleDirectionToggleBtn;
     Switch manualAutoToggleBtn;
-    private static boolean autoUpdate = false;
+    private static final boolean autoUpdate = false;
     public static boolean manualUpdateRequest = false;
 
     String fobsstring,fexpstring;
@@ -1006,7 +1006,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
             }
 
             try {
-                if (message.length() > 7 && message.substring(2,6).equals("grid")) {
+                if (message.length() > 7 && message.startsWith("grid", 2)) {
                     String resultString = "";
                     String amdString = message.substring(11,message.length()-2);
                     showLog("amdString: " + amdString);
@@ -1044,7 +1044,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
             }
 
             try {
-                if (message.length() > 8 && message.substring(2,7).equals("image")) {
+                if (message.length() > 8 && message.startsWith("image", 2)) {
                     JSONObject jsonObject = new JSONObject(message);
                     JSONArray jsonArray = jsonObject.getJSONArray("image");
                     gridMap.drawImageNumberCell(jsonArray.getInt(0),jsonArray.getInt(1),jsonArray.getInt(2));
@@ -1067,12 +1067,12 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
 //            }
             sharedPreferences();
             //String receivedText = sharedPreferences.getString("message", "") + "\n" + message;
-            //TODO Bluetooth
-//            String receivedText = BluetoothFragment.getBTdeviceName() + ": " + message;
-//            editor.putString("message", receivedText);
-//            editor.commit();
-            //BluetoothFragment.refreshMessageReceived();
-            //mBluetoothMessagesListAdapter.add(receivedText);
+
+            String receivedText = BluetoothFragment.getBTdeviceName() + ": " + message;
+            editor.putString("message", receivedText);
+            editor.commit();
+            BluetoothFragment.refreshMessageReceived();
+            //BluetoothMessagesListAdapter.add(receivedText);
         }
     };
 
