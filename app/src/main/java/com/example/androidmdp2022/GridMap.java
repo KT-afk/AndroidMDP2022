@@ -40,18 +40,18 @@ public class GridMap extends View {
 
     SharedPreferences sharedPreferences;
 
-    private Paint blackPaint = new Paint();
-    private Paint obstacleColor = new Paint();
-    private Paint robotColor = new Paint();
-    private Paint endColor = new Paint();
-    private Paint startColor = new Paint();
-    private Paint waypointColor = new Paint();
-    private Paint unexploredColor = new Paint();
-    private Paint exploredColor = new Paint();
-    private Paint arrowColor = new Paint();
+    private final Paint blackPaint = new Paint();
+    private final Paint obstacleColor = new Paint();
+    private final Paint robotColor = new Paint();
+    private final Paint endColor = new Paint();
+    private final Paint startColor = new Paint();
+    private final Paint waypointColor = new Paint();
+    private final Paint unexploredColor = new Paint();
+    private final Paint exploredColor = new Paint();
+    private final Paint arrowColor = new Paint();
     //private Paint fastestPathColor = new Paint();
-    private Paint imageLine = new Paint();
-    private Paint imageLineConfirm = new Paint();
+    private final Paint imageLine = new Paint();
+    private final Paint imageLineConfirm = new Paint();
 
     private static JSONObject receivedJsonObject = new JSONObject();
     private static JSONObject mapInformation;
@@ -86,7 +86,7 @@ public class GridMap extends View {
     public static String publicMDFExploration;
     public static String publicMDFObstacle;
 
-    private static int[] selectedObsCoord = new int[3];
+    private static final int[] selectedObsCoord = new int[3];
     private static boolean obsSelected = false;
     private static ArrayList<Cell> oCellArr = new ArrayList<Cell>();
 
@@ -1184,7 +1184,7 @@ public class GridMap extends View {
 
                         if (cells[x][y].type.equals("obstacle")) {
 
-                            message = message + Integer.toString(x - 1) + "," + Integer.toString(19 - y) + "," + rpiConvertDirection(cells[x][y].getobstacleFacing()) + ",";
+                            message = message + (x - 1) + "," + (19 - y) + "," + rpiConvertDirection(cells[x][y].getobstacleFacing()) + ",";
                         }
 
                     }
@@ -1691,7 +1691,7 @@ public class GridMap extends View {
                         infoJsonObject = infoJsonArray.getJSONObject(j);
                         this.setObstacleCoord(infoJsonObject.getInt("x")+1, infoJsonObject.getInt("y")+1);
                     }
-                    message = "No. of Obstacle: " + String.valueOf(infoJsonArray.length());
+                    message = "No. of Obstacle: " + infoJsonArray.length();
                     break;
                 case "arrow":
                     infoJsonArray = mapInformation.getJSONArray("arrow");
@@ -1699,7 +1699,7 @@ public class GridMap extends View {
                         infoJsonObject = infoJsonArray.getJSONObject(j);
                         if (!infoJsonObject.getString("face").equals("dummy")) {
                             this.setArrowCoordinate(infoJsonObject.getInt("x"), infoJsonObject.getInt("y"), infoJsonObject.getString("face"));
-                            message = "Arrow:  (" + String.valueOf(infoJsonObject.getInt("x")) + "," + String.valueOf(infoJsonObject.getInt("y")) + "), face: " + infoJsonObject.getString("face");
+                            message = "Arrow:  (" + infoJsonObject.getInt("x") + "," + infoJsonObject.getInt("y") + "), face: " + infoJsonObject.getString("face");
                         }
                     }
                     break;
@@ -1726,9 +1726,9 @@ public class GridMap extends View {
                     message = "Unintended default for JSONObject";
                     break;
             }
-            if (!message.equals("updateMapInformation Default message")){}
+            if (!message.equals("updateMapInformation Default message")){BluetoothFragment.receiveMessage(message);}
             //TODO Bluetooth Comment
-            //BluetoothFragment.receiveMessage(message);
+
         }
         showLog("Exiting updateMapInformation");
         this.invalidate();
