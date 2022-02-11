@@ -17,14 +17,11 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.annotation.Nullable;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -993,7 +990,7 @@ public class GridMap extends View {
         }
         showLog("Exiting setObstacleCoord");
         // TODO: uncommand for bluetooth
-        //ArenaFragment.updateArenaBTMessage( "Obstacle No: " + cells[col][row].obstacleNo + "\t\tX: "+ (col-1) + "\t\tY: " + (19-row) +  "\t\tDirection: " + cells[col][row].getobstacleFacing());
+        ArenaFragment.updateObstacleList( "Obstacle No: " + cells[col][row].obstacleNo + "\t\tX: "+ (col-1) + "\t\tY: " + (19-row) +  "\t\tDirection: " + cells[col][row].getobstacleFacing());
 
         // Obstacle, <x,y>, <obstacleID>, <obstacleDirection>
         //BluetoothFragment.printMessage("Obstacle, "+ "<"+ (col-1) + ">, <" + (19-row) + ">, " + "<" + cells[col][row].obstacleNo+ ">, " + "<" + cells[col][row].getobstacleFacing() +">");
