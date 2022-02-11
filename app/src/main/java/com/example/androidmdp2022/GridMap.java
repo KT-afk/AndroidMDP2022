@@ -1339,7 +1339,7 @@ public class GridMap extends View {
                         //Create the new cell
                         //oCellArr.set(selectedObsDirectionCor[2], cells[column][20 - row]);
                         //oCellArrDirection.set(selectedObsDirectionCor[2], switchDirection);
-
+                        ArenaFragment.removeObstacleFromList("Obstacle No: " + cells[column][20 - row].obstacleNo + "\t\tX: "+ (column-1) + "\t\tY: " + (row-1) +  "\t\tDirection: " + cells[column][20 - row].getobstacleFacing());
                         switch (switchDirection)
                         {
                             case 0:
@@ -1358,9 +1358,7 @@ public class GridMap extends View {
                                 cells[column][20 - row].setobstacleFacing("RIGHT");
                                 break;
                         }
-                        //ArenaFragment.updateArenaBTMessage( "Obstacle No: " + cells[column][20 - row].obstacleNo + "\t\tX: "+ (column-1) + "\t\tY: " + (row-1) +  "\t\tDirection: " + cells[column][20 - row].getobstacleFacing());
-
-
+                        ArenaFragment.updateObstacleList( "Obstacle No: " + cells[column][20 - row].obstacleNo + "\t\tX: "+ (column-1) + "\t\tY: " + (row-1) +  "\t\tDirection: " + cells[column][20 - row].getobstacleFacing());
                         invalidate();
 
                         // obstacle direction <x,y>, <obstacleID>, <obstacleDirection>

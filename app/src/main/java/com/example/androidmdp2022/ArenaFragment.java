@@ -278,7 +278,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                     gridMap.setSetObstacleStatus(true);
                     //gridMap.toggleCheckedBtn("setWaypointToggleBtn");
                 }
-                }
+            }
         });
 
         setObstacleDirectionToggleBtn.setOnClickListener(new View.OnClickListener() {
@@ -716,6 +716,10 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
         return view;
 
     }
+    public static void removeObstacleFromList(String message)
+    {
+        mObstacleListAdapter.remove(message);
+    }
     // Note ArenaBTMessage change to printing obstacle coordinate
     public static void updateObstacleList(String message)
     {
@@ -741,7 +745,6 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
         xAxisTextView.setText(String.valueOf(gridMap.getCurCoord()[0]-1));
         yAxisTextView.setText(String.valueOf(gridMap.getCurCoord()[1]-1));
         //directionAxisTextView.setText(sharedPreferences.getString("direction",""));
-
     }
 
     public void refreshDirection(String direction) {
