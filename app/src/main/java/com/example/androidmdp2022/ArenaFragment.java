@@ -199,6 +199,8 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                 showLog("Clicked resetMapBtn");
                 showToast("Resetting map...");
                 gridMap.resetMap();
+                mObstacleListAdapter.clear();
+                mObstacleList.setAdapter(mObstacleListAdapter);
                 // TODO: uncommand for bluetooth and send command to RPI
                 //BluetoothFragment.printMessage("RS");
 
