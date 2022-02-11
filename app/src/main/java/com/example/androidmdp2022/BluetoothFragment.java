@@ -256,6 +256,18 @@ public class BluetoothFragment extends Fragment {
 
                 IntentFilter discoverDevicesIntent = new IntentFilter(BluetoothDevice.ACTION_FOUND);
                 getContext().registerReceiver(mBroadcastReceiver3, discoverDevicesIntent);
+
+                Log.d(MY_TAG, "scanBTbutton: Looking for unpaired devices.");
+
+                availableDevicesListAdapter.clear();
+                availableDevices.clear();
+                    Set<BluetoothDevice> availableDevices = bluetoothAdapter.getBondedDevices();
+                    Log.d(MY_TAG, "Search: Number of paired devices found: "+ availableDevices.size());
+                    for(BluetoothDevice a : availableDevices){
+                        Log.d(MY_TAG, "Paired Devices: "+ a.getName() +" : " + a.getAddress());
+                        availableDevicesListAdapter.add(a.getName());
+                    }
+                availableDevicesListAdapter.notifyDataSetChanged();
             }
         });
 
@@ -285,9 +297,10 @@ public class BluetoothFragment extends Fragment {
                 String chosenDeviceName = ((TextView) view).getText().toString();
                 for (BluetoothDevice device : availableDevices) {
                     if (device.getName().equalsIgnoreCase(chosenDeviceName)) {
-                        availableDevicesListAdapter.clear();
-                        availableDevices.clear();
+//                        availableDevicesListAdapter.clear();
+//                        availableDevices.clear();
                         mDevice = device;
+                        showLog("pairedDevicesListView on click "+mDevice.getName());
                         isDisconnectBtn = false;
                         startConnection();
                         break;
