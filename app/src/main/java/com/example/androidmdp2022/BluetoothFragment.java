@@ -259,12 +259,12 @@ public class BluetoothFragment extends Fragment {
 
                 Log.d(MY_TAG, "scanBTbutton: Looking for unpaired devices.");
 
-                availableDevicesListAdapter.clear();
                 availableDevices.clear();
                     Set<BluetoothDevice> availableDevices = bluetoothAdapter.getBondedDevices();
                     Log.d(MY_TAG, "Search: Number of paired devices found: "+ availableDevices.size());
                     for(BluetoothDevice a : availableDevices){
                         Log.d(MY_TAG, "Paired Devices: "+ a.getName() +" : " + a.getAddress());
+                        availableDevices.add(a);
                         availableDevicesListAdapter.add(a.getName());
                     }
                 availableDevicesListAdapter.notifyDataSetChanged();
