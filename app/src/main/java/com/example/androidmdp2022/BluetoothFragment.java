@@ -384,7 +384,7 @@ public class BluetoothFragment extends Fragment {
         //this is pastel green
         tv_DeviceName.setTextColor(Color.rgb(119,221,119));
         //this is pastel red
-        tv_ConStatus.setTextColor(Color.rgb(255,105,97));
+        tv_ConStatus.setTextColor(Color.rgb(119,221,119));
 
         /*Intent intent = new Intent(getContext(), ArenaFragment.class);
         intent.putExtra("BT_Status", "CONNECTED");
