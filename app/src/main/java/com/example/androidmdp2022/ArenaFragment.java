@@ -278,7 +278,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                     gridMap.setSetObstacleStatus(true);
                     //gridMap.toggleCheckedBtn("setWaypointToggleBtn");
                 }
-                }
+            }
         });
 
         setObstacleDirectionToggleBtn.setOnClickListener(new View.OnClickListener() {
@@ -716,6 +716,10 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
         return view;
 
     }
+    public static void removeObstacleFromList(String message)
+    {
+        mObstacleListAdapter.remove(message);
+    }
     // Note ArenaBTMessage change to printing obstacle coordinate
     public static void updateObstacleList(String message)
     {
@@ -741,7 +745,6 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
         xAxisTextView.setText(String.valueOf(gridMap.getCurCoord()[0]-1));
         yAxisTextView.setText(String.valueOf(gridMap.getCurCoord()[1]-1));
         //directionAxisTextView.setText(sharedPreferences.getString("direction",""));
-
     }
 
     public void refreshDirection(String direction) {
@@ -862,53 +865,15 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
             }
             // TODO: need change the receiving using x,y instead of obstacle number
             // For RPI
-            if(message.contains("TARGET")) // example String: “TARGET, <x>, <y>, <Traget ID>”
-            {
-                int startingIndex = message.indexOf("<");
-                int endingIndex = message.indexOf(">");
-                int x = Integer.parseInt(message.substring(startingIndex + 1, endingIndex));
-
-                startingIndex = message.indexOf("<", endingIndex+1);
-                endingIndex = message.indexOf(">", endingIndex+1);
-                int y = Integer.parseInt(message.substring(startingIndex+1, endingIndex));
-
-                startingIndex = message.indexOf("<", endingIndex+1);
-                endingIndex = message.indexOf(">", endingIndex+1);
-                String targetID = message.substring(startingIndex+1, endingIndex);
-
-                // to count the number of <
-                char check = '<';
-                int count = 0;
-
-                for (int i = 0; i < message.length(); i++) {
-                    if (message.charAt(i) == check) {
-                        count++;
-                    }
-                }
-
-                // if count is equal to 4 == second case
-                if(count == 4){ // additional <Direction Facing change>
-                    startingIndex = message.indexOf("<", endingIndex+1);
-                    endingIndex = message.indexOf(">", endingIndex+1);
-                    String obstacleFacing = message.substring(startingIndex+1, endingIndex);
-                    Toast.makeText(getContext(), "x: " + x + " y: " + y + " ImageID: " + targetID + " on direction " + obstacleFacing, Toast.LENGTH_SHORT).show();
-                    // TODO: need update
-                    gridMap.updateImageNumberCellRPI(x, y , targetID, obstacleFacing);
-                    // if count is not equal 3 == first case
-                } else {
-                    Toast.makeText(getContext(), "x: " + x + " y: " + y + " ImageID: " + targetID, Toast.LENGTH_SHORT).show();
-                    // TODO: need update
-                    gridMap.updateImageNumberCellRPI(x, y , targetID);
-                }
-
-            }
-
-            // Try getting update image
-            // First Case
-//            if(message.contains("TARGET")){ // example String: “TARGET, <Obstacle Number>, <Target ID>”
+//            if(message.contains("TARGET")) // example String: “TARGET, <x>, <y>, <Traget ID>”
+//            {
 //                int startingIndex = message.indexOf("<");
 //                int endingIndex = message.indexOf(">");
-//                String obstacleNo = message.substring(startingIndex + 1, endingIndex);
+//                int x = Integer.parseInt(message.substring(startingIndex + 1, endingIndex));
+//
+//                startingIndex = message.indexOf("<", endingIndex+1);
+//                endingIndex = message.indexOf(">", endingIndex+1);
+//                int y = Integer.parseInt(message.substring(startingIndex+1, endingIndex));
 //
 //                startingIndex = message.indexOf("<", endingIndex+1);
 //                endingIndex = message.indexOf(">", endingIndex+1);
@@ -924,22 +889,60 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
 //                    }
 //                }
 //
-//                // if count is equal to 3 == second case
-//                if(count == 3){ // additional <Direction Facing change>
+//                // if count is equal to 4 == second case
+//                if(count == 4){ // additional <Direction Facing change>
 //                    startingIndex = message.indexOf("<", endingIndex+1);
 //                    endingIndex = message.indexOf(">", endingIndex+1);
 //                    String obstacleFacing = message.substring(startingIndex+1, endingIndex);
-//                    Toast.makeText(getContext(), "Obstacle No " + obstacleNo + " detected as " + targetID + " on direction " + obstacleFacing, Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getContext(), "x: " + x + " y: " + y + " ImageID: " + targetID + " on direction " + obstacleFacing, Toast.LENGTH_SHORT).show();
 //                    // TODO: need update
-//                    gridMap.updateImageNumberCell(Integer.parseInt(obstacleNo), targetID, obstacleFacing);
+//                    gridMap.updateImageNumberCellRPI(x, y , targetID, obstacleFacing);
 //                    // if count is not equal 3 == first case
 //                } else {
-//                    Toast.makeText(getContext(), "Obstacle No " + obstacleNo + " detected as " + targetID, Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getContext(), "x: " + x + " y: " + y + " ImageID: " + targetID, Toast.LENGTH_SHORT).show();
 //                    // TODO: need update
-//                    gridMap.updateImageNumberCell(Integer.parseInt(obstacleNo), targetID);
+//                    gridMap.updateImageNumberCellRPI(x, y , targetID);
 //                }
+//
 //            }
-            // Case C.10
+
+            // Try getting update image
+            // First Case
+            if(message.contains("TARGET")){ // example String: “TARGET, <Obstacle Number>, <Target ID>”
+                int startingIndex = message.indexOf("<");
+                int endingIndex = message.indexOf(">");
+                String obstacleNo = message.substring(startingIndex + 1, endingIndex);
+
+                startingIndex = message.indexOf("<", endingIndex+1);
+                endingIndex = message.indexOf(">", endingIndex+1);
+                String targetID = message.substring(startingIndex+1, endingIndex);
+
+                // to count the number of <
+                char check = '<';
+                int count = 0;
+
+                for (int i = 0; i < message.length(); i++) {
+                    if (message.charAt(i) == check) {
+                        count++;
+                    }
+                }
+
+                // if count is equal to 3 == second case
+                if(count == 3){ // additional <Direction Facing change>
+                    startingIndex = message.indexOf("<", endingIndex+1);
+                    endingIndex = message.indexOf(">", endingIndex+1);
+                    String obstacleFacing = message.substring(startingIndex+1, endingIndex);
+                    Toast.makeText(getContext(), "Obstacle No " + obstacleNo + " detected as " + targetID + " on direction " + obstacleFacing, Toast.LENGTH_SHORT).show();
+                    // TODO: need update
+                    gridMap.updateImageNumberCell(Integer.parseInt(obstacleNo), targetID, obstacleFacing);
+                    // if count is not equal 3 == first case
+                } else {
+                    Toast.makeText(getContext(), "Obstacle No " + obstacleNo + " detected as " + targetID, Toast.LENGTH_SHORT).show();
+                    // TODO: need update
+                    gridMap.updateImageNumberCell(Integer.parseInt(obstacleNo), targetID);
+                }
+            }
+
             if(message.contains("ROBOT")){
                 int startingIndex = message.indexOf("<");
                 int endingIndex = message.indexOf(">");
