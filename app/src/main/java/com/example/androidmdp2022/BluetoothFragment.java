@@ -254,19 +254,20 @@ public class BluetoothFragment extends Fragment {
                 checkBluetoothPermission();
                 bluetoothAdapter.startDiscovery();
 
+                Log.d(MY_TAG, "scanBTbutton: start discovery.");
+
                 IntentFilter discoverDevicesIntent = new IntentFilter(BluetoothDevice.ACTION_FOUND);
                 getContext().registerReceiver(mBroadcastReceiver3, discoverDevicesIntent);
 
                 Log.d(MY_TAG, "scanBTbutton: Looking for unpaired devices.");
 
-                availableDevices.clear();
-                    Set<BluetoothDevice> availableDevices = bluetoothAdapter.getBondedDevices();
-                    Log.d(MY_TAG, "Search: Number of paired devices found: "+ availableDevices.size());
-                    for(BluetoothDevice a : availableDevices){
-                        Log.d(MY_TAG, "Paired Devices: "+ a.getName() +" : " + a.getAddress());
-                        availableDevices.add(a);
-                        availableDevicesListAdapter.add(a.getName());
-                    }
+//                //availableDevices.clear();
+//                //    Set<BluetoothDevice> availableDevices = bluetoothAdapter.getBondedDevices();
+//                    Log.d(MY_TAG, "Search: Number of paired devices found: "+ availableDevices.size());
+//                    for(BluetoothDevice a : availableDevices){
+//                        Log.d(MY_TAG, "Paired Devices: "+ a.getName() +" : " + a.getAddress());
+//                        availableDevicesListAdapter.add(a.getName());
+//                    }
                 availableDevicesListAdapter.notifyDataSetChanged();
             }
         });
@@ -297,10 +298,10 @@ public class BluetoothFragment extends Fragment {
                 String chosenDeviceName = ((TextView) view).getText().toString();
                 for (BluetoothDevice device : availableDevices) {
                     if (device.getName().equalsIgnoreCase(chosenDeviceName)) {
-//                        availableDevicesListAdapter.clear();
-//                        availableDevices.clear();
+                        availableDevicesListAdapter.clear();
+                        availableDevices.clear();
                         mDevice = device;
-                        showLog("pairedDevicesListView on click "+mDevice.getName());
+                        showLog("availableDevicesListView on click "+mDevice.getName());
                         isDisconnectBtn = false;
                         startConnection();
                         break;
@@ -627,14 +628,14 @@ public class BluetoothFragment extends Fragment {
             final String action = intent.getAction();
             Log.d(MY_TAG, "onReceive: ACTION FOUND.");
 
-            if(action.equals(BluetoothDevice.ACTION_FOUND)) {
+            if(intent.getAction().equals(BluetoothDevice.ACTION_FOUND)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 String deviceName = device.getName();
                 if(deviceName == null)
                 {
                     Log.d(MY_TAG, "the device address: " + device.getAddress());
                     availableDevices.add(device);
-                    availableDevicesListAdapter.add(device.getAddress());
+                    availableDevicesListAdapter.add(device.getName());
                 }
                 else {
                     availableDevices.add(device);
@@ -731,11 +732,11 @@ public class BluetoothFragment extends Fragment {
         Log.d(MY_TAG, "onPause: called");
         super.onPause();
         try {
-            getContext().unregisterReceiver(mBroadcastReceiver1);
-            getContext().unregisterReceiver(mBroadcastReceiver2);
-            getContext().unregisterReceiver(mBroadcastReceiver3);
-            getContext().unregisterReceiver(mBroadcastReceiver4);
-            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mBroadcastReceiver5);
+//            getContext().unregisterReceiver(mBroadcastReceiver1);
+//            getContext().unregisterReceiver(mBroadcastReceiver2);
+              getContext().unregisterReceiver(mBroadcastReceiver3);
+//            getContext().unregisterReceiver(mBroadcastReceiver4);
+//            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mBroadcastReceiver5);
         } catch(IllegalArgumentException e){
             e.printStackTrace();
         }
