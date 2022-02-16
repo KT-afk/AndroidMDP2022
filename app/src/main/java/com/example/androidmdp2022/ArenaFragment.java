@@ -337,7 +337,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                 else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
                     gridMap.moveRobot("forward");
                     // TODO: uncommand for bluetooth and send command to RPI
-                    //BluetoothFragment.printMessage("f");
+                    BluetoothFragment.printMessage("f");
                     refreshLabel();
                     //"W" is used for communication with AMDTOOL
 //                    MainActivity.printMessage("W");
@@ -361,10 +361,10 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                     gridMap.moveRobot("forward");
                     gridMap.moveRobot("right");
                     gridMap.moveRobot("forward");
-                    gridMap.moveRobot("forward");
-                    gridMap.moveRobot("forward");
+//                    gridMap.moveRobot("forward");
+//                    gridMap.moveRobot("forward");
                     // TODO: uncommand for bluetooth and send command to RPI
-                    //BluetoothFragment.printMessage("tl");
+                    BluetoothFragment.printMessage("sr");
                     refreshLabel();
                     updateStatus("turning forward right");
                     //"A" is used for communication with AMDTOOL
@@ -386,11 +386,11 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                     gridMap.moveRobot("forward");
                     gridMap.moveRobot("left");
                     gridMap.moveRobot("forward");
-                    gridMap.moveRobot("forward");
-                    gridMap.moveRobot("forward");
-                    gridMap.moveRobot("forward");
+//                    gridMap.moveRobot("forward");
+//                    gridMap.moveRobot("forward");
+//                    gridMap.moveRobot("forward");
                     // TODO: uncommand for bluetooth and send command to RPI
-                    //BluetoothFragment.printMessage("tl");
+                    BluetoothFragment.printMessage("sl");
                     refreshLabel();
                     updateStatus("turning forward left");
                     //"A" is used for communication with AMDTOOL
@@ -441,7 +441,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                     //"S" is used for communication with AMDTOOL
                     // MainActivity.printMessage("S");
                     // TODO: uncommand for bluetooth and send command to RPI
-                    //BluetoothFragment.printMessage("r");
+                    BluetoothFragment.printMessage("r");
                     refreshLabel();
                     if (gridMap.getValidPosition())
                         updateStatus("moving backward");
