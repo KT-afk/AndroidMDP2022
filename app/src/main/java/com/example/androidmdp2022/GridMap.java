@@ -1,5 +1,7 @@
 package com.example.androidmdp2022;
 
+import static java.lang.String.valueOf;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -17,14 +19,11 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.annotation.Nullable;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,18 +42,18 @@ public class GridMap extends View {
 
     SharedPreferences sharedPreferences;
 
-    private Paint blackPaint = new Paint();
-    private Paint obstacleColor = new Paint();
-    private Paint robotColor = new Paint();
-    private Paint endColor = new Paint();
-    private Paint startColor = new Paint();
-    private Paint waypointColor = new Paint();
-    private Paint unexploredColor = new Paint();
-    private Paint exploredColor = new Paint();
-    private Paint arrowColor = new Paint();
+    private final Paint blackPaint = new Paint();
+    private final Paint obstacleColor = new Paint();
+    private final Paint robotColor = new Paint();
+    private final Paint endColor = new Paint();
+    private final Paint startColor = new Paint();
+    private final Paint waypointColor = new Paint();
+    private final Paint unexploredColor = new Paint();
+    private final Paint exploredColor = new Paint();
+    private final Paint arrowColor = new Paint();
     //private Paint fastestPathColor = new Paint();
-    private Paint imageLine = new Paint();
-    private Paint imageLineConfirm = new Paint();
+    private final Paint imageLine = new Paint();
+    private final Paint imageLineConfirm = new Paint();
 
     private static JSONObject receivedJsonObject = new JSONObject();
     private static JSONObject mapInformation;
@@ -89,7 +88,7 @@ public class GridMap extends View {
     public static String publicMDFExploration;
     public static String publicMDFObstacle;
 
-    private static int[] selectedObsCoord = new int[3];
+    private static final int[] selectedObsCoord = new int[3];
     private static boolean obsSelected = false;
     private static ArrayList<Cell> oCellArr = new ArrayList<Cell>();
 
@@ -312,7 +311,7 @@ public class GridMap extends View {
                         textPaint.setColor(Color.WHITE);
                         textPaint.setTextAlign(Paint.Align.CENTER);
                         canvas.drawRect(cells[x][y].startX, cells[x][y].startY, cells[x][y].endX, cells[x][y].endY, cells[x][y].paint);
-                        canvas.drawText(String.valueOf(cells[x][y].getId()),(cells[x][y].startX+cells[x][y].endX)/2, cells[x][y].endY + (cells[x][y].startY-cells[x][y].endY)/4, textPaint);
+                        canvas.drawText(valueOf(cells[x][y].getId()),(cells[x][y].startX+cells[x][y].endX)/2, cells[x][y].endY + (cells[x][y].startY-cells[x][y].endY)/4, textPaint);
                     }
 
         // Obstacle Face --> Assign Drawable to the cells @ GridMap.Java (Start)
@@ -447,7 +446,6 @@ public class GridMap extends View {
                     }
         this.invalidate();
     }
-
     public void drawRobotIfEmpty(){
 
     }
@@ -539,56 +537,24 @@ public class GridMap extends View {
             int endrow = 19;
             endrow = this.convertRow(endrow);
             RectF endrect = new RectF(endcol * cellSize, endrow * cellSize, (endcol + 1) * cellSize, (endrow + 1) * cellSize);
-            //Bitmap goal = BitmapFactory.decodeResource(getResources(), R.drawable.goal);
-            //canvas.drawBitmap(goal, null, endrect, null);
             newEndCoord=false;
         }
         for (int y = androidRowCoord; y <= androidRowCoord + 1; y++){
             canvas.drawLine(cells[curCoord[0] - 1][y].startX, cells[curCoord[0] - 1][y].startY - (cellSize / 30), cells[curCoord[0] + 1][y].endX, cells[curCoord[0] + 1][y].startY - (cellSize / 30), robotColor );
         }
-        //canvas.drawBitmap(bitmap, null, mRedPaddleRect, mPaint);
         for (int x = curCoord[0] - 1; x < curCoord[0] + 1; x++){
             canvas.drawLine(cells[x][androidRowCoord - 1].startX - (cellSize / 30) + cellSize, cells[x][androidRowCoord - 1].startY, cells[x][androidRowCoord + 1].startX - (cellSize / 30) + cellSize, cells[x][androidRowCoord + 1].endY, robotColor);
         }
         int col = curCoord[0];
         int row = androidRowCoord;
         RectF rect = new RectF(col * cellSize, row * cellSize, (col + 1) * cellSize, (row + 1) * cellSize);
-        //Bitmap robot = BitmapFactory.decodeResource(getResources(), R.drawable.robot);
-        //canvas.drawBitmap(robot, null, rect, null);
-        //canvas.drawRect(cells[curCoord[0] - 1][androidRowCoord - 1].startX,cells[curCoord[0] - 1][androidRowCoord - 1].startY,cells[curCoord[0] - 1][androidRowCoord + 1].startX,cells[curCoord[0] - 1][androidRowCoord + 1].endY,waypointColor);
 
         switch (this.getRobotDirection()) {
             case "up":
-
                 //left drawn line
                 canvas.drawLine(cells[curCoord[0] - 1][androidRowCoord + 1].startX, cells[curCoord[0] - 1][androidRowCoord + 1].endY, (cells[curCoord[0]][androidRowCoord - 1].startX + cells[curCoord[0]][androidRowCoord - 1].endX) / 2, cells[curCoord[0]][androidRowCoord - 1].startY, blackPaint);
-
                 //right drawn line
                 canvas.drawLine((cells[curCoord[0]][androidRowCoord - 1].startX + cells[curCoord[0]][androidRowCoord - 1].endX) / 2, cells[curCoord[0]][androidRowCoord - 1].startY, cells[curCoord[0] + 1][androidRowCoord + 1].endX, cells[curCoord[0] + 1][androidRowCoord + 1].endY, blackPaint);
-
-                //NE
-                //left drawn line
-                //canvas.drawLine(cells[curCoord[0] - 1][androidRowCoord].startX, cells[curCoord[0] - 1][androidRowCoord].endY, (cells[curCoord[0] + 1][androidRowCoord - 1].startX + cells[curCoord[0] + 2][androidRowCoord - 1 ].endX) / 2, cells[curCoord[0] + 2][androidRowCoord - 1].startY, blackPaint);
-                //canvas.drawLine((cells[curCoord[0] + 1][androidRowCoord - 1].startX + cells[curCoord[0] + 2][androidRowCoord - 1].endX) / 2, cells[curCoord[0] + 1][androidRowCoord - 1].startY, cells[curCoord[0] - 1][androidRowCoord].endX, cells[curCoord[0] - 1][androidRowCoord + 1].endY, blackPaint);
-
-                //NW
-                //left drawn line
-                //canvas.drawLine(cells[curCoord[0] + 1][androidRowCoord + 1].startX, cells[curCoord[0] + 1][androidRowCoord + 1].endY, (cells[curCoord[0] - 2][androidRowCoord].startX + cells[curCoord[0] - 1][androidRowCoord].endX) / 2, cells[curCoord[0] - 1][androidRowCoord - 1].startY, blackPaint);
-                //canvas.drawLine((cells[curCoord[0] - 2][androidRowCoord].startX + cells[curCoord[0] - 1][androidRowCoord].endX) / 2, cells[curCoord[0]][androidRowCoord - 1].startY, cells[curCoord[0] + 1][androidRowCoord].endX, cells[curCoord[0] + 1][androidRowCoord].endY, blackPaint);
-
-                // SE
-                //canvas.drawLine(cells[curCoord[0] - 1][androidRowCoord].startX, cells[curCoord[0] - 1][androidRowCoord].startY, (cells[curCoord[0] + 1][androidRowCoord + 1].startX + cells[curCoord[0] + 2][androidRowCoord + 1].endX) / 2, cells[curCoord[0] + 1][androidRowCoord + 1].endY, blackPaint);
-                //canvas.drawLine((cells[curCoord[0] + 1][androidRowCoord + 1].startX + cells[curCoord[0] + 2][androidRowCoord + 1].endX) / 2, cells[curCoord[0]][androidRowCoord + 1].endY, cells[curCoord[0] - 1][androidRowCoord - 1].endX, cells[curCoord[0] - 1][androidRowCoord - 1].startY, blackPaint);
-
-
-                // SW
-                //canvas.drawLine(cells[curCoord[0] + 1][androidRowCoord - 1].startX, cells[curCoord[0] + 1][androidRowCoord - 1].startY, (cells[curCoord[0] - 2][androidRowCoord + 1].startX + cells[curCoord[0] - 1][androidRowCoord + 1].endX) / 2, cells[curCoord[0] - 1][androidRowCoord + 1].endY, blackPaint);
-                //canvas.drawLine((cells[curCoord[0] - 2][androidRowCoord + 1].startX + cells[curCoord[0] - 1][androidRowCoord + 1].endX) / 2, cells[curCoord[0]][androidRowCoord + 1].endY, cells[curCoord[0] + 1][androidRowCoord].endX, cells[curCoord[0] + 1][androidRowCoord].startY, blackPaint);
-
-
-                //showLog( " curCoord[0]: " +Integer.toString(curCoord[0]) + " androidRowCoord: " +Integer.toString(20 - (androidRowCoord)) + " curCoord[1]: " + Integer.toString(curCoord[1]));
-
-
                 break;
             case "down":
                 canvas.drawLine(cells[curCoord[0] - 1][androidRowCoord - 1].startX, cells[curCoord[0] - 1][androidRowCoord - 1].startY, (cells[curCoord[0]][androidRowCoord + 1].startX + cells[curCoord[0]][androidRowCoord + 1].endX) / 2, cells[curCoord[0]][androidRowCoord + 1].endY, blackPaint);
@@ -650,7 +616,7 @@ public class GridMap extends View {
     }
 
     public void setAutoUpdate(boolean autoUpdate) throws JSONException {
-        showLog(String.valueOf(backupMapInformation));
+        showLog(valueOf(backupMapInformation));
         if (!autoUpdate)
             backupMapInformation = this.getReceivedJsonObject();
         else {
@@ -879,8 +845,8 @@ public class GridMap extends View {
         int[] obstacleCoord = new int[]{col, row};
         this.getObstacleCoord().add(obstacleCoord);
         String[] arrowCoord = new String[3];
-        arrowCoord[0] = String.valueOf(col);
-        arrowCoord[1] = String.valueOf(row);
+        arrowCoord[0] = valueOf(col);
+        arrowCoord[1] = valueOf(row);
         arrowCoord[2] = arrowDirection;
         this.getArrowCoord().add(arrowCoord);
 
@@ -903,8 +869,8 @@ public class GridMap extends View {
         TextView yAxisTextView =  ((Activity)this.getContext()).findViewById(R.id.yValue);
         TextView directionAxisTextView =  ((Activity)this.getContext()).findViewById(R.id.directionValue);
 
-        xAxisTextView.setText(String.valueOf(col-1));
-        yAxisTextView.setText(String.valueOf(row-1));
+        xAxisTextView.setText(valueOf(col-1));
+        yAxisTextView.setText(valueOf(row-1));
         //directionAxisTextView.setText(direction);
         if(direction.equals("up"))
         {
@@ -986,6 +952,7 @@ public class GridMap extends View {
             if(obstacleNoArray[i] != -1){
                 if(cells[col][row].obstacleNo == -1){
                     cells[col][row].obstacleNo = obstacleNoArray[i]; // assign obstacle no
+                    String random = col + "" + row;
                     obstacleNoArray[i] = -1; // set index to marked as used
                     break;
                 }
@@ -993,17 +960,19 @@ public class GridMap extends View {
         }
         showLog("Exiting setObstacleCoord");
         // TODO: uncommand for bluetooth
-        //ArenaFragment.updateArenaBTMessage( "Obstacle No: " + cells[col][row].obstacleNo + "\t\tX: "+ (col-1) + "\t\tY: " + (19-row) +  "\t\tDirection: " + cells[col][row].getobstacleFacing());
-
+        ArenaFragment.updateObstacleList( "Obstacle No: " + cells[col][row].obstacleNo + "\t\tX: "+ (col-1) + "\t\tY: " + (19-row) +  "\t\tDirection: " + cells[col][row].getobstacleFacing());
+        if(!obsSelected)
+        {
+            try {
+                BluetoothFragment.printMessage("Obstacle", (col-1), (19-row), getObstacleDirectionText(newDirection) + "\n");
+                BluetoothFragment.printMessage("Obstacle"+ " Column: "+ (col-1) + " Row: "+ (19-row) + " Direction: " + getObstacleDirectionText(newDirection) + "\n");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
         // Obstacle, <x,y>, <obstacleID>, <obstacleDirection>
         //BluetoothFragment.printMessage("Obstacle, "+ "<"+ (col-1) + ">, <" + (19-row) + ">, " + "<" + cells[col][row].obstacleNo+ ">, " + "<" + cells[col][row].getobstacleFacing() +">");
-//        try {
-//
-//            BluetoothFragment.printMessage("Obstacle", (col-1), (19-row), getObstacleDirectionText(newDirection));
-//            BluetoothFragment.printMessage("Obstacle"+ " Column: "+ (col-1) + " Row: "+ (19-row) + " Direction: " + getObstacleDirectionText(newDirection));
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
+
     }
 
     private ArrayList<int[]> getObstacleCoord() {
@@ -1076,7 +1045,7 @@ public class GridMap extends View {
         Paint paint;
         String type;
         int id = -1;
-        String obstacleFacing = "null";
+        String obstacleFacing = "";
 
         String targetID = null;
         int obstacleNo = -1;
@@ -1187,7 +1156,7 @@ public class GridMap extends View {
 
                         if (cells[x][y].type.equals("obstacle")) {
 
-                            message = message + Integer.toString(x - 1) + "," + Integer.toString(19 - y) + "," + rpiConvertDirection(cells[x][y].getobstacleFacing()) + ",";
+                            message = message + (x - 1) + "," + (19 - y) + "," + rpiConvertDirection(cells[x][y].getobstacleFacing()) + ",";
                         }
 
                     }
@@ -1361,9 +1330,7 @@ public class GridMap extends View {
                                 cells[column][20 - row].setobstacleFacing("RIGHT");
                                 break;
                         }
-                        //ArenaFragment.updateArenaBTMessage( "Obstacle No: " + cells[column][20 - row].obstacleNo + "\t\tX: "+ (column-1) + "\t\tY: " + (row-1) +  "\t\tDirection: " + cells[column][20 - row].getobstacleFacing());
-
-
+                        ArenaFragment.updateObstacleList( "Obstacle No: " + cells[column][20 - row].obstacleNo + "\t\tX: "+ (column-1) + "\t\tY: " + (row-1) +  "\t\tDirection: " + cells[column][20 - row].getobstacleFacing());
                         invalidate();
 
                         // obstacle direction <x,y>, <obstacleID>, <obstacleDirection>
@@ -1417,6 +1384,12 @@ public class GridMap extends View {
             if(obsSelected) {
                 obsSelected = false;
                 Log.d("obsSelected", Boolean.toString(obsSelected));
+                try {
+                    BluetoothFragment.printMessage("Obstacle", (column-1), (row-1), getObstacleDirectionText(newDirection) + "\n");
+                    BluetoothFragment.printMessage("Obstacle"+ " Column: "+ (column-1) + " Row: "+ (row-1) + " Direction: " + getObstacleDirectionText(newDirection) + "\n");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 return true;
             }
         }
@@ -1432,8 +1405,12 @@ public class GridMap extends View {
                 }
                 if (occupied == false) {
 
+                    String obstacleRemove = "Obstacle No: " + cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].obstacleNo + "\t\tX: "+ (selectedObsCoord[0] - 1) + "\t\tY: " + (selectedObsCoord[1] - 1) +  "\t\tDirection: ";
+                    if(cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].getobstacleFacing() != null)
+                        obstacleRemove += cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].getobstacleFacing();
+                    ArenaFragment.removeObstacleFromList(obstacleRemove);
                     // TODO: NEW obstacle
-                    //BluetoothFragment.printMessage("RemovedObstacle, " + "<" + valueOf(selectedObsCoord[0] - 1) + ">, <" + valueOf(Math.abs(selectedObsCoord[1]) - 1) + ">, <" + cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].obstacleNo + ">");
+                    showLog("RemovedObstacle, " + "<" + valueOf(selectedObsCoord[0] - 1) + ">, <" + valueOf(Math.abs(selectedObsCoord[1]) - 1) + ">, <" + cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].obstacleNo + ">");
                     obstacleNoArray[cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].obstacleNo - 1] = cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].obstacleNo; // unset obstacle no by assigning number back to array
                     cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].obstacleNo = -1;
                     cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].setType("unexplored");
@@ -1441,6 +1418,7 @@ public class GridMap extends View {
                     obsSelectedFacing = cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].getobstacleFacing(); // <-- newly added
                     cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].setobstacleFacing(null); // <-- newly added
                     // Remove target ID
+                    showLog(""+selectedObsCoord[0] + " " + (20 - selectedObsCoord[1]));
                     obsTargetImageID = cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].targetID; // <-- newly added
                     cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].targetID = null; // <-- newly added
 
@@ -1498,7 +1476,6 @@ public class GridMap extends View {
                     this.invalidate();
                     return true;
                 }
-
             }
         }
         showLog("Exiting onTouchEvent");
@@ -1619,9 +1596,9 @@ public class GridMap extends View {
                     for (int j = 0; j < exploredString.length() - 4; j++) {
                         y = 19 - (j / 15);
                         x = 1 + j - ((19 - y) * 15);
-                        if ((String.valueOf(exploredString.charAt(j + 2))).equals("1") && !cells[x][y].type.equals("robot"))
+                        if ((valueOf(exploredString.charAt(j + 2))).equals("1") && !cells[x][y].type.equals("robot"))
                             cells[x][y].setType("explored");
-                        else if ((String.valueOf(exploredString.charAt(j + 2))).equals("0") && !cells[x][y].type.equals("robot"))
+                        else if ((valueOf(exploredString.charAt(j + 2))).equals("0") && !cells[x][y].type.equals("robot"))
                             cells[x][y].setType("unexplored");
                     }
 
@@ -1643,7 +1620,7 @@ public class GridMap extends View {
                     for (int row = ROW - 1; row >= 0; row--)
                         for (int col = 1; col <= COL; col++)
                             if ((cells[col][row].type.equals("explored") || (cells[col][row].type.equals("robot"))) && k < obstacleString.length()) {
-                                if ((String.valueOf(obstacleString.charAt(k))).equals("1"))
+                                if ((valueOf(obstacleString.charAt(k))).equals("1"))
                                     this.setObstacleCoord(col, 20 - row);
                                 k++;
                             }
@@ -1694,7 +1671,7 @@ public class GridMap extends View {
                         infoJsonObject = infoJsonArray.getJSONObject(j);
                         this.setObstacleCoord(infoJsonObject.getInt("x")+1, infoJsonObject.getInt("y")+1);
                     }
-                    message = "No. of Obstacle: " + String.valueOf(infoJsonArray.length());
+                    message = "No. of Obstacle: " + infoJsonArray.length();
                     break;
                 case "arrow":
                     infoJsonArray = mapInformation.getJSONArray("arrow");
@@ -1702,7 +1679,7 @@ public class GridMap extends View {
                         infoJsonObject = infoJsonArray.getJSONObject(j);
                         if (!infoJsonObject.getString("face").equals("dummy")) {
                             this.setArrowCoordinate(infoJsonObject.getInt("x"), infoJsonObject.getInt("y"), infoJsonObject.getString("face"));
-                            message = "Arrow:  (" + String.valueOf(infoJsonObject.getInt("x")) + "," + String.valueOf(infoJsonObject.getInt("y")) + "), face: " + infoJsonObject.getString("face");
+                            message = "Arrow:  (" + infoJsonObject.getInt("x") + "," + infoJsonObject.getInt("y") + "), face: " + infoJsonObject.getString("face");
                         }
                     }
                     break;
@@ -1729,14 +1706,68 @@ public class GridMap extends View {
                     message = "Unintended default for JSONObject";
                     break;
             }
-            if (!message.equals("updateMapInformation Default message")){}
+            if (!message.equals("updateMapInformation Default message")){BluetoothFragment.receiveMessage(message);}
             //TODO Bluetooth Comment
-            //BluetoothFragment.receiveMessage(message);
+
         }
         showLog("Exiting updateMapInformation");
         this.invalidate();
     }
-
+    public void changeDirection(String direction){
+        showLog("Entering changeDirection");
+        String robotDirection = getRobotDirection();
+        String backupDirection = robotDirection;
+        switch(robotDirection){
+            case "up":
+                switch(direction){
+                    case "forward right":
+                    case "back right":
+                        robotDirection = "right";
+                        break;
+                    case "forward left":
+                    case "back left":
+                        robotDirection = "left";
+                        break;
+                }
+                break;
+            case "right":
+                switch(direction){
+                    case "forward right":
+                    case "back right":
+                        robotDirection = "down";
+                        break;
+                    case "forward left":
+                    case "back left":
+                        robotDirection = "up";
+                        break;
+                }
+                break;
+            case "left":
+                switch(direction){
+                    case "forward right":
+                    case "back right":
+                        robotDirection = "up";
+                        break;
+                    case "forward left":
+                    case "back left":
+                        robotDirection = "down";
+                        break;
+                }
+                break;
+            case "down":
+                switch(direction){
+                    case "forward right":
+                    case "back right":
+                        robotDirection = "left";
+                        break;
+                    case "forward left":
+                    case "back left":
+                        robotDirection = "right";
+                        break;
+                }
+                break;
+        }
+    }
     // TODO: need find a way to make the turn like a car using angle (clock)
     public void moveRobot(String direction) {
         showLog("Entering moveRobot");

@@ -59,7 +59,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
     ImageButton directionChangeImageBtn, exploredImageBtn, obstacleImageBtn, clearImageBtn;
     ToggleButton setStartPointToggleBtn, setWaypointToggleBtn, setObstacleToggleBtn, setObstacleDirectionToggleBtn;
     Switch manualAutoToggleBtn;
-    private static boolean autoUpdate = false;
+    private static final boolean autoUpdate = false;
     public static boolean manualUpdateRequest = false;
 
     String fobsstring,fexpstring;
@@ -81,8 +81,8 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
 
     TextView btStatus;
 
-    private ListView mBluetoothMessages;
-    private static ArrayAdapter<String> mBluetoothMessagesListAdapter;
+    private ListView mObstacleList;
+    private static ArrayAdapter<String> mObstacleListAdapter;
 
     private Sensor mSensor;
     private SensorManager mSensorManager;
@@ -199,6 +199,8 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                 showLog("Clicked resetMapBtn");
                 showToast("Resetting map...");
                 gridMap.resetMap();
+                mObstacleListAdapter.clear();
+                mObstacleList.setAdapter(mObstacleListAdapter);
                 // TODO: uncommand for bluetooth and send command to RPI
                 //BluetoothFragment.printMessage("RS");
 
@@ -276,7 +278,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                     gridMap.setSetObstacleStatus(true);
                     //gridMap.toggleCheckedBtn("setWaypointToggleBtn");
                 }
-                }
+            }
         });
 
         setObstacleDirectionToggleBtn.setOnClickListener(new View.OnClickListener() {
@@ -359,7 +361,8 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                     gridMap.moveRobot("forward");
                     gridMap.moveRobot("right");
                     gridMap.moveRobot("forward");
-                    gridMap.moveRobot("left");
+                    gridMap.moveRobot("forward");
+                    gridMap.moveRobot("forward");
                     // TODO: uncommand for bluetooth and send command to RPI
                     //BluetoothFragment.printMessage("tl");
                     refreshLabel();
@@ -383,7 +386,9 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                     gridMap.moveRobot("forward");
                     gridMap.moveRobot("left");
                     gridMap.moveRobot("forward");
-                    gridMap.moveRobot("right");
+                    gridMap.moveRobot("forward");
+                    gridMap.moveRobot("forward");
+                    gridMap.moveRobot("forward");
                     // TODO: uncommand for bluetooth and send command to RPI
                     //BluetoothFragment.printMessage("tl");
                     refreshLabel();
@@ -408,7 +413,9 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                     gridMap.moveRobot("back");
                     gridMap.moveRobot("left");
                     gridMap.moveRobot("back");
-                    gridMap.moveRobot("right");
+                    gridMap.moveRobot("back");
+                    gridMap.moveRobot("back");
+                    gridMap.moveRobot("back");
                     // TODO: uncommand for bluetooth and send command to RPI
                     //BluetoothFragment.printMessage("cmd:right");
                     //BluetoothFragment.printMessage("tr");
@@ -457,14 +464,15 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                     gridMap.moveRobot("back");
                     gridMap.moveRobot("right");
                     gridMap.moveRobot("back");
-                    gridMap.moveRobot("left");
+                    gridMap.moveRobot("back");
+                    gridMap.moveRobot("back");
+                    gridMap.moveRobot("back");
                     // TODO: uncommand for bluetooth and send command to RPI
                     //BluetoothFragment.printMessage("tl");
                     refreshLabel();
                     updateStatus("turning back left");
                     //"A" is used for communication with AMDTOOL
 //                    MainActivity.printMessage("A");
-
                 }
                 else
                     updateStatus("Please press 'STARTING POINT'");
@@ -625,9 +633,9 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
 //            }
 //        });
         //TODO Bluetooth
-//        mBluetoothMessages = view.findViewById(R.id.bluetooth_messages_in_arena);
-//        mBluetoothMessagesListAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1);
-//        mBluetoothMessages.setAdapter(mBluetoothMessagesListAdapter);
+        mObstacleList = view.findViewById(R.id.obstacleList);
+        mObstacleListAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1);
+        mObstacleList.setAdapter(mObstacleListAdapter);
 
 
 //        mStartingPiontFAB.setOnClickListener(new View.OnClickListener() {
@@ -708,11 +716,15 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
         return view;
 
     }
+    public static void removeObstacleFromList(String message)
+    {
+        mObstacleListAdapter.remove(message);
+    }
     // Note ArenaBTMessage change to printing obstacle coordinate
-//    public static void updateArenaBTMessage(String message)
-//    {
-//        mBluetoothMessagesListAdapter.add(message);
-//    }
+    public static void updateObstacleList(String message)
+    {
+        mObstacleListAdapter.add(message);
+    }
 
 
     private void showLog(String message) {
@@ -733,7 +745,6 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
         xAxisTextView.setText(String.valueOf(gridMap.getCurCoord()[0]-1));
         yAxisTextView.setText(String.valueOf(gridMap.getCurCoord()[1]-1));
         //directionAxisTextView.setText(sharedPreferences.getString("direction",""));
-
     }
 
     public void refreshDirection(String direction) {
@@ -854,53 +865,15 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
             }
             // TODO: need change the receiving using x,y instead of obstacle number
             // For RPI
-            if(message.contains("TARGET")) // example String: “TARGET, <x>, <y>, <Traget ID>”
-            {
-                int startingIndex = message.indexOf("<");
-                int endingIndex = message.indexOf(">");
-                int x = Integer.parseInt(message.substring(startingIndex + 1, endingIndex));
-
-                startingIndex = message.indexOf("<", endingIndex+1);
-                endingIndex = message.indexOf(">", endingIndex+1);
-                int y = Integer.parseInt(message.substring(startingIndex+1, endingIndex));
-
-                startingIndex = message.indexOf("<", endingIndex+1);
-                endingIndex = message.indexOf(">", endingIndex+1);
-                String targetID = message.substring(startingIndex+1, endingIndex);
-
-                // to count the number of <
-                char check = '<';
-                int count = 0;
-
-                for (int i = 0; i < message.length(); i++) {
-                    if (message.charAt(i) == check) {
-                        count++;
-                    }
-                }
-
-                // if count is equal to 4 == second case
-                if(count == 4){ // additional <Direction Facing change>
-                    startingIndex = message.indexOf("<", endingIndex+1);
-                    endingIndex = message.indexOf(">", endingIndex+1);
-                    String obstacleFacing = message.substring(startingIndex+1, endingIndex);
-                    Toast.makeText(getContext(), "x: " + x + " y: " + y + " ImageID: " + targetID + " on direction " + obstacleFacing, Toast.LENGTH_SHORT).show();
-                    // TODO: need update
-                    gridMap.updateImageNumberCellRPI(x, y , targetID, obstacleFacing);
-                    // if count is not equal 3 == first case
-                } else {
-                    Toast.makeText(getContext(), "x: " + x + " y: " + y + " ImageID: " + targetID, Toast.LENGTH_SHORT).show();
-                    // TODO: need update
-                    gridMap.updateImageNumberCellRPI(x, y , targetID);
-                }
-
-            }
-
-            // Try getting update image
-            // First Case
-//            if(message.contains("TARGET")){ // example String: “TARGET, <Obstacle Number>, <Target ID>”
+//            if(message.contains("TARGET")) // example String: “TARGET, <x>, <y>, <Traget ID>”
+//            {
 //                int startingIndex = message.indexOf("<");
 //                int endingIndex = message.indexOf(">");
-//                String obstacleNo = message.substring(startingIndex + 1, endingIndex);
+//                int x = Integer.parseInt(message.substring(startingIndex + 1, endingIndex));
+//
+//                startingIndex = message.indexOf("<", endingIndex+1);
+//                endingIndex = message.indexOf(">", endingIndex+1);
+//                int y = Integer.parseInt(message.substring(startingIndex+1, endingIndex));
 //
 //                startingIndex = message.indexOf("<", endingIndex+1);
 //                endingIndex = message.indexOf(">", endingIndex+1);
@@ -916,22 +889,60 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
 //                    }
 //                }
 //
-//                // if count is equal to 3 == second case
-//                if(count == 3){ // additional <Direction Facing change>
+//                // if count is equal to 4 == second case
+//                if(count == 4){ // additional <Direction Facing change>
 //                    startingIndex = message.indexOf("<", endingIndex+1);
 //                    endingIndex = message.indexOf(">", endingIndex+1);
 //                    String obstacleFacing = message.substring(startingIndex+1, endingIndex);
-//                    Toast.makeText(getContext(), "Obstacle No " + obstacleNo + " detected as " + targetID + " on direction " + obstacleFacing, Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getContext(), "x: " + x + " y: " + y + " ImageID: " + targetID + " on direction " + obstacleFacing, Toast.LENGTH_SHORT).show();
 //                    // TODO: need update
-//                    gridMap.updateImageNumberCell(Integer.parseInt(obstacleNo), targetID, obstacleFacing);
+//                    gridMap.updateImageNumberCellRPI(x, y , targetID, obstacleFacing);
 //                    // if count is not equal 3 == first case
 //                } else {
-//                    Toast.makeText(getContext(), "Obstacle No " + obstacleNo + " detected as " + targetID, Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getContext(), "x: " + x + " y: " + y + " ImageID: " + targetID, Toast.LENGTH_SHORT).show();
 //                    // TODO: need update
-//                    gridMap.updateImageNumberCell(Integer.parseInt(obstacleNo), targetID);
+//                    gridMap.updateImageNumberCellRPI(x, y , targetID);
 //                }
+//
 //            }
-            // Case C.10
+
+            // Try getting update image
+            // First Case
+            if(message.contains("TARGET")){ // example String: “TARGET, <Obstacle Number>, <Target ID>”
+                int startingIndex = message.indexOf("<");
+                int endingIndex = message.indexOf(">");
+                String obstacleNo = message.substring(startingIndex + 1, endingIndex);
+
+                startingIndex = message.indexOf("<", endingIndex+1);
+                endingIndex = message.indexOf(">", endingIndex+1);
+                String targetID = message.substring(startingIndex+1, endingIndex);
+
+                // to count the number of <
+                char check = '<';
+                int count = 0;
+
+                for (int i = 0; i < message.length(); i++) {
+                    if (message.charAt(i) == check) {
+                        count++;
+                    }
+                }
+
+                // if count is equal to 3 == second case
+                if(count == 3){ // additional <Direction Facing change>
+                    startingIndex = message.indexOf("<", endingIndex+1);
+                    endingIndex = message.indexOf(">", endingIndex+1);
+                    String obstacleFacing = message.substring(startingIndex+1, endingIndex);
+                    Toast.makeText(getContext(), "Obstacle No " + obstacleNo + " detected as " + targetID + " on direction " + obstacleFacing, Toast.LENGTH_SHORT).show();
+                    // TODO: need update
+                    gridMap.updateImageNumberCell(Integer.parseInt(obstacleNo), targetID, obstacleFacing);
+                    // if count is not equal 3 == first case
+                } else {
+                    Toast.makeText(getContext(), "Obstacle No " + obstacleNo + " detected as " + targetID, Toast.LENGTH_SHORT).show();
+                    // TODO: need update
+                    gridMap.updateImageNumberCell(Integer.parseInt(obstacleNo), targetID);
+                }
+            }
+
             if(message.contains("ROBOT")){
                 int startingIndex = message.indexOf("<");
                 int endingIndex = message.indexOf(">");
@@ -1000,7 +1011,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
             }
 
             try {
-                if (message.length() > 7 && message.substring(2,6).equals("grid")) {
+                if (message.length() > 7 && message.startsWith("grid", 2)) {
                     String resultString = "";
                     String amdString = message.substring(11,message.length()-2);
                     showLog("amdString: " + amdString);
@@ -1038,7 +1049,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
             }
 
             try {
-                if (message.length() > 8 && message.substring(2,7).equals("image")) {
+                if (message.length() > 8 && message.startsWith("image", 2)) {
                     JSONObject jsonObject = new JSONObject(message);
                     JSONArray jsonArray = jsonObject.getJSONArray("image");
                     gridMap.drawImageNumberCell(jsonArray.getInt(0),jsonArray.getInt(1),jsonArray.getInt(2));
@@ -1061,12 +1072,12 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
 //            }
             sharedPreferences();
             //String receivedText = sharedPreferences.getString("message", "") + "\n" + message;
-            //TODO Bluetooth
-//            String receivedText = BluetoothFragment.getBTdeviceName() + ": " + message;
-//            editor.putString("message", receivedText);
-//            editor.commit();
-            //BluetoothFragment.refreshMessageReceived();
-            //mBluetoothMessagesListAdapter.add(receivedText);
+
+            String receivedText = BluetoothFragment.getBTdeviceName() + ": " + message;
+            editor.putString("message", receivedText);
+            editor.commit();
+            BluetoothFragment.refreshMessageReceived();
+            //BluetoothMessagesListAdapter.add(receivedText);
         }
     };
 
