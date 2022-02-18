@@ -369,7 +369,49 @@
 
             <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"><![CDATA[
+
+
+                android:text="ToggleButton" />
+
+
+                ]]>
+
+                <Button
+                    android:id="@+id/sendToRPIBtn"
+                    android:layout_width="59dp"
+                    android:layout_height="50dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="104dp"
+                    android:layout_marginEnd="52dp"
+                    android:background="@drawable/roundedbutton"
+                    android:text="RPI" />
+
+                <ImageButton
+                    android:id="@+id/timerButton"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="44dp"
+                    android:layout_marginTop="170dp"
+                    android:layout_marginEnd="56dp"
+                    android:background="@drawable/roundedbutton"
+                    app:srcCompat="@drawable/timer_32" />
+
+                <ImageButton
+                    android:id="@+id/resetButton"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_below="@+id/timerButton"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="57dp"
+                    android:background="@drawable/roundedbutton"
+
+                    app:srcCompat="@drawable/reset_30" />
 
                 <ToggleButton
                     android:id="@+id/startingPointButton"
@@ -379,38 +421,23 @@
                     android:layout_below="@+id/resetButton"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentEnd="true"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginStart="48dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginEnd="52dp"
+                    android:layout_marginStart="43dp"
+                    android:layout_marginTop="29dp"
+                    android:layout_marginEnd="57dp"
                     android:background="@drawable/ic_toggle_bg" />
-                android:text="ToggleButton" />
 
-
-                <ImageButton
-                    android:id="@+id/resetButton"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_below="@+id/timerButton"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginEnd="52dp"
-                    android:background="@drawable/roundedbutton"
-
-                    app:srcCompat="@drawable/reset_30" />
-
-                <ImageButton
-                    android:id="@+id/timerButton"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_alignParentStart="true"
+                <ToggleButton
+                    android:id="@+id/imgRecToogleButton"
+                    style="@style/toggleButton"
+                    android:layout_width="64dp"
+                    android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentEnd="true"
-                    android:layout_marginStart="49dp"
-                    android:layout_marginTop="253dp"
-                    android:layout_marginEnd="51dp"
-                    android:background="@drawable/roundedbutton"
-                    app:srcCompat="@drawable/timer_32" />
+                    android:layout_marginTop="29dp"
+                    android:layout_marginEnd="49dp"
+                    android:background="@drawable/img_toggle_bg"
+                    android:text="ToggleButton" />
+
             </RelativeLayout>
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

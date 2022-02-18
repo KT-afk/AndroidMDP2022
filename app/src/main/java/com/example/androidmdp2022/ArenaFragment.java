@@ -38,7 +38,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.math.BigInteger;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Arrays;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -173,7 +180,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
         setObstacleDirectionToggleBtn = view.findViewById(R.id.setObstacleDirectionToggleBtn);
 
         // for RPI
-        //sendToRPIBtn = view.findViewById(R.id.sendToRPIBtn);
+        sendToRPIBtn = view.findViewById(R.id.sendToRPIBtn);
 
         //dropdownlist = view.findViewById(R.id.AC_dropdownlistDirection);
         //TODO Bluetooth comment
@@ -221,6 +228,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                 showLog("Clicked setStartPointToggleBtn");
                 if (!setStartPointToggleBtn.isChecked())
                 {
+                    gridMap.setStartCoordStatus(false);
                     showToast("Cancelled selecting starting point");
                 }
                 else if (setStartPointToggleBtn.isChecked() && !gridMap.getAutoUpdate()) {
@@ -297,14 +305,15 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
             }
         });
 
-//        //For RPI
-//        sendToRPIBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                showLog("Sending to RPI");
-//                gridMap.sendRPIMessage();
-//            }
-//        });
+        //For RPI
+        sendToRPIBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showLog("Sending to RPI");
+                gridMap.sendRPIMessage();
+            }
+
+        });
 
 
         // variable initialization for controller
@@ -317,7 +326,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
 
 //        exploreTimeTextView = view.findViewById(R.id.exploreTimeTextView);
 //        fastestTimeTextView = view.findViewById(R.id.fastestTimeTextView);
-        //imgRecButton = view.findViewById(R.id.imgRecToogleButton);
+          imgRecButton = view.findViewById(R.id.imgRecToogleButton);
 //        fastestButton = view.findViewById(R.id.fastestToggleBtn);
 //        exploreResetButton = view.findViewById(R.id.exploreResetImageBtn);
 //        fastestResetButton = view.findViewById(R.id.fastestResetImageBtn);
@@ -358,9 +367,10 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                 if (gridMap.getAutoUpdate())
                     updateStatus("Please press 'MANUAL'");
                 else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
-                    gridMap.moveRobot("forward");
+                    //gridMap.moveRobot("forward");
                     gridMap.moveRobot("right");
                     gridMap.moveRobot("forward");
+                    gridMap.moveRobot("left");
 //                    gridMap.moveRobot("forward");
 //                    gridMap.moveRobot("forward");
                     // TODO: uncommand for bluetooth and send command to RPI
@@ -383,9 +393,10 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                 if (gridMap.getAutoUpdate())
                     updateStatus("Please press 'MANUAL'");
                 else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
-                    gridMap.moveRobot("forward");
+                    //gridMap.moveRobot("forward");
                     gridMap.moveRobot("left");
                     gridMap.moveRobot("forward");
+                    gridMap.moveRobot("right");
 //                    gridMap.moveRobot("forward");
 //                    gridMap.moveRobot("forward");
 //                    gridMap.moveRobot("forward");
@@ -484,6 +495,25 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
 //        imgRecButton.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
+//                Character[][] mapArray = new Character[20][20];
+//                OutputStream out = null;
+//                for (Character[] row: mapArray)
+//                    Arrays.fill(row, 'X');
+//                try {
+//                    URL url = new URL("localhost/");
+//                    HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+//                    out = new BufferedOutputStream(urlConnection.getOutputStream());
+//
+//                    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
+//                    writer.write(mapArray);
+//                    writer.flush();
+//                    writer.close();
+//                    out.close();
+//
+//                    urlConnection.connect();
+//                } catch (Exception e) {
+//                    System.out.println(e.getMessage());
+//                }
 //                showLog("Clicked Image Recognition ToggleBtn");
 //                ToggleButton imgRecToggleBtn = (ToggleButton) v;
 //                if (imgRecToggleBtn.getText().equals("IMAGE RECOGNITION")) {
