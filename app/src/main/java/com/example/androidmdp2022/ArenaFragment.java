@@ -40,11 +40,13 @@ import org.json.JSONObject;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
+import java.io.DataOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Arrays;
 
 /**
@@ -491,7 +493,54 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                         "");
             }
         });
+        imgRecButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Character[][] mapArray = new Character[20][20];
+                DataOutputStream out = null;
 
+                for (Character[] row: mapArray)
+                    Arrays.fill(row, 'X');
+                JSONObject postArr = new JSONObject();
+                try {
+                    postArr.put("arena", mapArray);
+                    URL url = new URL("localhost/");
+                    HttpURLConnection client = null;
+                    client = (HttpURLConnection) url.openConnection();
+                    client.setRequestMethod("POST");
+                    client.setRequestProperty("Content-Type","application/json");
+                    client.connect();
+
+                    out = new DataOutputStream(client.getOutputStream ());
+                    out.writeBytes(URLEncoder.encode(postArr.toString(),"UTF-8"));
+                    out.flush();
+                    out.close();
+
+
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+                showLog("Clicked Image Recognition ToggleBtn");
+//                ToggleButton imgRecToggleBtn = (ToggleButton) v;
+//                if (imgRecToggleBtn.getText().equals("IMAGE RECOGNITION")) {
+//                    showToast("Image Recognition timer stop!");
+//                    robotStatusTextView.setText("Image Recognition Stopped");
+//                    timerHandler.removeCallbacks(timerRunnableExplore);
+//                }
+//                else if (imgRecToggleBtn.getText().equals("STOP")) {
+//                    showToast("Image Recognition timer start!");
+//                    // TODO: uncommand for bluetooth and send command to RPI
+//                    //BluetoothFragment.printMessage("IR");
+//                    robotStatusTextView.setText("Image Recognition Started");
+//                    exploreTimer = System.currentTimeMillis();
+//                    timerHandler.postDelayed(timerRunnableExplore, 0);
+//                }
+//                else {
+//                    showToast(""+imgRecToggleBtn.getText());
+//                }
+                showLog("Exiting Image Recognition ToggleBtn");
+            }
+        });
 //        imgRecButton.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
@@ -895,46 +944,46 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
             }
             // TODO: need change the receiving using x,y instead of obstacle number
             // For RPI
-//            if(message.contains("TARGET")) // example String: “TARGET, <x>, <y>, <Traget ID>”
-//            {
-//                int startingIndex = message.indexOf("<");
-//                int endingIndex = message.indexOf(">");
-//                int x = Integer.parseInt(message.substring(startingIndex + 1, endingIndex));
-//
-//                startingIndex = message.indexOf("<", endingIndex+1);
-//                endingIndex = message.indexOf(">", endingIndex+1);
-//                int y = Integer.parseInt(message.substring(startingIndex+1, endingIndex));
-//
-//                startingIndex = message.indexOf("<", endingIndex+1);
-//                endingIndex = message.indexOf(">", endingIndex+1);
-//                String targetID = message.substring(startingIndex+1, endingIndex);
-//
-//                // to count the number of <
-//                char check = '<';
-//                int count = 0;
-//
-//                for (int i = 0; i < message.length(); i++) {
-//                    if (message.charAt(i) == check) {
-//                        count++;
-//                    }
-//                }
-//
-//                // if count is equal to 4 == second case
-//                if(count == 4){ // additional <Direction Facing change>
-//                    startingIndex = message.indexOf("<", endingIndex+1);
-//                    endingIndex = message.indexOf(">", endingIndex+1);
-//                    String obstacleFacing = message.substring(startingIndex+1, endingIndex);
-//                    Toast.makeText(getContext(), "x: " + x + " y: " + y + " ImageID: " + targetID + " on direction " + obstacleFacing, Toast.LENGTH_SHORT).show();
-//                    // TODO: need update
-//                    gridMap.updateImageNumberCellRPI(x, y , targetID, obstacleFacing);
-//                    // if count is not equal 3 == first case
-//                } else {
-//                    Toast.makeText(getContext(), "x: " + x + " y: " + y + " ImageID: " + targetID, Toast.LENGTH_SHORT).show();
-//                    // TODO: need update
-//                    gridMap.updateImageNumberCellRPI(x, y , targetID);
-//                }
-//
-//            }
+            if(message.contains("TARGET")) // example String: “TARGET, <x>, <y>, <Target ID>”
+            {
+                int startingIndex = message.indexOf("<");
+                int endingIndex = message.indexOf(">");
+                int x = Integer.parseInt(message.substring(startingIndex + 1, endingIndex));
+
+                startingIndex = message.indexOf("<", endingIndex+1);
+                endingIndex = message.indexOf(">", endingIndex+1);
+                int y = Integer.parseInt(message.substring(startingIndex+1, endingIndex));
+
+                startingIndex = message.indexOf("<", endingIndex+1);
+                endingIndex = message.indexOf(">", endingIndex+1);
+                String targetID = message.substring(startingIndex+1, endingIndex);
+
+                // to count the number of <
+                char check = '<';
+                int count = 0;
+
+                for (int i = 0; i < message.length(); i++) {
+                    if (message.charAt(i) == check) {
+                        count++;
+                    }
+                }
+
+                // if count is equal to 4 == second case
+                if(count == 4){ // additional <Direction Facing change>
+                    startingIndex = message.indexOf("<", endingIndex+1);
+                    endingIndex = message.indexOf(">", endingIndex+1);
+                    String obstacleFacing = message.substring(startingIndex+1, endingIndex);
+                    Toast.makeText(getContext(), "x: " + x + " y: " + y + " ImageID: " + targetID + " on direction " + obstacleFacing, Toast.LENGTH_SHORT).show();
+                    // TODO: need update
+                    gridMap.updateImageNumberCellRPI(x, y , targetID, obstacleFacing);
+                    // if count is not equal 3 == first case
+                } else {
+                    Toast.makeText(getContext(), "x: " + x + " y: " + y + " ImageID: " + targetID, Toast.LENGTH_SHORT).show();
+                    // TODO: need update
+                    gridMap.updateImageNumberCellRPI(x, y , targetID);
+                }
+
+            }
 
             // Try getting update image
             // First Case
