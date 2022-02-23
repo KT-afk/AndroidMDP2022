@@ -427,7 +427,7 @@
                     android:background="@drawable/ic_toggle_bg" />
 
                 <ToggleButton
-                    android:id="@+id/imgRecToogleButton"
+                    android:id="@+id/imgRecToggleButton"
                     style="@style/toggleButton"
                     android:layout_width="64dp"
                     android:layout_height="wrap_content"

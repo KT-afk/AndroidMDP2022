@@ -328,7 +328,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
 
 //        exploreTimeTextView = view.findViewById(R.id.exploreTimeTextView);
 //        fastestTimeTextView = view.findViewById(R.id.fastestTimeTextView);
-          imgRecButton = view.findViewById(R.id.imgRecToogleButton);
+          imgRecButton = view.findViewById(R.id.imgRecToggleButton);
 //        fastestButton = view.findViewById(R.id.fastestToggleBtn);
 //        exploreResetButton = view.findViewById(R.id.exploreResetImageBtn);
 //        fastestResetButton = view.findViewById(R.id.fastestResetImageBtn);
@@ -348,7 +348,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                 else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
                     gridMap.moveRobot("forward");
                     // TODO: uncommand for bluetooth and send command to RPI
-                    BluetoothFragment.printMessage("f");
+                    BluetoothFragment.printMessage("q");
                     refreshLabel();
                     //"W" is used for communication with AMDTOOL
 //                    MainActivity.printMessage("W");
@@ -369,14 +369,14 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                 if (gridMap.getAutoUpdate())
                     updateStatus("Please press 'MANUAL'");
                 else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
-                    //gridMap.moveRobot("forward");
+                    gridMap.moveRobot("forward");
                     gridMap.moveRobot("right");
                     gridMap.moveRobot("forward");
-                    gridMap.moveRobot("left");
-//                    gridMap.moveRobot("forward");
-//                    gridMap.moveRobot("forward");
+                    gridMap.moveRobot("forward");
+                    gridMap.moveRobot("forward");
+                    gridMap.moveRobot("forward");
                     // TODO: uncommand for bluetooth and send command to RPI
-                    BluetoothFragment.printMessage("sr");
+                    BluetoothFragment.printMessage("w");
                     refreshLabel();
                     updateStatus("turning forward right");
                     //"A" is used for communication with AMDTOOL
@@ -395,15 +395,14 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                 if (gridMap.getAutoUpdate())
                     updateStatus("Please press 'MANUAL'");
                 else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
-                    //gridMap.moveRobot("forward");
+                    gridMap.moveRobot("forward");
                     gridMap.moveRobot("left");
                     gridMap.moveRobot("forward");
-                    gridMap.moveRobot("right");
-//                    gridMap.moveRobot("forward");
-//                    gridMap.moveRobot("forward");
-//                    gridMap.moveRobot("forward");
+                    gridMap.moveRobot("forward");
+                    gridMap.moveRobot("forward");
+                    gridMap.moveRobot("forward");
                     // TODO: uncommand for bluetooth and send command to RPI
-                    BluetoothFragment.printMessage("sl");
+                    BluetoothFragment.printMessage("e");
                     refreshLabel();
                     updateStatus("turning forward left");
                     //"A" is used for communication with AMDTOOL
@@ -431,7 +430,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                     gridMap.moveRobot("back");
                     // TODO: uncommand for bluetooth and send command to RPI
                     //BluetoothFragment.printMessage("cmd:right");
-                    //BluetoothFragment.printMessage("tr");
+                    BluetoothFragment.printMessage("d");
 
                     refreshLabel();
                     //"D" is used for communication with AMDTOOL
@@ -454,7 +453,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                     //"S" is used for communication with AMDTOOL
                     // MainActivity.printMessage("S");
                     // TODO: uncommand for bluetooth and send command to RPI
-                    BluetoothFragment.printMessage("r");
+                    BluetoothFragment.printMessage("s");
                     refreshLabel();
                     if (gridMap.getValidPosition())
                         updateStatus("moving backward");
@@ -481,7 +480,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                     gridMap.moveRobot("back");
                     gridMap.moveRobot("back");
                     // TODO: uncommand for bluetooth and send command to RPI
-                    //BluetoothFragment.printMessage("tl");
+                    BluetoothFragment.printMessage("a");
                     refreshLabel();
                     updateStatus("turning back left");
                     //"A" is used for communication with AMDTOOL
@@ -493,54 +492,56 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                         "");
             }
         });
-        imgRecButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Character[][] mapArray = new Character[20][20];
-                DataOutputStream out = null;
-
-                for (Character[] row: mapArray)
-                    Arrays.fill(row, 'X');
-                JSONObject postArr = new JSONObject();
-                try {
-                    postArr.put("arena", mapArray);
-                    URL url = new URL("localhost/");
-                    HttpURLConnection client = null;
-                    client = (HttpURLConnection) url.openConnection();
-                    client.setRequestMethod("POST");
-                    client.setRequestProperty("Content-Type","application/json");
-                    client.connect();
-
-                    out = new DataOutputStream(client.getOutputStream ());
-                    out.writeBytes(URLEncoder.encode(postArr.toString(),"UTF-8"));
-                    out.flush();
-                    out.close();
-
-
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
-                }
-                showLog("Clicked Image Recognition ToggleBtn");
-//                ToggleButton imgRecToggleBtn = (ToggleButton) v;
-//                if (imgRecToggleBtn.getText().equals("IMAGE RECOGNITION")) {
-//                    showToast("Image Recognition timer stop!");
-//                    robotStatusTextView.setText("Image Recognition Stopped");
-//                    timerHandler.removeCallbacks(timerRunnableExplore);
+//        imgRecButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Character[][] mapArray = new Character[20][20];
+//                DataOutputStream out = null;
+//                for (Character[] row: mapArray){
+//                    for(Character[] column: mapArray){
+//                        if( gridMap.getCurCoord())
+//                    }
+//                    Arrays.fill(row, 'X');
 //                }
-//                else if (imgRecToggleBtn.getText().equals("STOP")) {
-//                    showToast("Image Recognition timer start!");
-//                    // TODO: uncommand for bluetooth and send command to RPI
-//                    //BluetoothFragment.printMessage("IR");
-//                    robotStatusTextView.setText("Image Recognition Started");
-//                    exploreTimer = System.currentTimeMillis();
-//                    timerHandler.postDelayed(timerRunnableExplore, 0);
+//
+//                JSONObject postArr = new JSONObject();
+//                try {
+//                    postArr.put("arena", mapArray);
+//                    URL url = new URL("localhost/");
+//                    HttpURLConnection client = null;
+//                    client = (HttpURLConnection) url.openConnection();
+//                    client.setRequestMethod("POST");
+//                    client.setRequestProperty("Content-Type","application/json");
+//                    client.connect();
+//
+//                    out = new DataOutputStream(client.getOutputStream ());
+//                    out.writeBytes(URLEncoder.encode(postArr.toString(),"UTF-8"));
+//                    out.flush();
+//                    out.close();
+//                } catch (Exception e) {
+//                    System.out.println(e.getMessage());
 //                }
-//                else {
-//                    showToast(""+imgRecToggleBtn.getText());
-//                }
-                showLog("Exiting Image Recognition ToggleBtn");
-            }
-        });
+//                showLog("Clicked Image Recognition ToggleBtn");
+////                ToggleButton imgRecToggleBtn = (ToggleButton) v;
+////                if (imgRecToggleBtn.getText().equals("IMAGE RECOGNITION")) {
+////                    showToast("Image Recognition timer stop!");
+////                    robotStatusTextView.setText("Image Recognition Stopped");
+////                    timerHandler.removeCallbacks(timerRunnableExplore);
+////                }
+////                else if (imgRecToggleBtn.getText().equals("STOP")) {
+////                    showToast("Image Recognition timer start!");
+////                    // TODO: uncommand for bluetooth and send command to RPI
+////                    //BluetoothFragment.printMessage("IR");
+////                    robotStatusTextView.setText("Image Recognition Started");
+////                    exploreTimer = System.currentTimeMillis();
+////                    timerHandler.postDelayed(timerRunnableExplore, 0);
+////                }
+////                else {
+////                    showToast(""+imgRecToggleBtn.getText());
+////                }
+//                showLog("Exiting Image Recognition ToggleBtn");
+//            }
+//        });
 //        imgRecButton.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
@@ -944,7 +945,8 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
             }
             // TODO: need change the receiving using x,y instead of obstacle number
             // For RPI
-            if(message.contains("TARGET")) // example String: “TARGET, <x>, <y>, <Target ID>”
+            // UPDATE, <x>, <y>, <N>
+            if(message.contains("UPDATE")) // example String: “TARGET, <x>, <y>, <Target ID>”
             {
                 int startingIndex = message.indexOf("<");
                 int endingIndex = message.indexOf(">");
