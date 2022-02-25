@@ -40,11 +40,13 @@ import org.json.JSONObject;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
+import java.io.DataOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 /**
@@ -346,7 +348,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                 else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
                     gridMap.moveRobot("forward");
                     // TODO: uncommand for bluetooth and send command to RPI
-                    BluetoothFragment.printMessage("f");
+                    BluetoothFragment.printMessage("W");
                     refreshLabel();
                     //"W" is used for communication with AMDTOOL
 //                    MainActivity.printMessage("W");
@@ -374,7 +376,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
 //                    gridMap.moveRobot("forward");
 //                    gridMap.moveRobot("forward");
                     // TODO: uncommand for bluetooth and send command to RPI
-                    BluetoothFragment.printMessage("sr");
+                    BluetoothFragment.printMessage("E");
                     refreshLabel();
                     updateStatus("turning forward right");
                     //"A" is used for communication with AMDTOOL
@@ -401,7 +403,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
 //                    gridMap.moveRobot("forward");
 //                    gridMap.moveRobot("forward");
                     // TODO: uncommand for bluetooth and send command to RPI
-                    BluetoothFragment.printMessage("sl");
+                    BluetoothFragment.printMessage("Q");
                     refreshLabel();
                     updateStatus("turning forward left");
                     //"A" is used for communication with AMDTOOL
@@ -452,7 +454,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                     //"S" is used for communication with AMDTOOL
                     // MainActivity.printMessage("S");
                     // TODO: uncommand for bluetooth and send command to RPI
-                    BluetoothFragment.printMessage("r");
+                    BluetoothFragment.printMessage("S");
                     refreshLabel();
                     if (gridMap.getValidPosition())
                         updateStatus("moving backward");
@@ -492,49 +494,69 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
             }
         });
 
-//        imgRecButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Character[][] mapArray = new Character[20][20];
-//                OutputStream out = null;
-//                for (Character[] row: mapArray)
-//                    Arrays.fill(row, 'X');
-//                try {
-//                    URL url = new URL("localhost/");
-//                    HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-//                    out = new BufferedOutputStream(urlConnection.getOutputStream());
-//
-//                    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
-//                    writer.write(mapArray);
-//                    writer.flush();
-//                    writer.close();
-//                    out.close();
-//
-//                    urlConnection.connect();
-//                } catch (Exception e) {
-//                    System.out.println(e.getMessage());
-//                }
-//                showLog("Clicked Image Recognition ToggleBtn");
-//                ToggleButton imgRecToggleBtn = (ToggleButton) v;
-//                if (imgRecToggleBtn.getText().equals("IMAGE RECOGNITION")) {
-//                    showToast("Image Recognition timer stop!");
-//                    robotStatusTextView.setText("Image Recognition Stopped");
-//                    timerHandler.removeCallbacks(timerRunnableExplore);
-//                }
-//                else if (imgRecToggleBtn.getText().equals("STOP")) {
-//                    showToast("Image Recognition timer start!");
-//                    // TODO: uncommand for bluetooth and send command to RPI
-//                    //BluetoothFragment.printMessage("IR");
-//                    robotStatusTextView.setText("Image Recognition Started");
-//                    exploreTimer = System.currentTimeMillis();
-//                    timerHandler.postDelayed(timerRunnableExplore, 0);
-//                }
-//                else {
-//                    showToast("Else statement: " + imgRecToggleBtn.getText());
-//                }
-//                showLog("Exiting Image Recognition ToggleBtn");
-//            }
-//        });
+        imgRecButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Character[][] mapArray = new Character[20][20];
+                OutputStream out = null;
+                for (Character[] row: mapArray)
+                    Arrays.fill(row, 'X');
+
+                for(int[] coord : gridMap.getObstacleCoord()){
+                    mapArray[coord[0]][coord[1]] = 'O';
+                    Log.d(TAG, "sucessfully updated 2d array");
+                }
+
+                JSONArray jsonArray = new JSONArray();
+                jsonArray.put(mapArray);
+                JSONObject arrayObj = new JSONObject();
+                try {
+                    arrayObj.put("Arena", jsonArray);
+                    Log.d(TAG, "sucuessfully created jsonArray");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                try {
+                    URL url = new URL("http://localhost:3000/set_arena");
+                    HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                    Log.d(TAG, "HTTP connection success");
+                    urlConnection.setRequestMethod("POST");
+                    urlConnection.setRequestProperty("Content-Type", "application/json");
+                    urlConnection.setDoOutput(true);
+
+                    DataOutputStream writer = new DataOutputStream(urlConnection.getOutputStream ());
+                    BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(writer, StandardCharsets.UTF_8));
+                    bufferedWriter.write(arrayObj.toString());
+                    Log.d(TAG, "POST REQUEST SENT");
+                    writer.flush ();
+                    writer.close ();
+                    urlConnection.disconnect();
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                    Log.d(TAG, "failed to connect w localhost");
+                }
+                showLog("Clicked Image Recognition ToggleBtn");
+                ToggleButton imgRecToggleBtn = (ToggleButton) v;
+                if (imgRecToggleBtn.getText().equals("IMAGE RECOGNITION")) {
+                    showToast("Image Recognition timer stop!");
+                    robotStatusTextView.setText("Image Recognition Stopped");
+                    timerHandler.removeCallbacks(timerRunnableExplore);
+                }
+                else if (imgRecToggleBtn.getText().equals("STOP")) {
+                    showToast("Image Recognition timer start!");
+                    // TODO: uncommand for bluetooth and send command to RPI
+                    //BluetoothFragment.printMessage("IR");
+                    robotStatusTextView.setText("Image Recognition Started");
+                    exploreTimer = System.currentTimeMillis();
+                    timerHandler.postDelayed(timerRunnableExplore, 0);
+                }
+                else {
+                    showToast("Else statement: " + imgRecToggleBtn.getText());
+                }
+                showLog("Exiting Image Recognition ToggleBtn");
+            }
+        });
 
 //        exploreResetButton.setOnClickListener(new View.OnClickListener() {
 //            @Override

@@ -975,7 +975,7 @@ public class GridMap extends View {
 
     }
 
-    private ArrayList<int[]> getObstacleCoord() {
+    public ArrayList<int[]> getObstacleCoord() {
         return obstacleCoord;
     }
 
@@ -1411,7 +1411,7 @@ public class GridMap extends View {
                         obstacleRemove += cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].getobstacleFacing();
                     ArenaFragment.removeObstacleFromList(obstacleRemove);
                     // TODO: NEW obstacle
-                    showLog("RemovedObstacle, " + "<" + valueOf(selectedObsCoord[0] - 1) + ">, <" + valueOf(Math.abs(selectedObsCoord[1]) - 1) + ">, <" + cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].obstacleNo + ">");
+                    showLog("RemovedObstacle, " + "<" + (selectedObsCoord[0] - 1) + ">, <" + (Math.abs(selectedObsCoord[1]) - 1) + ">, <" + cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].obstacleNo + ">");
                     obstacleNoArray[cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].obstacleNo - 1] = cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].obstacleNo; // unset obstacle no by assigning number back to array
                     cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].obstacleNo = -1;
                     cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].setType("unexplored");
