@@ -42,6 +42,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -504,7 +505,16 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                 }
 
                 for(int[] coord : gridMap.getObstacleCoord()){
-                    mapArray[coord[0]-1][coord[1]-1] = "N";
+                    if(GridMap.returnObstacleFacing(coord[0]-1,coord[1]-1)=="UP") {
+                        mapArray[coord[0]-1][coord[1]-1] = "N";
+                    } else if(GridMap.returnObstacleFacing(coord[0]-1,coord[1]-1).contains("DOWN")) {
+                        mapArray[coord[0]-1][coord[1]-1] = "S";
+                    } else if(GridMap.returnObstacleFacing(coord[0]-1,coord[1]-1).contains("RIGHT")) {
+                        mapArray[coord[0]-1][coord[1]-1] = "E";
+                    } else if(GridMap.returnObstacleFacing(coord[0]-1,coord[1]-1).contains("LEFT")) {
+                        mapArray[coord[0]-1][coord[1]-1] = "W";
+                    } else mapArray[coord[0]-1][coord[1]-1] = "X";
+
                     System.out.println("mapArray[0][1]" + mapArray[coord[0]-1][coord[1]-1]);
                     Log.d(TAG, "successfully updated 2d array");
                 }
@@ -532,7 +542,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                             urlConnection.addRequestProperty("Accept", "application/json");
                             urlConnection.addRequestProperty("Content-Type", "application/json");
                             urlConnection.setDoOutput(true);
-                            OutputStreamWriter out = new OutputStreamWriter(urlConnection.getOutputStream(), "UTF-8");
+                            OutputStreamWriter out = new OutputStreamWriter(urlConnection.getOutputStream(), StandardCharsets.UTF_8);
                             out.write(jsonStr);
                             out.flush();
                             out.close();
