@@ -34,25 +34,14 @@ import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.DataOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -506,16 +495,16 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
             public void onClick(View v) {
                 ExecutorService executor = Executors.newSingleThreadExecutor();
                 Handler handler = new Handler(Looper.getMainLooper());
-                ArrayList[][] mapArray = new ArrayList[20][20];
+                String[][] mapArray = new String[20][20];
                 OutputStream out = null;
                 for (int i = 0; i < 20; i++) {
                     for (int j = 0; j < 20; j++) {
-                        mapArray[i][j].add("X");
+                        mapArray[i][j] = "O";
                     }
                 }
 
                 for(int[] coord : gridMap.getObstacleCoord()){
-                    mapArray[coord[0]-1][coord[1]-1].add("O");
+                    mapArray[coord[0]-1][coord[1]-1] = "N";
                     System.out.println("mapArray[0][1]" + mapArray[coord[0]-1][coord[1]-1]);
                     Log.d(TAG, "successfully updated 2d array");
                 }
@@ -525,19 +514,16 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
 //                    }
 //                    System.out.println("\n");
 //                }
-//                JSONObject newFormat = mapArray.map(function(e){
-//                    return [e["Value"], e["ValuePourcent"]]
-//                });
+
                 executor.execute(new Runnable() {
                     @Override
                     public void run() {
-                        JSONObject arrayObj = new JSONObject();
-                        try {
-                            arrayObj.put("arena", mapArray);
-                            Log.d(TAG, "successfully created jsonArray");
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                        Gson gson = new Gson();
+                        JsonObject jsonObj = new JsonObject();
+                        JsonElement jsonMapArray = gson.toJsonTree(mapArray);
+                        jsonObj.addProperty("arena", jsonMapArray.toString());
+                        String jsonStr = gson.toJson(jsonObj);
+
                         try {
                             URL url = new URL("http://10.27.155.177:3000/set_arena");
                             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
@@ -547,7 +533,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                             urlConnection.addRequestProperty("Content-Type", "application/json");
                             urlConnection.setDoOutput(true);
                             OutputStreamWriter out = new OutputStreamWriter(urlConnection.getOutputStream(), "UTF-8");
-                            out.write(arrayObj.toString());
+                            out.write(jsonStr);
                             out.flush();
                             out.close();
                             urlConnection.connect();
@@ -1094,54 +1080,54 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                 }
             }
 
-            try {
-                if (message.length() > 7 && message.startsWith("grid", 2)) {
-                    String resultString = "";
-                    String amdString = message.substring(11,message.length()-2);
-                    showLog("amdString: " + amdString);
-                    BigInteger hexBigIntegerExplored = new BigInteger(amdString, 16);
-                    String exploredString = hexBigIntegerExplored.toString(2);
-
-                    while (exploredString.length() < 400)
-                        exploredString = "0" + exploredString;
-
-                    for (int i=0; i<exploredString.length(); i=i+20) {
-                        int j=0;
-                        String subString = "";
-                        while (j<20) {
-                            subString = subString + exploredString.charAt(j+i);
-                            j++;
-                        }
-                        resultString = subString + resultString;
-                    }
-                    hexBigIntegerExplored = new BigInteger(resultString, 2);
-                    resultString = hexBigIntegerExplored.toString(16);
-
-                    JSONObject amdObject = new JSONObject();
-                    amdObject.put("explored", "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
-                    amdObject.put("length", amdString.length()*4);
-                    amdObject.put("obstacle", resultString);
-                    JSONArray amdArray = new JSONArray();
-                    amdArray.put(amdObject);
-                    JSONObject amdMessage = new JSONObject();
-                    amdMessage.put("map", amdArray);
-                    message = String.valueOf(amdMessage);
-                    showLog("Executed for AMD message, message: " + message);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            try {
-                if (message.length() > 8 && message.startsWith("image", 2)) {
-                    JSONObject jsonObject = new JSONObject(message);
-                    JSONArray jsonArray = jsonObject.getJSONArray("image");
-                    gridMap.drawImageNumberCell(jsonArray.getInt(0),jsonArray.getInt(1),jsonArray.getInt(2));
-                    showLog("Image Added for index: " + jsonArray.getInt(0) + "," +jsonArray.getInt(1));
-                }
-            } catch (JSONException e) {
-                showLog("Adding Image Failed");
-            }
+//            try {
+//                if (message.length() > 7 && message.startsWith("grid", 2)) {
+//                    String resultString = "";
+//                    String amdString = message.substring(11,message.length()-2);
+//                    showLog("amdString: " + amdString);
+//                    BigInteger hexBigIntegerExplored = new BigInteger(amdString, 16);
+//                    String exploredString = hexBigIntegerExplored.toString(2);
+//
+//                    while (exploredString.length() < 400)
+//                        exploredString = "0" + exploredString;
+//
+//                    for (int i=0; i<exploredString.length(); i=i+20) {
+//                        int j=0;
+//                        String subString = "";
+//                        while (j<20) {
+//                            subString = subString + exploredString.charAt(j+i);
+//                            j++;
+//                        }
+//                        resultString = subString + resultString;
+//                    }
+//                    hexBigIntegerExplored = new BigInteger(resultString, 2);
+//                    resultString = hexBigIntegerExplored.toString(16);
+//
+//                    JSONObject amdObject = new JSONObject();
+//                    amdObject.put("explored", "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+//                    amdObject.put("length", amdString.length()*4);
+//                    amdObject.put("obstacle", resultString);
+//                    JSONArray amdArray = new JSONArray();
+//                    amdArray.put(amdObject);
+//                    JSONObject amdMessage = new JSONObject();
+//                    amdMessage.put("map", amdArray);
+//                    message = String.valueOf(amdMessage);
+//                    showLog("Executed for AMD message, message: " + message);
+//                }
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//
+//            try {
+//                if (message.length() > 8 && message.startsWith("image", 2)) {
+//                    JSONObject jsonObject = new JSONObject(message);
+//                    JSONArray jsonArray = jsonObject.getJSONArray("image");
+//                    gridMap.drawImageNumberCell(jsonArray.getInt(0),jsonArray.getInt(1),jsonArray.getInt(2));
+//                    showLog("Image Added for index: " + jsonArray.getInt(0) + "," +jsonArray.getInt(1));
+//                }
+//            } catch (JSONException e) {
+//                showLog("Adding Image Failed");
+//            }
 
             // TODO: need update Not sure if needed or not
 //            if (gridMap.getAutoUpdate() || MapFragment.manualUpdateRequest) {
