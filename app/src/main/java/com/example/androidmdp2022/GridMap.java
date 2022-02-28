@@ -178,7 +178,7 @@ public class GridMap extends View {
         showLog("Exiting onDraw");
     }
 
-    public static String returnObstacleFacing(int x, int y){
+    public String returnObstacleFacing(int x, int y){
         return cells[x][y].obstacleFacing;
     }
 
@@ -975,7 +975,7 @@ public class GridMap extends View {
 
     }
 
-    private ArrayList<int[]> getObstacleCoord() {
+    public ArrayList<int[]> getObstacleCoord() {
         return obstacleCoord;
     }
 
@@ -1121,7 +1121,7 @@ public class GridMap extends View {
     }
 
     // For RPI
-    private String rpiConvertDirection(String direction)
+    String rpiConvertDirection(String direction)
     {
         String direction_NSEW = "";
         switch (direction)
@@ -1176,7 +1176,6 @@ public class GridMap extends View {
 
 
     }
-
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         showLog("Entering onTouchEvent");
