@@ -508,7 +508,6 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                 }
 
                 for(int[] coord : gridMap.getObstacleCoord()){
-
                     mapArray[coord[0]-1][coord[1]-1] = "N";
                     System.out.println("mapArray[0][1]" + mapArray[coord[0]-1][coord[1]-1]);
                     Log.d(TAG, "successfully updated 2d array");
