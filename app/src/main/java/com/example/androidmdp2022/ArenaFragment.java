@@ -505,13 +505,13 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                 }
 
                 for(int[] coord : gridMap.getObstacleCoord()){
-                    if(GridMap.returnObstacleFacing(coord[0]-1,coord[1]-1)=="UP") {
+                    if(GridMap.returnObstacleFacing(coord[0],20-coord[1]-1)=="UP") {
                         mapArray[coord[0]-1][coord[1]-1] = "N";
-                    } else if(GridMap.returnObstacleFacing(coord[0]-1,coord[1]-1).contains("DOWN")) {
+                    } else if(GridMap.returnObstacleFacing(coord[0],20-coord[1]-1).contains("DOWN")) {
                         mapArray[coord[0]-1][coord[1]-1] = "S";
-                    } else if(GridMap.returnObstacleFacing(coord[0]-1,coord[1]-1).contains("RIGHT")) {
+                    } else if(GridMap.returnObstacleFacing(coord[0],20-coord[1]-1).contains("RIGHT")) {
                         mapArray[coord[0]-1][coord[1]-1] = "E";
-                    } else if(GridMap.returnObstacleFacing(coord[0]-1,coord[1]-1).contains("LEFT")) {
+                    } else if(GridMap.returnObstacleFacing(coord[0],20-coord[1]-1).contains("LEFT")) {
                         mapArray[coord[0]-1][coord[1]-1] = "W";
                     } else mapArray[coord[0]-1][coord[1]-1] = "X";
 
