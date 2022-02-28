@@ -14,6 +14,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -39,15 +40,21 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -431,7 +438,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                     gridMap.moveRobot("back");
                     // TODO: uncommand for bluetooth and send command to RPI
                     //BluetoothFragment.printMessage("cmd:right");
-                    //BluetoothFragment.printMessage("tr");
+                    BluetoothFragment.printMessage("D");
 
                     refreshLabel();
                     //"D" is used for communication with AMDTOOL
@@ -481,7 +488,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                     gridMap.moveRobot("back");
                     gridMap.moveRobot("back");
                     // TODO: uncommand for bluetooth and send command to RPI
-                    //BluetoothFragment.printMessage("tl");
+                    BluetoothFragment.printMessage("A");
                     refreshLabel();
                     updateStatus("turning back left");
                     //"A" is used for communication with AMDTOOL
@@ -497,63 +504,88 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
         imgRecButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Character[][] mapArray = new Character[20][20];
+                ExecutorService executor = Executors.newSingleThreadExecutor();
+                Handler handler = new Handler(Looper.getMainLooper());
+                ArrayList[][] mapArray = new ArrayList[20][20];
                 OutputStream out = null;
-                for (Character[] row: mapArray)
-                    Arrays.fill(row, 'X');
+                for (int i = 0; i < 20; i++) {
+                    for (int j = 0; j < 20; j++) {
+                        mapArray[i][j].add("X");
+                    }
+                }
 
                 for(int[] coord : gridMap.getObstacleCoord()){
-                    mapArray[coord[0]][coord[1]] = 'O';
-                    Log.d(TAG, "sucessfully updated 2d array");
+                    mapArray[coord[0]-1][coord[1]-1].add("O");
+                    System.out.println("mapArray[0][1]" + mapArray[coord[0]-1][coord[1]-1]);
+                    Log.d(TAG, "successfully updated 2d array");
                 }
+//                for(int i = 0; i<mapArray.length; i++){
+//                    for(int j = 0; j<mapArray.length; j++){
+//                        System.out.println(i + ", " + j + " " + mapArray[i][j] + ",");
+//                    }
+//                    System.out.println("\n");
+//                }
+//                JSONObject newFormat = mapArray.map(function(e){
+//                    return [e["Value"], e["ValuePourcent"]]
+//                });
+                executor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        JSONObject arrayObj = new JSONObject();
+                        try {
+                            arrayObj.put("arena", mapArray);
+                            Log.d(TAG, "successfully created jsonArray");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        try {
+                            URL url = new URL("http://10.27.155.177:3000/set_arena");
+                            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                            Log.d(TAG, "HTTP connection created");
+                            urlConnection.setRequestMethod("POST");
+                            urlConnection.addRequestProperty("Accept", "application/json");
+                            urlConnection.addRequestProperty("Content-Type", "application/json");
+                            urlConnection.setDoOutput(true);
+                            OutputStreamWriter out = new OutputStreamWriter(urlConnection.getOutputStream(), "UTF-8");
+                            out.write(arrayObj.toString());
+                            out.flush();
+                            out.close();
+                            urlConnection.connect();
+//                            DataOutputStream writer = new DataOutputStream(urlConnection.getOutputStream ());
+//                            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(writer, StandardCharsets.UTF_8));
+//                            bufferedWriter.write(arrayObj.toString());
+                            Log.d(TAG, "POST REQUEST SENT");
 
-                JSONArray jsonArray = new JSONArray();
-                jsonArray.put(mapArray);
-                JSONObject arrayObj = new JSONObject();
-                try {
-                    arrayObj.put("Arena", jsonArray);
-                    Log.d(TAG, "sucuessfully created jsonArray");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+//                           InputStream inputStream = urlConnection.getInputStream();
 
-                try {
-                    URL url = new URL("http://localhost:3000/set_arena");
-                    HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                    Log.d(TAG, "HTTP connection success");
-                    urlConnection.setRequestMethod("POST");
-                    urlConnection.setRequestProperty("Content-Type", "application/json");
-                    urlConnection.setDoOutput(true);
-
-                    DataOutputStream writer = new DataOutputStream(urlConnection.getOutputStream ());
-                    BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(writer, StandardCharsets.UTF_8));
-                    bufferedWriter.write(arrayObj.toString());
-                    Log.d(TAG, "POST REQUEST SENT");
-                    writer.flush ();
-                    writer.close ();
-                    urlConnection.disconnect();
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
-                    Log.d(TAG, "failed to connect w localhost");
-                }
+//                            writer.flush ();
+//                            writer.close ();
+                            int code = urlConnection.getResponseCode();
+                            System.out.println(code);
+                        } catch (Exception e) {
+                            System.out.println(e.getMessage());
+                            Log.d(TAG, "failed to connect w localhost");
+                        }
+                    }
+                });
                 showLog("Clicked Image Recognition ToggleBtn");
-                ToggleButton imgRecToggleBtn = (ToggleButton) v;
-                if (imgRecToggleBtn.getText().equals("IMAGE RECOGNITION")) {
-                    showToast("Image Recognition timer stop!");
-                    robotStatusTextView.setText("Image Recognition Stopped");
-                    timerHandler.removeCallbacks(timerRunnableExplore);
-                }
-                else if (imgRecToggleBtn.getText().equals("STOP")) {
-                    showToast("Image Recognition timer start!");
-                    // TODO: uncommand for bluetooth and send command to RPI
-                    //BluetoothFragment.printMessage("IR");
-                    robotStatusTextView.setText("Image Recognition Started");
-                    exploreTimer = System.currentTimeMillis();
-                    timerHandler.postDelayed(timerRunnableExplore, 0);
-                }
-                else {
-                    showToast("Else statement: " + imgRecToggleBtn.getText());
-                }
+//                ToggleButton imgRecToggleBtn = (ToggleButton) v;
+//                if (imgRecToggleBtn.getText().equals("IMAGE RECOGNITION")) {
+//                    showToast("Image Recognition timer stop!");
+//                    robotStatusTextView.setText("Image Recognition Stopped");
+//                    timerHandler.removeCallbacks(timerRunnableExplore);
+//                }
+//                else if (imgRecToggleBtn.getText().equals("STOP")) {
+//                    showToast("Image Recognition timer start!");
+//                    // TODO: uncommand for bluetooth and send command to RPI
+//                    //BluetoothFragment.printMessage("IR");
+//                    robotStatusTextView.setText("Image Recognition Started");
+//                    exploreTimer = System.currentTimeMillis();
+//                    timerHandler.postDelayed(timerRunnableExplore, 0);
+//                }
+//                else {
+//                    showToast("Else statement: " + imgRecToggleBtn.getText());
+//                }
                 showLog("Exiting Image Recognition ToggleBtn");
             }
         });
