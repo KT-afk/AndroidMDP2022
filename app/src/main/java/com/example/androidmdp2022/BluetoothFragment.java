@@ -56,7 +56,8 @@ public class BluetoothFragment extends Fragment {
 
     //NEW
     BluetoothServices mBluetoothConnection;
-    private static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+    //private static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+    private static final UUID myUUID = UUID.fromString("94f39d29-7d6d-437d-973b-fba39e49d4ee");
 
     private String connectedDeviceName;
     private Switch switch_BT;
@@ -284,6 +285,8 @@ public class BluetoothFragment extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String chosenDeviceName = ((TextView) view).getText().toString();
                 for (BluetoothDevice device : availableDevices) {
+                    if (device==null || device.getName()==null)
+                        continue;
                     if (device.getName().equalsIgnoreCase(chosenDeviceName)) {
                         availableDevicesListAdapter.clear();
                         availableDevices.clear();
