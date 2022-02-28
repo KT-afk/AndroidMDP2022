@@ -329,7 +329,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
 
 //        exploreTimeTextView = view.findViewById(R.id.exploreTimeTextView);
 //        fastestTimeTextView = view.findViewById(R.id.fastestTimeTextView);
-          imgRecButton = view.findViewById(R.id.imgRecToogleButton);
+          imgRecButton = view.findViewById(R.id.imgRecToggleButton);
 //        fastestButton = view.findViewById(R.id.fastestToggleBtn);
 //        exploreResetButton = view.findViewById(R.id.exploreResetImageBtn);
 //        fastestResetButton = view.findViewById(R.id.fastestResetImageBtn);
