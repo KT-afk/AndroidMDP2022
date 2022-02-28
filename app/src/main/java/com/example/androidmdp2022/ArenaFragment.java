@@ -521,7 +521,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                         Gson gson = new Gson();
                         JsonObject jsonObj = new JsonObject();
                         JsonElement jsonMapArray = gson.toJsonTree(mapArray);
-                        jsonObj.addProperty("arena", jsonMapArray.toString());
+                        jsonObj.add("arena", jsonMapArray);
                         String jsonStr = gson.toJson(jsonObj);
 
                         try {
