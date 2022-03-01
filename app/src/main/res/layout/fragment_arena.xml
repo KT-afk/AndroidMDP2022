@@ -49,10 +49,9 @@
                     android:id="@+id/resetButton"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-
                     android:layout_marginTop="25dp"
-                    android:background="@drawable/roundedbutton"
-                    app:srcCompat="@drawable/reset_30" />
+                    android:background="@drawable/imagebuttonreset"
+                    android:backgroundTint="#5D3FD3" />
 
                 <ToggleButton
                     android:id="@+id/imgRecToogleButton"
@@ -60,25 +59,24 @@
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:layout_marginTop="25dp"
-                    android:background="@drawable/img_toggle_bg"
-                    android:text="ToggleButton" />
+                    android:background="@drawable/imagebuttoncamera"
+                    android:backgroundTint="#5D3FD3" />
 
                 <ImageButton
                     android:id="@+id/timerButton"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:layout_marginTop="25dp"
-                    android:background="@drawable/roundedbutton"
-                    app:srcCompat="@drawable/timer_32" />
+                    android:background="@drawable/imagebuttonclock"
+                    android:backgroundTint="#5D3FD3" />
 
                 <Button
                     android:id="@+id/sendToRPIBtn"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:layout_marginTop="25dp"
-                    android:background="@drawable/roundedbutton"
-                    android:text="RPI"
-                    android:textSize="16sp" />
+                    android:background="@drawable/imagebuttonrpi"
+                    android:backgroundTint="#5D3FD3" />
 
                 <ToggleButton
                     android:id="@+id/startingPointButton"
@@ -86,7 +84,8 @@
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:layout_marginTop="25dp"
-                    android:background="@drawable/ic_toggle_bg" />
+                    android:background="@drawable/imagebuttoncar"
+                    android:backgroundTint="#5D3FD3" />
             </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
