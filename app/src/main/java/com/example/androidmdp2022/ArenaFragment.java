@@ -535,7 +535,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                         String jsonStr = gson.toJson(jsonObj);
 
                         try {
-                            URL url = new URL("http://10.27.155.177:3000/set_arena");
+                            URL url = new URL("http://192.168.3.12:3000/set_arena");
                             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                             Log.d(TAG, "HTTP connection created");
                             urlConnection.setRequestMethod("POST");
