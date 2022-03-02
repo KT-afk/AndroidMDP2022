@@ -507,14 +507,14 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                 for(int[] coord : gridMap.getObstacleCoord()){
                     //System.out.println(String.format("PRINT COORDS: [%d][%d]",coord[0],coord[1]));
                     if(gridMap.returnObstacleFacing(coord[0],coord[1])=="UP") {
-                        mapArray[coord[0]-1][coord[1]-1] = "N";
+                        mapArray[coord[1]-1][coord[0]-1] = "N";
                     } else if(gridMap.returnObstacleFacing(coord[0],coord[1]).contains("DOWN")) {
-                        mapArray[coord[0]-1][coord[1]-1] = "S";
+                        mapArray[coord[1]-1][coord[0]-1] = "S";
                     } else if(gridMap.returnObstacleFacing(coord[0],coord[1]).contains("RIGHT")) {
-                        mapArray[coord[0]-1][coord[1]-1] = "E";
+                        mapArray[coord[1]-1][coord[0]-1] = "E";
                     } else if(gridMap.returnObstacleFacing(coord[0],coord[1]).contains("LEFT")) {
-                        mapArray[coord[0]-1][coord[1]-1] = "W";
-                    } else mapArray[coord[0]-1][coord[1]-1] = "X";
+                        mapArray[coord[1]-1][coord[0]-1] = "W";
+                    } else mapArray[coord[1]-1][coord[0]-1] = "X";
 
                     //System.out.println("mapArray[0][1]" + mapArray[coord[0]-1][coord[1]-1]);
                     //System.out.println(String.format("LOGIC mapArray[%d][%d] %b",coord[0],20-coord[1],mapArray[coord[0]][20-coord[1]]));
