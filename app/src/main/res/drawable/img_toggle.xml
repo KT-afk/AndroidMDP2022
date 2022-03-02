@@ -1,7 +1,7 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:state_checked="false"
-        android:drawable="@drawable/camera_32" />
+        android:drawable="@drawable/imagebuttoncamera" />
     <item android:state_checked="true"
-        android:drawable="@drawable/x_mark" />
+        android:drawable="@drawable/imagebuttonwait" />
 </selector>

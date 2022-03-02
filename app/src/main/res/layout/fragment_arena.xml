@@ -53,12 +53,12 @@
 
                 <ToggleButton
                     android:id="@+id/imgRecToogleButton"
-                    style="@style/toggleButton"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:layout_marginTop="45dp"
-                    android:background="@drawable/imagebuttoncamera"
-                    android:backgroundTint="#5D3FD3" />
+                    android:background="@drawable/img_toggle"
+                    android:backgroundTint="#5D3FD3"
+                    style="@style/toggleButton"/>
 
                 <ImageButton
                     android:id="@+id/timerButton"
@@ -82,7 +82,7 @@
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:layout_marginTop="45dp"
-                    android:background="@drawable/imagebuttoncar"
+                    android:background="@drawable/ic_toggle"
                     android:backgroundTint="#5D3FD3" />
             </LinearLayout>
 
