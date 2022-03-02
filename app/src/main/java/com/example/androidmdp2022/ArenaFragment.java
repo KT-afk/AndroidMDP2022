@@ -539,7 +539,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                         String jsonStr = gson.toJson(jsonObj);
 
                         try {
-                            URL url = new URL("http://192.168.3.12:3000/set_arena");
+                            URL url = new URL("http://192.168.3.13:3000/set_arena");
                             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                             Log.d(TAG, "HTTP connection created");
                             urlConnection.setRequestMethod("POST");
@@ -993,7 +993,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
 
             // Try getting update image
             // First Case
-            if(message.contains("TARGET")){ // example String: “TARGET, <Obstacle Number>, <Target ID>”
+            if(message.contains("TARGET")){ // example String: “TARGET,<x>,<y>,<Target ID>”
                 int startingIndex = message.indexOf("<");
                 int endingIndex = message.indexOf(">");
                 int xCoord = Integer.parseInt(message.substring(startingIndex + 1, endingIndex));
@@ -1020,19 +1020,16 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                 }
 
                 // if count is equal to 3 == second case
-                if(count == 3){ // additional <Direction Facing change>
-                    startingIndex = message.indexOf("<", endingIndex+1);
-                    endingIndex = message.indexOf(">", endingIndex+1);
-                    String obstacleFacing = message.substring(startingIndex+1, endingIndex);
-                    Toast.makeText(getContext(), "Obstacle No " + obstacleNo + " detected as " + targetID + " on direction " + obstacleFacing, Toast.LENGTH_SHORT).show();
-                    // TODO: need update
-                    gridMap.updateImageNumberCell(Integer.parseInt(obstacleNo), targetID, obstacleFacing);
-                    // if count is not equal 3 == first case
-                } else {
+//                if(count == 3){ // additional <Direction Facing change>
+//                    Toast.makeText(getContext(), "Obstacle No " + obstacleNo + " detected as " + targetID + " on direction " + obstacleFacing, Toast.LENGTH_SHORT).show();
+//                    // TODO: need update
+//                    gridMap.updateImageNumberCell(Integer.parseInt(obstacleNo), targetID, obstacleFacing);
+//                    // if count is not equal 3 == first case
+//                } else {
                     Toast.makeText(getContext(), "Obstacle No " + obstacleNo + " detected as " + targetID, Toast.LENGTH_SHORT).show();
                     // TODO: need update
                     gridMap.updateImageNumberCell(Integer.parseInt(obstacleNo), targetID);
-                }
+                //}
             }
 
             if(message.contains("ROBOT")){
