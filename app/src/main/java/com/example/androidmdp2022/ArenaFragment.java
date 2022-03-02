@@ -996,8 +996,11 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
             if(message.contains("TARGET")){ // example String: “TARGET, <Obstacle Number>, <Target ID>”
                 int startingIndex = message.indexOf("<");
                 int endingIndex = message.indexOf(">");
-                int xCoord = Integer.parseInt(message.substring(startingIndex + 1)) + 1;
-                int yCoord = Integer.parseInt(message.substring(startingIndex + 3)) + 1;
+                int xCoord = Integer.parseInt(message.substring(startingIndex + 1, endingIndex));
+
+                startingIndex = message.indexOf("<", endingIndex+1);
+                endingIndex = message.indexOf(">", endingIndex+1);
+                int yCoord = Integer.parseInt(message.substring(startingIndex+1, endingIndex));
                 startingIndex = message.indexOf("<", endingIndex+1);
                 endingIndex = message.indexOf(">", endingIndex+1);
                 String targetID = message.substring(startingIndex+1, endingIndex);
