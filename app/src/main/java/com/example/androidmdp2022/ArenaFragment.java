@@ -505,17 +505,21 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                 }
 
                 for(int[] coord : gridMap.getObstacleCoord()){
-                    if(GridMap.returnObstacleFacing(coord[0],20-coord[1])=="UP") {
+                    //System.out.println(String.format("PRINT COORDS: [%d][%d]",coord[0],coord[1]));
+                    if(gridMap.returnObstacleFacing(coord[0],coord[1])=="UP") {
                         mapArray[coord[0]-1][coord[1]-1] = "N";
-                    } else if(GridMap.returnObstacleFacing(coord[0],20-coord[1]).contains("DOWN")) {
+                    } else if(gridMap.returnObstacleFacing(coord[0],coord[1]).contains("DOWN")) {
                         mapArray[coord[0]-1][coord[1]-1] = "S";
-                    } else if(GridMap.returnObstacleFacing(coord[0],20-coord[1]).contains("RIGHT")) {
+                    } else if(gridMap.returnObstacleFacing(coord[0],coord[1]).contains("RIGHT")) {
                         mapArray[coord[0]-1][coord[1]-1] = "E";
-                    } else if(GridMap.returnObstacleFacing(coord[0],20-coord[1]).contains("LEFT")) {
+                    } else if(gridMap.returnObstacleFacing(coord[0],coord[1]).contains("LEFT")) {
                         mapArray[coord[0]-1][coord[1]-1] = "W";
                     } else mapArray[coord[0]-1][coord[1]-1] = "X";
 
-                    System.out.println("mapArray[0][1]" + mapArray[coord[0]-1][coord[1]-1]);
+                    //System.out.println("mapArray[0][1]" + mapArray[coord[0]-1][coord[1]-1]);
+                    //System.out.println(String.format("LOGIC mapArray[%d][%d] %b",coord[0],20-coord[1],mapArray[coord[0]][20-coord[1]]));
+                    //System.out.println("PRINT ARRAY" + mapArray);
+                    //System.out.println(String.format("CHANGED mapArray[%d][%d] %b",coord[0],coord[1],mapArray[coord[0]][coord[1]]));
                     Log.d(TAG, "successfully updated 2d array");
                 }
 //                for(int i = 0; i<mapArray.length; i++){
@@ -992,7 +996,6 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                 int startingIndex = message.indexOf("<");
                 int endingIndex = message.indexOf(">");
                 String obstacleNo = message.substring(startingIndex + 1, endingIndex);
-
                 startingIndex = message.indexOf("<", endingIndex+1);
                 endingIndex = message.indexOf(">", endingIndex+1);
                 String targetID = message.substring(startingIndex+1, endingIndex);
