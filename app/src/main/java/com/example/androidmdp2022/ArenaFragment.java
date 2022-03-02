@@ -38,15 +38,11 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -329,7 +325,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
 
 //        exploreTimeTextView = view.findViewById(R.id.exploreTimeTextView);
 //        fastestTimeTextView = view.findViewById(R.id.fastestTimeTextView);
-          imgRecButton = view.findViewById(R.id.imgRecToggleButton);
+          imgRecButton = view.findViewById(R.id.imgRecToogleButton);
 //        fastestButton = view.findViewById(R.id.fastestToggleBtn);
 //        exploreResetButton = view.findViewById(R.id.exploreResetImageBtn);
 //        fastestResetButton = view.findViewById(R.id.fastestResetImageBtn);
@@ -349,7 +345,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                 else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
                     gridMap.moveRobot("forward");
                     // TODO: uncommand for bluetooth and send command to RPI
-                    BluetoothFragment.printMessage("f");
+                    BluetoothFragment.printMessage("W");
                     refreshLabel();
                     //"W" is used for communication with AMDTOOL
 //                    MainActivity.printMessage("W");
@@ -377,7 +373,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
 //                    gridMap.moveRobot("forward");
 //                    gridMap.moveRobot("forward");
                     // TODO: uncommand for bluetooth and send command to RPI
-                    BluetoothFragment.printMessage("sr");
+                    BluetoothFragment.printMessage("E");
                     refreshLabel();
                     updateStatus("turning forward right");
                     //"A" is used for communication with AMDTOOL
@@ -404,7 +400,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
 //                    gridMap.moveRobot("forward");
 //                    gridMap.moveRobot("forward");
                     // TODO: uncommand for bluetooth and send command to RPI
-                    BluetoothFragment.printMessage("sl");
+                    BluetoothFragment.printMessage("Q");
                     refreshLabel();
                     updateStatus("turning forward left");
                     //"A" is used for communication with AMDTOOL
@@ -432,7 +428,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                     gridMap.moveRobot("back");
                     // TODO: uncommand for bluetooth and send command to RPI
                     //BluetoothFragment.printMessage("cmd:right");
-                    //BluetoothFragment.printMessage("tr");
+                    BluetoothFragment.printMessage("D");
 
                     refreshLabel();
                     //"D" is used for communication with AMDTOOL
@@ -455,7 +451,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                     //"S" is used for communication with AMDTOOL
                     // MainActivity.printMessage("S");
                     // TODO: uncommand for bluetooth and send command to RPI
-                    BluetoothFragment.printMessage("r");
+                    BluetoothFragment.printMessage("S");
                     refreshLabel();
                     if (gridMap.getValidPosition())
                         updateStatus("moving backward");
@@ -482,7 +478,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                     gridMap.moveRobot("back");
                     gridMap.moveRobot("back");
                     // TODO: uncommand for bluetooth and send command to RPI
-                    //BluetoothFragment.printMessage("tl");
+                    BluetoothFragment.printMessage("A");
                     refreshLabel();
                     updateStatus("turning back left");
                     //"A" is used for communication with AMDTOOL
@@ -494,6 +490,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                         "");
             }
         });
+
         imgRecButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -508,7 +505,16 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                 }
 
                 for(int[] coord : gridMap.getObstacleCoord()){
-                    mapArray[coord[0]-1][coord[1]-1] = "N";
+                    if(GridMap.returnObstacleFacing(coord[0],20-coord[1])=="UP") {
+                        mapArray[coord[0]-1][coord[1]-1] = "N";
+                    } else if(GridMap.returnObstacleFacing(coord[0],20-coord[1]).contains("DOWN")) {
+                        mapArray[coord[0]-1][coord[1]-1] = "S";
+                    } else if(GridMap.returnObstacleFacing(coord[0],20-coord[1]).contains("RIGHT")) {
+                        mapArray[coord[0]-1][coord[1]-1] = "E";
+                    } else if(GridMap.returnObstacleFacing(coord[0],20-coord[1]).contains("LEFT")) {
+                        mapArray[coord[0]-1][coord[1]-1] = "W";
+                    } else mapArray[coord[0]-1][coord[1]-1] = "X";
+
                     System.out.println("mapArray[0][1]" + mapArray[coord[0]-1][coord[1]-1]);
                     Log.d(TAG, "successfully updated 2d array");
                 }
@@ -536,7 +542,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                             urlConnection.addRequestProperty("Accept", "application/json");
                             urlConnection.addRequestProperty("Content-Type", "application/json");
                             urlConnection.setDoOutput(true);
-                            OutputStreamWriter out = new OutputStreamWriter(urlConnection.getOutputStream(), "UTF-8");
+                            OutputStreamWriter out = new OutputStreamWriter(urlConnection.getOutputStream(), StandardCharsets.UTF_8);
                             out.write(jsonStr);
                             out.flush();
                             out.close();
@@ -1084,54 +1090,54 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                 }
             }
 
-            try {
-                if (message.length() > 7 && message.startsWith("grid", 2)) {
-                    String resultString = "";
-                    String amdString = message.substring(11,message.length()-2);
-                    showLog("amdString: " + amdString);
-                    BigInteger hexBigIntegerExplored = new BigInteger(amdString, 16);
-                    String exploredString = hexBigIntegerExplored.toString(2);
-
-                    while (exploredString.length() < 400)
-                        exploredString = "0" + exploredString;
-
-                    for (int i=0; i<exploredString.length(); i=i+20) {
-                        int j=0;
-                        String subString = "";
-                        while (j<20) {
-                            subString = subString + exploredString.charAt(j+i);
-                            j++;
-                        }
-                        resultString = subString + resultString;
-                    }
-                    hexBigIntegerExplored = new BigInteger(resultString, 2);
-                    resultString = hexBigIntegerExplored.toString(16);
-
-                    JSONObject amdObject = new JSONObject();
-                    amdObject.put("explored", "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
-                    amdObject.put("length", amdString.length()*4);
-                    amdObject.put("obstacle", resultString);
-                    JSONArray amdArray = new JSONArray();
-                    amdArray.put(amdObject);
-                    JSONObject amdMessage = new JSONObject();
-                    amdMessage.put("map", amdArray);
-                    message = String.valueOf(amdMessage);
-                    showLog("Executed for AMD message, message: " + message);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            try {
-                if (message.length() > 8 && message.startsWith("image", 2)) {
-                    JSONObject jsonObject = new JSONObject(message);
-                    JSONArray jsonArray = jsonObject.getJSONArray("image");
-                    gridMap.drawImageNumberCell(jsonArray.getInt(0),jsonArray.getInt(1),jsonArray.getInt(2));
-                    showLog("Image Added for index: " + jsonArray.getInt(0) + "," +jsonArray.getInt(1));
-                }
-            } catch (JSONException e) {
-                showLog("Adding Image Failed");
-            }
+//            try {
+//                if (message.length() > 7 && message.startsWith("grid", 2)) {
+//                    String resultString = "";
+//                    String amdString = message.substring(11,message.length()-2);
+//                    showLog("amdString: " + amdString);
+//                    BigInteger hexBigIntegerExplored = new BigInteger(amdString, 16);
+//                    String exploredString = hexBigIntegerExplored.toString(2);
+//
+//                    while (exploredString.length() < 400)
+//                        exploredString = "0" + exploredString;
+//
+//                    for (int i=0; i<exploredString.length(); i=i+20) {
+//                        int j=0;
+//                        String subString = "";
+//                        while (j<20) {
+//                            subString = subString + exploredString.charAt(j+i);
+//                            j++;
+//                        }
+//                        resultString = subString + resultString;
+//                    }
+//                    hexBigIntegerExplored = new BigInteger(resultString, 2);
+//                    resultString = hexBigIntegerExplored.toString(16);
+//
+//                    JSONObject amdObject = new JSONObject();
+//                    amdObject.put("explored", "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+//                    amdObject.put("length", amdString.length()*4);
+//                    amdObject.put("obstacle", resultString);
+//                    JSONArray amdArray = new JSONArray();
+//                    amdArray.put(amdObject);
+//                    JSONObject amdMessage = new JSONObject();
+//                    amdMessage.put("map", amdArray);
+//                    message = String.valueOf(amdMessage);
+//                    showLog("Executed for AMD message, message: " + message);
+//                }
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//
+//            try {
+//                if (message.length() > 8 && message.startsWith("image", 2)) {
+//                    JSONObject jsonObject = new JSONObject(message);
+//                    JSONArray jsonArray = jsonObject.getJSONArray("image");
+//                    gridMap.drawImageNumberCell(jsonArray.getInt(0),jsonArray.getInt(1),jsonArray.getInt(2));
+//                    showLog("Image Added for index: " + jsonArray.getInt(0) + "," +jsonArray.getInt(1));
+//                }
+//            } catch (JSONException e) {
+//                showLog("Adding Image Failed");
+//            }
 
             // TODO: need update Not sure if needed or not
 //            if (gridMap.getAutoUpdate() || MapFragment.manualUpdateRequest) {
