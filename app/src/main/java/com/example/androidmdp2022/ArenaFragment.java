@@ -800,6 +800,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
         return view;
 
     }
+
     public static void removeObstacleFromList(String message)
     {
         mObstacleListAdapter.remove(message);
@@ -995,11 +996,16 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
             if(message.contains("TARGET")){ // example String: “TARGET, <Obstacle Number>, <Target ID>”
                 int startingIndex = message.indexOf("<");
                 int endingIndex = message.indexOf(">");
-                String obstacleNo = message.substring(startingIndex + 1, endingIndex);
+                int xCoord = Integer.parseInt(message.substring(startingIndex + 1)) + 1;
+                int yCoord = Integer.parseInt(message.substring(startingIndex + 3)) + 1;
                 startingIndex = message.indexOf("<", endingIndex+1);
                 endingIndex = message.indexOf(">", endingIndex+1);
                 String targetID = message.substring(startingIndex+1, endingIndex);
-
+                String obstacleNo = String.valueOf(gridMap.returnObstacleId(xCoord, yCoord));
+                if(Integer.parseInt(obstacleNo) == -100)
+                {
+                    Toast.makeText(getContext(), "Obstacle doesn't exist.", Toast.LENGTH_SHORT).show();
+                }
                 // to count the number of <
                 char check = '<';
                 int count = 0;

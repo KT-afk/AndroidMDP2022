@@ -174,7 +174,10 @@ public class GridMap extends View {
 
         showLog("Exiting onDraw");
     }
-
+    public int returnObstacleId(int x, int y){
+        if(x > 21 || y > 21)
+            return -100;
+        return cells[x][y].obstacleNo; }
     public String returnObstacleFacing(int x, int y){
         return cells[x][y].obstacleFacing;
     }
@@ -946,13 +949,14 @@ public class GridMap extends View {
                     cells[col][row].obstacleNo = obstacleNoArray[i]; // assign obstacle no
                     String random = col + "" + row;
                     obstacleNoArray[i] = -1; // set index to marked as used
+                    ArenaFragment.updateObstacleList( "Obstacle No: " + cells[col][row].obstacleNo + "\t\tX: "+ (col-1) + "\t\tY: " + (row -1) +  "\t\tDirection: " + cells[col][row].getobstacleFacing());
                     break;
                 }
             }
         }
         showLog("Exiting setObstacleCoord");
         // TODO: uncommand for bluetooth
-        ArenaFragment.updateObstacleList( "Obstacle No: " + cells[col][row].obstacleNo + "\t\tX: "+ (col-1) + "\t\tY: " + (row -1) +  "\t\tDirection: " + cells[col][row].getobstacleFacing());
+
         if(!obsSelected)
         {
             try {
