@@ -20,6 +20,7 @@
             android:layout_height="wrap_content"
             android:text="Disconnected"
             android:textAlignment="center"
+            android:textColor="#FF6961"
             android:textSize="34sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
