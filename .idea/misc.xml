@@ -16,9 +16,9 @@
         <entry key="app/src/main/res/drawable/img_toggle.xml" value="0.2125" />
         <entry key="app/src/main/res/drawable/roundedButton.xml" value="0.16510416666666666" />
         <entry key="app/src/main/res/drawable/roundedbutton.xml" value="0.19947916666666668" />
-        <entry key="app/src/main/res/layout/activity_bluetooth2.xml" value="0.4234375" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.37604166666666666" />
-        <entry key="app/src/main/res/layout/fragment_arena.xml" value="0.47125" />
+        <entry key="app/src/main/res/layout/activity_bluetooth2.xml" value="0.35625" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.26112759643916916" />
+        <entry key="app/src/main/res/layout/fragment_arena.xml" value="1.0" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.190625" />
       </map>
     </option>

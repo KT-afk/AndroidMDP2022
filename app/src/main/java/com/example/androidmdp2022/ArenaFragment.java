@@ -292,7 +292,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
             @Override
             public void onClick(View view) {
                 showLog("Clicked Obstacle Direction ToggleBtn");
-                if (setObstacleDirectionToggleBtn.getText().equals("Set Obstacle Direction")) {
+                if (setObstacleDirectionToggleBtn.getText().equals("Set Obs Direction")) {
                     showToast("Cancelled selecting obstacle");
                     gridMap.setSetObstacleDirection(false);
                 }
@@ -1044,16 +1044,16 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
 
                 startingIndex = message.indexOf("<", endingIndex+1);
                 endingIndex = message.indexOf(">", endingIndex+1);
-                String direction = message.substring(startingIndex+1);
+                String direction = message.substring(startingIndex+1, endingIndex);
 
                 // set directions from N S E W to up down left right
-                if(direction.equals("N")){
+                if(direction.equals("1")){
                     direction="up";
-                } else if(direction.equals("S")){
+                } else if(direction.equals("3")){
                     direction="down";
-                } else if(direction.equals("E")){
+                } else if(direction.equals("0")){
                     direction="right";
-                } else if(direction.equals("W")) {
+                } else if(direction.equals("2")) {
                     direction = "left";
                 }
                 else{
