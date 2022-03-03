@@ -569,6 +569,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                     }
                 });
                 showLog("Clicked Image Recognition ToggleBtn");
+                BluetoothFragment.printMessage("START");
 //                ToggleButton imgRecToggleBtn = (ToggleButton) v;
 //                if (imgRecToggleBtn.getText().equals("IMAGE RECOGNITION")) {
 //                    showToast("Image Recognition timer stop!");
