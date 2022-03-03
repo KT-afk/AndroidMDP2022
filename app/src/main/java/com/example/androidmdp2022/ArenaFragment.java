@@ -1044,7 +1044,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
 
                 startingIndex = message.indexOf("<", endingIndex+1);
                 endingIndex = message.indexOf(">", endingIndex+1);
-                String direction = message.substring(startingIndex+1, endingIndex);
+                String direction = message.substring(startingIndex+1);
 
                 // set directions from N S E W to up down left right
                 if(direction.equals("N")){
@@ -1053,20 +1053,8 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                     direction="down";
                 } else if(direction.equals("E")){
                     direction="right";
-                } else if(direction.equals("W")){
-                    direction="left";
-                }
-                else if(direction.equals("NE")){
-                    direction="upright";
-                }
-                else if(direction.equals("NW")){
-                    direction="upleft";
-                }
-                else if(direction.equals("SE")){
-                    direction="downright";
-                }
-                else if(direction.equals("SW")){
-                    direction="downleft";
+                } else if(direction.equals("W")) {
+                    direction = "left";
                 }
                 else{
                     direction="up";
