@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         viewPager2.setOffscreenPageLimit(2);
         ViewPagerAdapter adapter = new ViewPagerAdapter(this);
         viewPager2.setAdapter(adapter);
-        viewPager2.setUserInputEnabled(false);
+        viewPager2.setUserInputEnabled(true);
 
         TAB_TITLE = ViewPagerAdapter.getTabTitles();
         tabLayout.setSelectedTabIndicator(R.color.black);
