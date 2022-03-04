@@ -3,5 +3,5 @@
     <item android:state_checked="false"
         android:drawable="@drawable/imagebuttoncamera" />
     <item android:state_checked="true"
-        android:drawable="@drawable/imagebuttonwait" />
+        android:drawable="@drawable/imagebuttoncamera" />
 </selector>

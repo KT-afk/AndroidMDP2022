@@ -41,6 +41,7 @@ public class GridMap extends View {
     SharedPreferences sharedPreferences;
 
     private final Paint blackPaint = new Paint();
+    private final Paint imageColor = new Paint();
     private final Paint obstacleColor = new Paint();
     private final Paint robotColor = new Paint();
     private final Paint endColor = new Paint();
@@ -105,6 +106,7 @@ public class GridMap extends View {
         super(context, attrs);
         initMap();
         blackPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+        imageColor.setColor(Color.MAGENTA);
         obstacleColor.setColor(Color.BLACK);
         robotColor.setColor(Color.CYAN);
         endColor.setColor(Color.GREEN);
@@ -188,11 +190,11 @@ public class GridMap extends View {
         for (int x = 1; x <= COL; x++)
             for (int y = 1; y <= ROW; y++)
                 for (int i = 0; i < this.getArrowCoord().size(); i++)
-                    if (!cells[x][y].type.equals("image") && cells[x][y].getId() == -1) {
+                    if (cells[x][y].getId() == -1) {
                         canvas.drawRect(cells[x][y].startX, cells[x][y].startY, cells[x][y].endX, cells[x][y].endY, cells[x][y].paint);
 
                         // this is for drawing numbers in obstacle and using oCellArr arraylist for drag and drop
-                        if (cells[x][y].type.equals("obstacle")) {
+                        if (cells[x][y].type.equals("obstacle") || cells[x][y].type.equals("image")) {
                             boolean written = false;
                             for (int a = 0; a < oCellArr.size(); a++) {
                                 if (cells[x][y] == oCellArr.get(a)) {
@@ -442,6 +444,7 @@ public class GridMap extends View {
                 for (int i = 0; i < this.getArrowCoord().size(); i++)
                     if (cells[x][y].obstacleNo == obstacleNo) {
                         cells[x][y].targetID = targetID;
+                        cells[x][y].setType("image");
                         //cells[x][y].isDirection = true;
                     }
         this.invalidate();
@@ -1086,10 +1089,10 @@ public class GridMap extends View {
                     break;
                 /*case "fastestPath":
                     this.paint = fastestPathColor;
-                    break;
-                case "image":
-                    this.paint = obstacleColor;
                     break;*/
+                case "image":
+                    this.paint = imageColor;
+                    break;
                 case "id":
                     this.paint = obstacleColor;
                     break;
@@ -1150,7 +1153,7 @@ public class GridMap extends View {
                 for (int y = 1; y <= ROW; y++) {
                     for (int i = 0; i < this.getArrowCoord().size(); i++) {
 
-                        if (cells[x][y].type.equals("obstacle")) {
+                        if (cells[x][y].type.equals("obstacle") || cells[x][y].type.equals("image")) {
 
                             message = message + (x - 1) + "," + (y - 1) + "," + rpiConvertDirection(cells[x][y].getobstacleFacing()) + ",";
                         }
@@ -1344,7 +1347,7 @@ public class GridMap extends View {
                 });
 
                 // check if the cell selected is obstacle or not
-                if(cells[column][row].type.equals("obstacle")) {
+                if(cells[column][row].type.equals("obstacle") || cells[column][row].type.equals("image")) {
 
                     AlertDialog dialog = mBuilder.create();
                     dialog.show();

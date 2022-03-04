@@ -400,9 +400,9 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                 if (gridMap.getAutoUpdate())
                     updateStatus("Please press 'MANUAL'");
                 else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
-                    gridMap.moveRobot("forward");
+                    gridMap.moveRobot("back");
                     // TODO: uncommand for bluetooth and send command to RPI
-                    BluetoothFragment.printMessage("W");
+                    BluetoothFragment.printMessage("S");
                     refreshLabel();
                     //"W" is used for communication with AMDTOOL
 //                    MainActivity.printMessage("W");
@@ -504,11 +504,11 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                 if (gridMap.getAutoUpdate())
                     updateStatus("Please press 'MANUAL'");
                 else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
-                    gridMap.moveRobot("back");
+                    gridMap.moveRobot("forward");
                     //"S" is used for communication with AMDTOOL
                     // MainActivity.printMessage("S");
                     // TODO: uncommand for bluetooth and send command to RPI
-                    BluetoothFragment.printMessage("S");
+                    BluetoothFragment.printMessage("W");
                     refreshLabel();
                     if (gridMap.getValidPosition())
                         updateStatus("moving backward");
@@ -538,8 +538,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                     BluetoothFragment.printMessage("A");
                     refreshLabel();
                     updateStatus("turning back left");
-                    //"A" is used for communication with AMDTOOL
-//                    MainActivity.printMessage("A");
+
                 }
                 else
                     updateStatus("Please press 'STARTING POINT'");
@@ -553,6 +552,11 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
             public void onClick(View v) {
                 ExecutorService executor = Executors.newSingleThreadExecutor();
                 Handler handler = new Handler(Looper.getMainLooper());
+                showLog("Sending START to RPI");
+                BluetoothFragment.printMessage("START");
+                updateStatus("Sending START to RPI");
+            }
+        });
 //                String[][] mapArray = new String[20][20];
 //                OutputStream out = null;
 //                for (int i = 0; i < 20; i++) {
@@ -625,28 +629,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
 //                        }
 //                    }
 //                });
-                showLog("Clicked Image Recognition ToggleBtn");
-                BluetoothFragment.printMessage("START");
-//                ToggleButton imgRecToggleBtn = (ToggleButton) v;
-//                if (imgRecToggleBtn.getText().equals("IMAGE RECOGNITION")) {
-//                    showToast("Image Recognition timer stop!");
-//                    robotStatusTextView.setText("Image Recognition Stopped");
-//                    timerHandler.removeCallbacks(timerRunnableExplore);
-//                }
-//                else if (imgRecToggleBtn.getText().equals("STOP")) {
-//                    showToast("Image Recognition timer start!");
-//                    // TODO: uncommand for bluetooth and send command to RPI
-//                    //BluetoothFragment.printMessage("IR");
-//                    robotStatusTextView.setText("Image Recognition Started");
-//                    exploreTimer = System.currentTimeMillis();
-//                    timerHandler.postDelayed(timerRunnableExplore, 0);
-//                }
-//                else {
-//                    showToast("Else statement: " + imgRecToggleBtn.getText());
-//                }
-                showLog("Exiting Image Recognition ToggleBtn");
-            }
-        });
+
 
 //        exploreResetButton.setOnClickListener(new View.OnClickListener() {
 //            @Override
