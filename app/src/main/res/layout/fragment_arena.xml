@@ -47,41 +47,43 @@
 
                 <Button
                     android:id="@+id/sendToRPIBtn"
-                    android:layout_width="1dp"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="25dp" />
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="25dp"
+                    android:background="@drawable/imagebuttonrpi"
+                    android:backgroundTint="#5D3FD3" />
 
                 <ToggleButton
                     android:id="@+id/imgRecToogleButton"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_marginTop="45dp"
+                    style="@style/toggleButton"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="35dp"
                     android:background="@drawable/img_toggle"
-                    android:backgroundTint="#5D3FD3"
-                    style="@style/toggleButton"/>
+                    android:backgroundTint="#5D3FD3" />
 
                 <ImageButton
                     android:id="@+id/timerButton"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_marginTop="45dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="35dp"
                     android:background="@drawable/imagebuttonclock"
                     android:backgroundTint="#5D3FD3" />
 
                 <ImageButton
                     android:id="@+id/resetButton"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_marginTop="45dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="35dp"
                     android:background="@drawable/imagebuttonreset"
                     android:backgroundTint="#5D3FD3" />
 
                 <ToggleButton
                     android:id="@+id/startingPointButton"
                     style="@style/toggleButton"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_marginTop="45dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="35dp"
                     android:background="@drawable/ic_toggle"
                     android:backgroundTint="#5D3FD3" />
             </LinearLayout>

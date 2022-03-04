@@ -307,9 +307,66 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
         //For RPI
         sendToRPIBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                showLog("Sending to RPI");
-                gridMap.sendRPIMessage();
+            public void onClick(View v) {
+                showLog("Exiting Image Recognition ToggleBtn");
+                ExecutorService executor = Executors.newSingleThreadExecutor();
+                Handler handler = new Handler(Looper.getMainLooper());
+                String[][] mapArray = new String[20][20];
+                OutputStream out = null;
+                for (int i = 0; i < 20; i++) {
+                    for (int j = 0; j < 20; j++) {
+                        mapArray[i][j] = "O";
+                    }
+                }
+
+                for(int[] coord : gridMap.getObstacleCoord()){
+                    if(gridMap.returnObstacleFacing(coord[0],coord[1])=="UP") {
+                        mapArray[coord[1]-1][coord[0]-1] = "N";
+                    } else if(gridMap.returnObstacleFacing(coord[0],coord[1]).contains("DOWN")) {
+                        mapArray[coord[1]-1][coord[0]-1] = "S";
+                    } else if(gridMap.returnObstacleFacing(coord[0],coord[1]).contains("RIGHT")) {
+                        mapArray[coord[1]-1][coord[0]-1] = "E";
+                    } else if(gridMap.returnObstacleFacing(coord[0],coord[1]).contains("LEFT")) {
+                        mapArray[coord[1]-1][coord[0]-1] = "W";
+                    } else mapArray[coord[1]-1][coord[0]-1] = "X";
+
+                    Log.d(TAG, "successfully updated 2d array");
+                }
+
+                executor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        Gson gson = new Gson();
+                        JsonObject jsonObj = new JsonObject();
+                        JsonElement jsonMapArray = gson.toJsonTree(mapArray);
+                        jsonObj.add("arena", jsonMapArray);
+                        String jsonStr = gson.toJson(jsonObj);
+
+                        try {
+                            URL url = new URL("http://192.168.3.13:3000/set_arena");
+                            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                            Log.d(TAG, "HTTP connection created");
+                            urlConnection.setRequestMethod("POST");
+                            urlConnection.addRequestProperty("Accept", "application/json");
+                            urlConnection.addRequestProperty("Content-Type", "application/json");
+                            urlConnection.setDoOutput(true);
+                            OutputStreamWriter out = new OutputStreamWriter(urlConnection.getOutputStream(), StandardCharsets.UTF_8);
+                            out.write(jsonStr);
+                            out.flush();
+                            out.close();
+                            urlConnection.connect();
+                            Log.d(TAG, "POST REQUEST SENT");
+
+                            int code = urlConnection.getResponseCode();
+                            System.out.println(code);
+                        } catch (Exception e) {
+                            System.out.println(e.getMessage());
+                            Log.d(TAG, "failed to connect w localhost");
+                        }
+                    }
+                });
+                showLog("Clicked Send to RPI Btn");
+                showToast("Sending Map Array to RPI!");
             }
 
         });
@@ -496,78 +553,78 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
             public void onClick(View v) {
                 ExecutorService executor = Executors.newSingleThreadExecutor();
                 Handler handler = new Handler(Looper.getMainLooper());
-                String[][] mapArray = new String[20][20];
-                OutputStream out = null;
-                for (int i = 0; i < 20; i++) {
-                    for (int j = 0; j < 20; j++) {
-                        mapArray[i][j] = "O";
-                    }
-                }
-
-                for(int[] coord : gridMap.getObstacleCoord()){
-                    //System.out.println(String.format("PRINT COORDS: [%d][%d]",coord[0],coord[1]));
-                    if(gridMap.returnObstacleFacing(coord[0],coord[1])=="UP") {
-                        mapArray[coord[1]-1][coord[0]-1] = "N";
-                    } else if(gridMap.returnObstacleFacing(coord[0],coord[1]).contains("DOWN")) {
-                        mapArray[coord[1]-1][coord[0]-1] = "S";
-                    } else if(gridMap.returnObstacleFacing(coord[0],coord[1]).contains("RIGHT")) {
-                        mapArray[coord[1]-1][coord[0]-1] = "E";
-                    } else if(gridMap.returnObstacleFacing(coord[0],coord[1]).contains("LEFT")) {
-                        mapArray[coord[1]-1][coord[0]-1] = "W";
-                    } else mapArray[coord[1]-1][coord[0]-1] = "X";
-
-                    //System.out.println("mapArray[0][1]" + mapArray[coord[0]-1][coord[1]-1]);
-                    //System.out.println(String.format("LOGIC mapArray[%d][%d] %b",coord[0],20-coord[1],mapArray[coord[0]][20-coord[1]]));
-                    //System.out.println("PRINT ARRAY" + mapArray);
-                    //System.out.println(String.format("CHANGED mapArray[%d][%d] %b",coord[0],coord[1],mapArray[coord[0]][coord[1]]));
-                    Log.d(TAG, "successfully updated 2d array");
-                }
-//                for(int i = 0; i<mapArray.length; i++){
-//                    for(int j = 0; j<mapArray.length; j++){
-//                        System.out.println(i + ", " + j + " " + mapArray[i][j] + ",");
+//                String[][] mapArray = new String[20][20];
+//                OutputStream out = null;
+//                for (int i = 0; i < 20; i++) {
+//                    for (int j = 0; j < 20; j++) {
+//                        mapArray[i][j] = "O";
 //                    }
-//                    System.out.println("\n");
 //                }
-
-                executor.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        Gson gson = new Gson();
-                        JsonObject jsonObj = new JsonObject();
-                        JsonElement jsonMapArray = gson.toJsonTree(mapArray);
-                        jsonObj.add("arena", jsonMapArray);
-                        String jsonStr = gson.toJson(jsonObj);
-
-                        try {
-                            URL url = new URL("http://192.168.3.13:3000/set_arena");
-                            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                            Log.d(TAG, "HTTP connection created");
-                            urlConnection.setRequestMethod("POST");
-                            urlConnection.addRequestProperty("Accept", "application/json");
-                            urlConnection.addRequestProperty("Content-Type", "application/json");
-                            urlConnection.setDoOutput(true);
-                            OutputStreamWriter out = new OutputStreamWriter(urlConnection.getOutputStream(), StandardCharsets.UTF_8);
-                            out.write(jsonStr);
-                            out.flush();
-                            out.close();
-                            urlConnection.connect();
-//                            DataOutputStream writer = new DataOutputStream(urlConnection.getOutputStream ());
-//                            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(writer, StandardCharsets.UTF_8));
-//                            bufferedWriter.write(arrayObj.toString());
-                            Log.d(TAG, "POST REQUEST SENT");
-
-//                           InputStream inputStream = urlConnection.getInputStream();
-
-//                            writer.flush ();
-//                            writer.close ();
-                            int code = urlConnection.getResponseCode();
-                            System.out.println(code);
-                        } catch (Exception e) {
-                            System.out.println(e.getMessage());
-                            Log.d(TAG, "failed to connect w localhost");
-                        }
-                    }
-                });
+//
+//                for(int[] coord : gridMap.getObstacleCoord()){
+//                    //System.out.println(String.format("PRINT COORDS: [%d][%d]",coord[0],coord[1]));
+//                    if(gridMap.returnObstacleFacing(coord[0],coord[1])=="UP") {
+//                        mapArray[coord[1]-1][coord[0]-1] = "N";
+//                    } else if(gridMap.returnObstacleFacing(coord[0],coord[1]).contains("DOWN")) {
+//                        mapArray[coord[1]-1][coord[0]-1] = "S";
+//                    } else if(gridMap.returnObstacleFacing(coord[0],coord[1]).contains("RIGHT")) {
+//                        mapArray[coord[1]-1][coord[0]-1] = "E";
+//                    } else if(gridMap.returnObstacleFacing(coord[0],coord[1]).contains("LEFT")) {
+//                        mapArray[coord[1]-1][coord[0]-1] = "W";
+//                    } else mapArray[coord[1]-1][coord[0]-1] = "X";
+//
+//                    //System.out.println("mapArray[0][1]" + mapArray[coord[0]-1][coord[1]-1]);
+//                    //System.out.println(String.format("LOGIC mapArray[%d][%d] %b",coord[0],20-coord[1],mapArray[coord[0]][20-coord[1]]));
+//                    //System.out.println("PRINT ARRAY" + mapArray);
+//                    //System.out.println(String.format("CHANGED mapArray[%d][%d] %b",coord[0],coord[1],mapArray[coord[0]][coord[1]]));
+//                    Log.d(TAG, "successfully updated 2d array");
+//                }
+////                for(int i = 0; i<mapArray.length; i++){
+////                    for(int j = 0; j<mapArray.length; j++){
+////                        System.out.println(i + ", " + j + " " + mapArray[i][j] + ",");
+////                    }
+////                    System.out.println("\n");
+////                }
+//
+//                executor.execute(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        Gson gson = new Gson();
+//                        JsonObject jsonObj = new JsonObject();
+//                        JsonElement jsonMapArray = gson.toJsonTree(mapArray);
+//                        jsonObj.add("arena", jsonMapArray);
+//                        String jsonStr = gson.toJson(jsonObj);
+//
+//                        try {
+//                            URL url = new URL("http://192.168.3.13:3000/set_arena");
+//                            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+//                            Log.d(TAG, "HTTP connection created");
+//                            urlConnection.setRequestMethod("POST");
+//                            urlConnection.addRequestProperty("Accept", "application/json");
+//                            urlConnection.addRequestProperty("Content-Type", "application/json");
+//                            urlConnection.setDoOutput(true);
+//                            OutputStreamWriter out = new OutputStreamWriter(urlConnection.getOutputStream(), StandardCharsets.UTF_8);
+//                            out.write(jsonStr);
+//                            out.flush();
+//                            out.close();
+//                            urlConnection.connect();
+////                            DataOutputStream writer = new DataOutputStream(urlConnection.getOutputStream ());
+////                            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(writer, StandardCharsets.UTF_8));
+////                            bufferedWriter.write(arrayObj.toString());
+//                            Log.d(TAG, "POST REQUEST SENT");
+//
+////                           InputStream inputStream = urlConnection.getInputStream();
+//
+////                            writer.flush ();
+////                            writer.close ();
+//                            int code = urlConnection.getResponseCode();
+//                            System.out.println(code);
+//                        } catch (Exception e) {
+//                            System.out.println(e.getMessage());
+//                            Log.d(TAG, "failed to connect w localhost");
+//                        }
+//                    }
+//                });
                 showLog("Clicked Image Recognition ToggleBtn");
                 BluetoothFragment.printMessage("START");
 //                ToggleButton imgRecToggleBtn = (ToggleButton) v;
