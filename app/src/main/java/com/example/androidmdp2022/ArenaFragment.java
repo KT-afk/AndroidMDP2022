@@ -292,7 +292,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
             @Override
             public void onClick(View view) {
                 showLog("Clicked Obstacle Direction ToggleBtn");
-                if (setObstacleDirectionToggleBtn.getText().equals("Set Obstacle Direction")) {
+                if (setObstacleDirectionToggleBtn.getText().equals("Set Obs Direction")) {
                     showToast("Cancelled selecting obstacle");
                     gridMap.setSetObstacleDirection(false);
                 }
@@ -307,9 +307,66 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
         //For RPI
         sendToRPIBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                showLog("Sending to RPI");
-                gridMap.sendRPIMessage();
+            public void onClick(View v) {
+                showLog("Exiting Image Recognition ToggleBtn");
+                ExecutorService executor = Executors.newSingleThreadExecutor();
+                Handler handler = new Handler(Looper.getMainLooper());
+                String[][] mapArray = new String[20][20];
+                OutputStream out = null;
+                for (int i = 0; i < 20; i++) {
+                    for (int j = 0; j < 20; j++) {
+                        mapArray[i][j] = "O";
+                    }
+                }
+
+                for(int[] coord : gridMap.getObstacleCoord()){
+                    if(gridMap.returnObstacleFacing(coord[0],coord[1])=="UP") {
+                        mapArray[coord[1]-1][coord[0]-1] = "N";
+                    } else if(gridMap.returnObstacleFacing(coord[0],coord[1]).contains("DOWN")) {
+                        mapArray[coord[1]-1][coord[0]-1] = "S";
+                    } else if(gridMap.returnObstacleFacing(coord[0],coord[1]).contains("RIGHT")) {
+                        mapArray[coord[1]-1][coord[0]-1] = "E";
+                    } else if(gridMap.returnObstacleFacing(coord[0],coord[1]).contains("LEFT")) {
+                        mapArray[coord[1]-1][coord[0]-1] = "W";
+                    } else mapArray[coord[1]-1][coord[0]-1] = "X";
+
+                    Log.d(TAG, "successfully updated 2d array");
+                }
+
+                executor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        Gson gson = new Gson();
+                        JsonObject jsonObj = new JsonObject();
+                        JsonElement jsonMapArray = gson.toJsonTree(mapArray);
+                        jsonObj.add("arena", jsonMapArray);
+                        String jsonStr = gson.toJson(jsonObj);
+
+                        try {
+                            URL url = new URL("http://192.168.3.13:3000/set_arena");
+                            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                            Log.d(TAG, "HTTP connection created");
+                            urlConnection.setRequestMethod("POST");
+                            urlConnection.addRequestProperty("Accept", "application/json");
+                            urlConnection.addRequestProperty("Content-Type", "application/json");
+                            urlConnection.setDoOutput(true);
+                            OutputStreamWriter out = new OutputStreamWriter(urlConnection.getOutputStream(), StandardCharsets.UTF_8);
+                            out.write(jsonStr);
+                            out.flush();
+                            out.close();
+                            urlConnection.connect();
+                            Log.d(TAG, "POST REQUEST SENT");
+
+                            int code = urlConnection.getResponseCode();
+                            System.out.println(code);
+                        } catch (Exception e) {
+                            System.out.println(e.getMessage());
+                            Log.d(TAG, "failed to connect w localhost");
+                        }
+                    }
+                });
+                showLog("Clicked Send to RPI Btn");
+                showToast("Sending Map Array to RPI!");
             }
 
         });
@@ -343,9 +400,9 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                 if (gridMap.getAutoUpdate())
                     updateStatus("Please press 'MANUAL'");
                 else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
-                    gridMap.moveRobot("forward");
+                    gridMap.moveRobot("back");
                     // TODO: uncommand for bluetooth and send command to RPI
-                    BluetoothFragment.printMessage("W");
+                    BluetoothFragment.printMessage("S");
                     refreshLabel();
                     //"W" is used for communication with AMDTOOL
 //                    MainActivity.printMessage("W");
@@ -447,11 +504,11 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                 if (gridMap.getAutoUpdate())
                     updateStatus("Please press 'MANUAL'");
                 else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
-                    gridMap.moveRobot("back");
+                    gridMap.moveRobot("forward");
                     //"S" is used for communication with AMDTOOL
                     // MainActivity.printMessage("S");
                     // TODO: uncommand for bluetooth and send command to RPI
-                    BluetoothFragment.printMessage("S");
+                    BluetoothFragment.printMessage("W");
                     refreshLabel();
                     if (gridMap.getValidPosition())
                         updateStatus("moving backward");
@@ -481,8 +538,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                     BluetoothFragment.printMessage("A");
                     refreshLabel();
                     updateStatus("turning back left");
-                    //"A" is used for communication with AMDTOOL
-//                    MainActivity.printMessage("A");
+
                 }
                 else
                     updateStatus("Please press 'STARTING POINT'");
@@ -496,95 +552,84 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
             public void onClick(View v) {
                 ExecutorService executor = Executors.newSingleThreadExecutor();
                 Handler handler = new Handler(Looper.getMainLooper());
-                String[][] mapArray = new String[20][20];
-                OutputStream out = null;
-                for (int i = 0; i < 20; i++) {
-                    for (int j = 0; j < 20; j++) {
-                        mapArray[i][j] = "O";
-                    }
-                }
-
-                for(int[] coord : gridMap.getObstacleCoord()){
-                    if(GridMap.returnObstacleFacing(coord[0],20-coord[1])=="UP") {
-                        mapArray[coord[0]-1][coord[1]-1] = "N";
-                    } else if(GridMap.returnObstacleFacing(coord[0],20-coord[1]).contains("DOWN")) {
-                        mapArray[coord[0]-1][coord[1]-1] = "S";
-                    } else if(GridMap.returnObstacleFacing(coord[0],20-coord[1]).contains("RIGHT")) {
-                        mapArray[coord[0]-1][coord[1]-1] = "E";
-                    } else if(GridMap.returnObstacleFacing(coord[0],20-coord[1]).contains("LEFT")) {
-                        mapArray[coord[0]-1][coord[1]-1] = "W";
-                    } else mapArray[coord[0]-1][coord[1]-1] = "X";
-
-                    System.out.println("mapArray[0][1]" + mapArray[coord[0]-1][coord[1]-1]);
-                    Log.d(TAG, "successfully updated 2d array");
-                }
-//                for(int i = 0; i<mapArray.length; i++){
-//                    for(int j = 0; j<mapArray.length; j++){
-//                        System.out.println(i + ", " + j + " " + mapArray[i][j] + ",");
-//                    }
-//                    System.out.println("\n");
-//                }
-
-                executor.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        Gson gson = new Gson();
-                        JsonObject jsonObj = new JsonObject();
-                        JsonElement jsonMapArray = gson.toJsonTree(mapArray);
-                        jsonObj.add("arena", jsonMapArray);
-                        String jsonStr = gson.toJson(jsonObj);
-
-                        try {
-                            URL url = new URL("http://10.27.155.177:3000/set_arena");
-                            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                            Log.d(TAG, "HTTP connection created");
-                            urlConnection.setRequestMethod("POST");
-                            urlConnection.addRequestProperty("Accept", "application/json");
-                            urlConnection.addRequestProperty("Content-Type", "application/json");
-                            urlConnection.setDoOutput(true);
-                            OutputStreamWriter out = new OutputStreamWriter(urlConnection.getOutputStream(), StandardCharsets.UTF_8);
-                            out.write(jsonStr);
-                            out.flush();
-                            out.close();
-                            urlConnection.connect();
-//                            DataOutputStream writer = new DataOutputStream(urlConnection.getOutputStream ());
-//                            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(writer, StandardCharsets.UTF_8));
-//                            bufferedWriter.write(arrayObj.toString());
-                            Log.d(TAG, "POST REQUEST SENT");
-
-//                           InputStream inputStream = urlConnection.getInputStream();
-
-//                            writer.flush ();
-//                            writer.close ();
-                            int code = urlConnection.getResponseCode();
-                            System.out.println(code);
-                        } catch (Exception e) {
-                            System.out.println(e.getMessage());
-                            Log.d(TAG, "failed to connect w localhost");
-                        }
-                    }
-                });
-                showLog("Clicked Image Recognition ToggleBtn");
-//                ToggleButton imgRecToggleBtn = (ToggleButton) v;
-//                if (imgRecToggleBtn.getText().equals("IMAGE RECOGNITION")) {
-//                    showToast("Image Recognition timer stop!");
-//                    robotStatusTextView.setText("Image Recognition Stopped");
-//                    timerHandler.removeCallbacks(timerRunnableExplore);
-//                }
-//                else if (imgRecToggleBtn.getText().equals("STOP")) {
-//                    showToast("Image Recognition timer start!");
-//                    // TODO: uncommand for bluetooth and send command to RPI
-//                    //BluetoothFragment.printMessage("IR");
-//                    robotStatusTextView.setText("Image Recognition Started");
-//                    exploreTimer = System.currentTimeMillis();
-//                    timerHandler.postDelayed(timerRunnableExplore, 0);
-//                }
-//                else {
-//                    showToast("Else statement: " + imgRecToggleBtn.getText());
-//                }
-                showLog("Exiting Image Recognition ToggleBtn");
+                showLog("Sending START to RPI");
+                BluetoothFragment.printMessage("START");
+                updateStatus("Sending START to RPI");
             }
         });
+//                String[][] mapArray = new String[20][20];
+//                OutputStream out = null;
+//                for (int i = 0; i < 20; i++) {
+//                    for (int j = 0; j < 20; j++) {
+//                        mapArray[i][j] = "O";
+//                    }
+//                }
+//
+//                for(int[] coord : gridMap.getObstacleCoord()){
+//                    //System.out.println(String.format("PRINT COORDS: [%d][%d]",coord[0],coord[1]));
+//                    if(gridMap.returnObstacleFacing(coord[0],coord[1])=="UP") {
+//                        mapArray[coord[1]-1][coord[0]-1] = "N";
+//                    } else if(gridMap.returnObstacleFacing(coord[0],coord[1]).contains("DOWN")) {
+//                        mapArray[coord[1]-1][coord[0]-1] = "S";
+//                    } else if(gridMap.returnObstacleFacing(coord[0],coord[1]).contains("RIGHT")) {
+//                        mapArray[coord[1]-1][coord[0]-1] = "E";
+//                    } else if(gridMap.returnObstacleFacing(coord[0],coord[1]).contains("LEFT")) {
+//                        mapArray[coord[1]-1][coord[0]-1] = "W";
+//                    } else mapArray[coord[1]-1][coord[0]-1] = "X";
+//
+//                    //System.out.println("mapArray[0][1]" + mapArray[coord[0]-1][coord[1]-1]);
+//                    //System.out.println(String.format("LOGIC mapArray[%d][%d] %b",coord[0],20-coord[1],mapArray[coord[0]][20-coord[1]]));
+//                    //System.out.println("PRINT ARRAY" + mapArray);
+//                    //System.out.println(String.format("CHANGED mapArray[%d][%d] %b",coord[0],coord[1],mapArray[coord[0]][coord[1]]));
+//                    Log.d(TAG, "successfully updated 2d array");
+//                }
+////                for(int i = 0; i<mapArray.length; i++){
+////                    for(int j = 0; j<mapArray.length; j++){
+////                        System.out.println(i + ", " + j + " " + mapArray[i][j] + ",");
+////                    }
+////                    System.out.println("\n");
+////                }
+//
+//                executor.execute(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        Gson gson = new Gson();
+//                        JsonObject jsonObj = new JsonObject();
+//                        JsonElement jsonMapArray = gson.toJsonTree(mapArray);
+//                        jsonObj.add("arena", jsonMapArray);
+//                        String jsonStr = gson.toJson(jsonObj);
+//
+//                        try {
+//                            URL url = new URL("http://192.168.3.13:3000/set_arena");
+//                            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+//                            Log.d(TAG, "HTTP connection created");
+//                            urlConnection.setRequestMethod("POST");
+//                            urlConnection.addRequestProperty("Accept", "application/json");
+//                            urlConnection.addRequestProperty("Content-Type", "application/json");
+//                            urlConnection.setDoOutput(true);
+//                            OutputStreamWriter out = new OutputStreamWriter(urlConnection.getOutputStream(), StandardCharsets.UTF_8);
+//                            out.write(jsonStr);
+//                            out.flush();
+//                            out.close();
+//                            urlConnection.connect();
+////                            DataOutputStream writer = new DataOutputStream(urlConnection.getOutputStream ());
+////                            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(writer, StandardCharsets.UTF_8));
+////                            bufferedWriter.write(arrayObj.toString());
+//                            Log.d(TAG, "POST REQUEST SENT");
+//
+////                           InputStream inputStream = urlConnection.getInputStream();
+//
+////                            writer.flush ();
+////                            writer.close ();
+//                            int code = urlConnection.getResponseCode();
+//                            System.out.println(code);
+//                        } catch (Exception e) {
+//                            System.out.println(e.getMessage());
+//                            Log.d(TAG, "failed to connect w localhost");
+//                        }
+//                    }
+//                });
+
 
 //        exploreResetButton.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -796,6 +841,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
         return view;
 
     }
+
     public static void removeObstacleFromList(String message)
     {
         mObstacleListAdapter.remove(message);
@@ -988,15 +1034,22 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
 
             // Try getting update image
             // First Case
-            if(message.contains("TARGET")){ // example String: “TARGET, <Obstacle Number>, <Target ID>”
+            if(message.contains("TARGET")){ // example String: “TARGET,<x>,<y>,<Target ID>”
                 int startingIndex = message.indexOf("<");
                 int endingIndex = message.indexOf(">");
-                String obstacleNo = message.substring(startingIndex + 1, endingIndex);
+                int xCoord = Integer.parseInt(message.substring(startingIndex + 1, endingIndex))+1;
 
                 startingIndex = message.indexOf("<", endingIndex+1);
                 endingIndex = message.indexOf(">", endingIndex+1);
+                int yCoord = Integer.parseInt(message.substring(startingIndex+1, endingIndex))+1;
+                startingIndex = message.indexOf("<", endingIndex+1);
+                endingIndex = message.indexOf(">", endingIndex+1);
                 String targetID = message.substring(startingIndex+1, endingIndex);
-
+                String obstacleNo = String.valueOf(gridMap.returnObstacleId(xCoord, yCoord));
+                if(Integer.parseInt(obstacleNo) == -100)
+                {
+                    Toast.makeText(getContext(), "Obstacle doesn't exist.", Toast.LENGTH_SHORT).show();
+                }
                 // to count the number of <
                 char check = '<';
                 int count = 0;
@@ -1008,19 +1061,16 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                 }
 
                 // if count is equal to 3 == second case
-                if(count == 3){ // additional <Direction Facing change>
-                    startingIndex = message.indexOf("<", endingIndex+1);
-                    endingIndex = message.indexOf(">", endingIndex+1);
-                    String obstacleFacing = message.substring(startingIndex+1, endingIndex);
-                    Toast.makeText(getContext(), "Obstacle No " + obstacleNo + " detected as " + targetID + " on direction " + obstacleFacing, Toast.LENGTH_SHORT).show();
-                    // TODO: need update
-                    gridMap.updateImageNumberCell(Integer.parseInt(obstacleNo), targetID, obstacleFacing);
-                    // if count is not equal 3 == first case
-                } else {
+//                if(count == 3){ // additional <Direction Facing change>
+//                    Toast.makeText(getContext(), "Obstacle No " + obstacleNo + " detected as " + targetID + " on direction " + obstacleFacing, Toast.LENGTH_SHORT).show();
+//                    // TODO: need update
+//                    gridMap.updateImageNumberCell(Integer.parseInt(obstacleNo), targetID, obstacleFacing);
+//                    // if count is not equal 3 == first case
+//                } else {
                     Toast.makeText(getContext(), "Obstacle No " + obstacleNo + " detected as " + targetID, Toast.LENGTH_SHORT).show();
                     // TODO: need update
                     gridMap.updateImageNumberCell(Integer.parseInt(obstacleNo), targetID);
-                }
+                //}
             }
 
             if(message.contains("ROBOT")){
@@ -1037,26 +1087,14 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                 String direction = message.substring(startingIndex+1, endingIndex);
 
                 // set directions from N S E W to up down left right
-                if(direction.equals("N")){
+                if(direction.equals("1")){
                     direction="up";
-                } else if(direction.equals("S")){
+                } else if(direction.equals("3")){
                     direction="down";
-                } else if(direction.equals("E")){
+                } else if(direction.equals("0")){
                     direction="right";
-                } else if(direction.equals("W")){
-                    direction="left";
-                }
-                else if(direction.equals("NE")){
-                    direction="upright";
-                }
-                else if(direction.equals("NW")){
-                    direction="upleft";
-                }
-                else if(direction.equals("SE")){
-                    direction="downright";
-                }
-                else if(direction.equals("SW")){
-                    direction="downleft";
+                } else if(direction.equals("2")) {
+                    direction = "left";
                 }
                 else{
                     direction="up";

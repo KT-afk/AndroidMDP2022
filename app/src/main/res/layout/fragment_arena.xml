@@ -12,31 +12,116 @@
         android:layout_height="match_parent"
         tools:context=".MainActivity">
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <view
+                android:id="@+id/MapView"
+                class="com.example.androidmdp2022.GridMap"
+                android:layout_width="480dp"
+                android:layout_height="480dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <LinearLayout
+                android:id="@+id/linearLayout3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="30dp"
+                android:layout_marginBottom="30dp"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@+id/MapView"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1.0">
+
+                <Button
+                    android:id="@+id/sendToRPIBtn"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="25dp"
+                    android:background="@drawable/imagebuttonrpi"
+                    android:backgroundTint="#5D3FD3" />
+
+                <ToggleButton
+                    android:id="@+id/imgRecToogleButton"
+                    style="@style/toggleButton"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="35dp"
+                    android:background="@drawable/img_toggle"
+                    android:backgroundTint="#5D3FD3" />
+
+                <ImageButton
+                    android:id="@+id/timerButton"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="35dp"
+                    android:background="@drawable/imagebuttonclock"
+                    android:backgroundTint="#5D3FD3" />
+
+                <ImageButton
+                    android:id="@+id/resetButton"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="35dp"
+                    android:background="@drawable/imagebuttonreset"
+                    android:backgroundTint="#5D3FD3" />
+
+                <ToggleButton
+                    android:id="@+id/startingPointButton"
+                    style="@style/toggleButton"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="35dp"
+                    android:background="@drawable/ic_toggle"
+                    android:backgroundTint="#5D3FD3" />
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
         <LinearLayout
             android:id="@+id/linearLayout2"
             android:layout_width="wrap_content"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+            app:layout_constraintVertical_bias="0.0">
 
             <LinearLayout
-                android:layout_width="278dp"
+                android:layout_width="290dp"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
                 android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/textView2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Obstacle" />
+                    android:text="Obstacle"
+                    android:textColor="#5D3FD3"
+                    android:textSize="20sp"
+                    android:textStyle="normal|bold" />
 
                 <ListView
                     android:id="@+id/obstacleList"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_marginTop="10dp"
                     android:stackFromBottom="true"
                     android:transcriptMode="alwaysScroll" />
             </LinearLayout>
@@ -49,49 +134,50 @@
                     android:id="@+id/robotStatusLayout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/directionLayout"
-                    android:layout_alignParentStart="true"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginTop="7dp">
+                    android:layout_below="@+id/obstacleDetailsLayout"
+                    android:layout_marginTop="25dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_toStartOf="@+id/controlsLayout">
 
                     <TextView
                         android:id="@+id/robotStatusTitle"
-                        android:layout_width="110dp"
+                        android:layout_width="120dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
                         android:background="@drawable/roundedbutton"
                         android:gravity="center_horizontal"
                         android:text="Robot Status"
                         android:textAlignment="center"
                         android:textColor="@android:color/white"
-                        android:textSize="15dp" />
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/robotStatusText"
-                        android:layout_width="110dp"
+                        android:layout_width="120dp"
                         android:layout_height="70dp"
-                        android:layout_marginTop="50dp"
+                        android:layout_below="@+id/robotStatusTitle"
+                        android:layout_marginTop="10dp"
                         android:background="@drawable/roundedbutton"
                         android:gravity="center"
                         android:text="Not Available"
                         android:textAlignment="center"
                         android:textColor="@android:color/white"
-                        android:textSize="15dp" />
+                        android:textSize="14sp" />
                 </RelativeLayout>
 
                 <RelativeLayout
                     android:id="@+id/directionLayout"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/obstacleDetailsLayout"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginEnd="15dp"
+                    android:layout_toStartOf="@+id/obstacleDetailsLayout">
 
                     <RelativeLayout
                         android:id="@+id/subDirectionLayout"
-                        android:layout_width="wrap_content"
+                        android:layout_width="130dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginBottom="10dp"
                         android:background="@drawable/roundedbutton"
                         android:padding="5dp"
                         android:textColor="@android:color/white">
@@ -101,7 +187,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="5dp"
-                            android:layout_marginTop="5dp"
                             android:text="Direction :"
                             android:textColor="@android:color/white"
                             android:textStyle="bold" />
@@ -111,18 +196,17 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="75dp"
-                            android:layout_marginTop="5dp"
                             android:text="None"
                             android:textColor="@android:color/white" />
                     </RelativeLayout>
 
                     <RelativeLayout
                         android:id="@+id/xyDirectionLayout"
-                        android:layout_width="wrap_content"
+                        android:layout_width="130dp"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/subDirectionLayout"
-                        android:layout_marginLeft="5dp"
-                        android:layout_marginTop="10dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginTop="5dp"
                         android:background="@drawable/roundedbutton"
                         android:padding="2dp"
                         android:textColor="@android:color/white">
@@ -133,6 +217,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="20dp"
                             android:layout_marginLeft="28dp"
+                            android:layout_marginTop="5dp"
                             android:layout_marginEnd="15dp"
                             android:gravity="center_horizontal"
                             android:text="X :"
@@ -144,6 +229,7 @@
                             android:id="@+id/xValue"
                             android:layout_width="45dp"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
                             android:layout_toRightOf="@id/xTitle"
                             android:text="0"
                             android:textAlignment="center"
@@ -184,41 +270,37 @@
 
                 <RelativeLayout
                     android:id="@+id/obstacleDetailsLayout"
-                    android:layout_width="164dp"
+                    android:layout_width="150dp"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentEnd="true"
-                    android:layout_marginEnd="4dp">
+                    android:layout_marginRight="10dp">
 
                     <ToggleButton
                         android:id="@+id/setObstacleToggleBtn"
-                        android:layout_width="190dp"
+                        android:layout_width="150dp"
                         android:layout_height="wrap_content"
                         android:layout_alignParentTop="true"
                         android:layout_alignParentEnd="true"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginEnd="7dp"
                         android:background="@drawable/roundedbutton"
                         android:textColor="@android:color/white"
                         android:textOff="Set Obstacle"
                         android:textOn="Cancel"
-                        android:textSize="15sp" />
+                        android:textSize="14sp" />
 
 
                     <ToggleButton
                         android:id="@+id/setObstacleDirectionToggleBtn"
-                        android:layout_width="190dp"
+                        android:layout_width="150dp"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/setObstacleToggleBtn"
-                        android:layout_marginTop="3dp"
-                        android:layout_marginEnd="4dp"
-                        android:layout_marginRight="16dp"
-                        android:layout_marginBottom="20dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginTop="5dp"
                         android:background="@drawable/roundedbutton"
                         android:textColor="@android:color/white"
-                        android:textOff="Set Obstacle Direction"
+                        android:textOff="Set Obs Direction"
                         android:textOn="Cancel"
-                        android:textSize="15sp"
+                        android:textSize="14sp"
                         app:layout_constraintEnd_toEndOf="parent" />
 
                 </RelativeLayout>
@@ -229,8 +311,8 @@
                     android:layout_height="150dp"
                     android:layout_below="@id/obstacleDetailsLayout"
                     android:layout_alignParentEnd="true"
-                    android:layout_marginTop="1dp"
-                    android:layout_marginEnd="10dp">
+                    android:layout_marginTop="15dp"
+                    android:layout_marginRight="10dp">
 
 
                     <ImageButton
@@ -349,95 +431,5 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/linearLayout"
-            android:layout_width="fill_parent"
-            android:layout_height="450dp"
-            android:layout_weight="1"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <view
-                android:id="@+id/MapView"
-                class="com.example.androidmdp2022.GridMap"
-                android:layout_width="450dp"
-                android:layout_height="450dp"
-                android:layout_marginTop="10dp" />
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"><![CDATA[
-
-
-                android:text="ToggleButton" />
-
-
-                ]]>
-
-                <Button
-                    android:id="@+id/sendToRPIBtn"
-                    android:layout_width="59dp"
-                    android:layout_height="50dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginTop="104dp"
-                    android:layout_marginEnd="52dp"
-                    android:background="@drawable/roundedbutton"
-                    android:text="RPI" />
-
-                <ImageButton
-                    android:id="@+id/timerButton"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginStart="44dp"
-                    android:layout_marginTop="170dp"
-                    android:layout_marginEnd="56dp"
-                    android:background="@drawable/roundedbutton"
-                    app:srcCompat="@drawable/timer_32" />
-
-                <ImageButton
-                    android:id="@+id/resetButton"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_below="@+id/timerButton"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginEnd="57dp"
-                    android:background="@drawable/roundedbutton"
-
-                    app:srcCompat="@drawable/reset_30" />
-
-                <ToggleButton
-                    android:id="@+id/startingPointButton"
-                    style="@style/toggleButton"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_below="@+id/resetButton"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginStart="43dp"
-                    android:layout_marginTop="29dp"
-                    android:layout_marginEnd="57dp"
-                    android:background="@drawable/ic_toggle_bg" />
-
-                <ToggleButton
-                    android:id="@+id/imgRecToggleButton"
-                    style="@style/toggleButton"
-                    android:layout_width="64dp"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginTop="29dp"
-                    android:layout_marginEnd="49dp"
-                    android:background="@drawable/img_toggle_bg"/>
-
-            </RelativeLayout>
-        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

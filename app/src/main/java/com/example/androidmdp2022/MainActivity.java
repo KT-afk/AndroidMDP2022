@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         viewPager2.setAdapter(adapter);
         viewPager2.setUserInputEnabled(false);
 
-        TAB_TITLE = adapter.getTabTitles();
+        TAB_TITLE = ViewPagerAdapter.getTabTitles();
         tabLayout.setSelectedTabIndicator(R.color.black);
 
         new TabLayoutMediator(tabLayout, viewPager2, new TabLayoutMediator.TabConfigurationStrategy() {
@@ -41,3 +41,4 @@ public class MainActivity extends AppCompatActivity {
 
     }
 }
+
