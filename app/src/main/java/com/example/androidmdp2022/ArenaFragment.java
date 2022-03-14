@@ -74,10 +74,11 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
     static TextView xAxisTextView, yAxisTextView, directionAxisTextView;
 
     // Control Button
-    ImageButton forwardBtn, backRightBtn, backBtn, backLeftBtn, forwardRightBtn, forwardLeftBtn;
+    ImageButton forwardBtn, backRightBtn, backBtn, backLeftBtn, forwardRightBtn, forwardLeftBtn, timerButton;
     //exploreResetButton, fastestResetButton;
     private static long exploreTimer, fastestTimer;
     ToggleButton imgRecButton, fastestButton;
+
     TextView exploreTimeTextView, fastestTimeTextView, robotStatusTextView;
     Switch phoneTiltSwitch;
     static Button fullcalibrateButton,calibrateButton;
@@ -383,6 +384,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
 //        exploreTimeTextView = view.findViewById(R.id.exploreTimeTextView);
 //        fastestTimeTextView = view.findViewById(R.id.fastestTimeTextView);
           imgRecButton = view.findViewById(R.id.imgRecToogleButton);
+          timerButton = view.findViewById(R.id.timerButton);
 //        fastestButton = view.findViewById(R.id.fastestToggleBtn);
 //        exploreResetButton = view.findViewById(R.id.exploreResetImageBtn);
 //        fastestResetButton = view.findViewById(R.id.fastestResetImageBtn);
@@ -555,6 +557,17 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
                 showLog("Sending START to RPI");
                 BluetoothFragment.printMessage("START");
                 updateStatus("Sending START to RPI");
+            }
+        });
+
+        timerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ExecutorService executor = Executors.newSingleThreadExecutor();
+                Handler handler = new Handler(Looper.getMainLooper());
+                showLog("Clicked on wk 9 button");
+                BluetoothFragment.printMessage("FP");
+                updateStatus("Starting Fastest Path NOW");
             }
         });
 //                String[][] mapArray = new String[20][20];
