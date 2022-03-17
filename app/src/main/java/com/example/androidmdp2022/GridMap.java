@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -113,7 +112,7 @@ public class GridMap extends View {
         startColor.setColor(Color.CYAN);
         waypointColor.setColor(Color.parseColor("#fefdca"));
         waypointColor.setColor(Color.parseColor("#fefdca"));
-        unexploredColor.setColor(Color.LTGRAY);
+        unexploredColor.setColor(0xa7bdff);
         exploredColor.setColor(Color.WHITE);
         arrowColor.setColor(Color.BLACK);
 
@@ -506,7 +505,7 @@ public class GridMap extends View {
     }
 
     private void drawHorizontalLines(Canvas canvas) {
-        for (int y = 1; y <= ROW; y++)
+        for (int y = 1; y <= ROW+1; y++)
             canvas.drawLine(cells[1][y].startX, cells[1][y].startY - (cellSize / 30), cells[20][y].endX, cells[20][y].startY - (cellSize / 30), blackPaint);
     }
 
@@ -952,7 +951,7 @@ public class GridMap extends View {
                     cells[col][row].obstacleNo = obstacleNoArray[i]; // assign obstacle no
                     String random = col + "" + row;
                     obstacleNoArray[i] = -1; // set index to marked as used
-                    ArenaFragment.updateObstacleList( "Obstacle No: " + cells[col][row].obstacleNo + "\t\tX: "+ (col-1) + "\t\tY: " + (row -1) +  "\t\tDirection: " + cells[col][row].getobstacleFacing());
+                    ArenaFragment.updateObstacleList( " Obstacle No: " + cells[col][row].obstacleNo + "\t\tX: "+ (col-1) + "\t\tY: " + (row -1) +  "\n Direction: " + cells[col][row].getobstacleFacing());
                     break;
                 }
             }
@@ -1309,7 +1308,7 @@ public class GridMap extends View {
                         //Create the new cell
                         //oCellArr.set(selectedObsDirectionCor[2], cells[column][20 - row]);
                         //oCellArrDirection.set(selectedObsDirectionCor[2], switchDirection);
-                        ArenaFragment.removeObstacleFromList( "Obstacle No: " + cells[column][row].obstacleNo + "\t\tX: "+ (column-1) + "\t\tY: " + (row-1) +  "\t\tDirection: " + cells[column][row].getobstacleFacing());
+                        ArenaFragment.removeObstacleFromList( " Obstacle No: " + cells[column][row].obstacleNo + "\t\tX: "+ (column-1) + "\t\tY: " + (row-1) +  "\n Direction: " + cells[column][row].getobstacleFacing());
                         switch (switchDirection)
                         {
                             case 0:
@@ -1404,7 +1403,7 @@ public class GridMap extends View {
                 }
                 if (occupied == false) {
 
-                    String obstacleRemove = "Obstacle No: " + cells[selectedObsCoord[0]][selectedObsCoord[1]].obstacleNo + "\t\tX: "+ (selectedObsCoord[0] - 1) + "\t\tY: " + (selectedObsCoord[1] - 1) +  "\t\tDirection: ";
+                    String obstacleRemove = " Obstacle No: " + cells[selectedObsCoord[0]][selectedObsCoord[1]].obstacleNo + "\t\tX: "+ (selectedObsCoord[0] - 1) + "\t\tY: " + (selectedObsCoord[1] - 1) +  "\n Direction: ";
                     if(cells[selectedObsCoord[0]][selectedObsCoord[1]].getobstacleFacing() != null)
                         obstacleRemove += cells[selectedObsCoord[0]][selectedObsCoord[1]].getobstacleFacing();
                     ArenaFragment.removeObstacleFromList(obstacleRemove);
@@ -1560,7 +1559,7 @@ public class GridMap extends View {
 
         // newly added
         obstacleNoArray = new int[]{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}; //reset obstacle no array
-        Bitmap arrowBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_arrow_error);
+
 
         showLog("Exiting resetMap");
         this.invalidate();

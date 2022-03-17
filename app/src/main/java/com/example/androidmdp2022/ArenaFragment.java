@@ -84,7 +84,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
     static Button fullcalibrateButton,calibrateButton;
 
     // for RPI
-    Button sendToRPIBtn;
+    ImageButton sendToRPIBtn;
 
     TextView btStatus;
 
@@ -772,7 +772,7 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
 //        });
         //TODO Bluetooth
         mObstacleList = view.findViewById(R.id.obstacleList);
-        mObstacleListAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1);
+        mObstacleListAdapter = new ArrayAdapter<>(getContext(), R.layout.obstacleitem);
         mObstacleList.setAdapter(mObstacleListAdapter);
 
 

@@ -10,6 +10,7 @@
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:background="@color/baby_blue"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -48,6 +49,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/deviceStatus"
+        android:background="@color/baby_blue"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
@@ -94,6 +96,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/unconnectedBTContainer"
         android:layout_width="match_parent"
+        android:background="@color/baby_blue"
         android:layout_height="0dp"
         android:layout_marginTop="50dp"
         android:visibility="visible"

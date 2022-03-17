@@ -15,6 +15,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/linearLayout"
             android:layout_width="0dp"
+            android:background="@color/beau_blue"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_weight="1"
@@ -45,13 +46,13 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="1.0">
 
-                <Button
+                <ImageButton
                     android:id="@+id/sendToRPIBtn"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_marginTop="25dp"
                     android:background="@drawable/imagebuttonrpi"
-                    android:backgroundTint="#5D3FD3" />
+                    android:backgroundTint="@color/oxford_blue" />
 
                 <ToggleButton
                     android:id="@+id/imgRecToogleButton"
@@ -60,7 +61,7 @@
                     android:layout_height="50dp"
                     android:layout_marginTop="35dp"
                     android:background="@drawable/img_toggle"
-                    android:backgroundTint="#5D3FD3" />
+                    android:backgroundTint="@color/oxford_blue" />
 
                 <ImageButton
                     android:id="@+id/timerButton"
@@ -68,7 +69,7 @@
                     android:layout_height="50dp"
                     android:layout_marginTop="35dp"
                     android:background="@drawable/imagebuttonclock"
-                    android:backgroundTint="#5D3FD3" />
+                    android:backgroundTint="@color/oxford_blue" />
 
                 <ImageButton
                     android:id="@+id/resetButton"
@@ -76,7 +77,7 @@
                     android:layout_height="50dp"
                     android:layout_marginTop="35dp"
                     android:background="@drawable/imagebuttonreset"
-                    android:backgroundTint="#5D3FD3" />
+                    android:backgroundTint="@color/oxford_blue" />
 
                 <ToggleButton
                     android:id="@+id/startingPointButton"
@@ -85,7 +86,7 @@
                     android:layout_height="50dp"
                     android:layout_marginTop="35dp"
                     android:background="@drawable/ic_toggle"
-                    android:backgroundTint="#5D3FD3" />
+                    android:backgroundTint="@color/oxford_blue" />
             </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -100,6 +101,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+            android:background="@color/lavender_blue"
             app:layout_constraintVertical_bias="0.0">
 
             <LinearLayout
@@ -112,8 +114,9 @@
                     android:id="@+id/textView2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Obstacle"
-                    android:textColor="#5D3FD3"
+                    android:text="List of Obstacles"
+                    android:layout_marginTop="5dp"
+                    android:textColor="@color/duke_blue"
                     android:textSize="20sp"
                     android:textStyle="normal|bold" />
 
@@ -122,7 +125,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
                     android:layout_marginTop="10dp"
-                    android:stackFromBottom="true"
+                    android:layout_marginRight="10dp"
+                    android:stackFromBottom="false"
+                    android:background="@drawable/border"
+                    android:divider="@android:color/transparent"
                     android:transcriptMode="alwaysScroll" />
             </LinearLayout>
 
@@ -147,7 +153,7 @@
                         android:gravity="center_horizontal"
                         android:text="Robot Status"
                         android:textAlignment="center"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/duke_blue"
                         android:textSize="14sp"
                         android:textStyle="bold" />
 
@@ -161,7 +167,7 @@
                         android:gravity="center"
                         android:text="Not Available"
                         android:textAlignment="center"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/duke_blue"
                         android:textSize="14sp" />
                 </RelativeLayout>
 
@@ -178,9 +184,9 @@
                         android:id="@+id/subDirectionLayout"
                         android:layout_width="130dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
                         android:background="@drawable/roundedbutton"
-                        android:padding="5dp"
-                        android:textColor="@android:color/white">
+                        android:padding="5dp">
 
                         <TextView
                             android:id="@+id/DirectionTitle"
@@ -188,7 +194,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="5dp"
                             android:text="Direction :"
-                            android:textColor="@android:color/white"
+                            android:textColor="@color/duke_blue"
                             android:textStyle="bold" />
 
                         <TextView
@@ -197,7 +203,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="75dp"
                             android:text="None"
-                            android:textColor="@android:color/white" />
+                            android:textColor="@color/duke_blue" />
                     </RelativeLayout>
 
                     <RelativeLayout
@@ -208,8 +214,7 @@
                         android:layout_alignParentBottom="true"
                         android:layout_marginTop="5dp"
                         android:background="@drawable/roundedbutton"
-                        android:padding="2dp"
-                        android:textColor="@android:color/white">
+                        android:padding="2dp">
 
                         <TextView
                             android:id="@+id/xTitle"
@@ -221,7 +226,7 @@
                             android:layout_marginEnd="15dp"
                             android:gravity="center_horizontal"
                             android:text="X :"
-                            android:textColor="@android:color/white"
+                            android:textColor="@color/duke_blue"
                             android:textSize="15sp"
                             android:textStyle="bold" />
 
@@ -233,7 +238,7 @@
                             android:layout_toRightOf="@id/xTitle"
                             android:text="0"
                             android:textAlignment="center"
-                            android:textColor="@android:color/white"
+                            android:textColor="@color/duke_blue"
                             android:textSize="15sp" />
 
                         <TextView
@@ -247,7 +252,7 @@
                             android:layout_marginEnd="15dp"
                             android:gravity="center_horizontal"
                             android:text="Y :"
-                            android:textColor="@android:color/white"
+                            android:textColor="@color/duke_blue"
                             android:textSize="15sp"
                             android:textStyle="bold" />
 
@@ -260,7 +265,7 @@
                             android:layout_toRightOf="@+id/yTitle"
                             android:text="0"
                             android:textAlignment="center"
-                            android:textColor="@android:color/white"
+                            android:textColor="@color/duke_blue"
                             android:textSize="15sp" />
 
 
@@ -271,6 +276,7 @@
                 <RelativeLayout
                     android:id="@+id/obstacleDetailsLayout"
                     android:layout_width="150dp"
+                    android:layout_marginTop="10dp"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentEnd="true"
@@ -283,7 +289,7 @@
                         android:layout_alignParentTop="true"
                         android:layout_alignParentEnd="true"
                         android:background="@drawable/roundedbutton"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/duke_blue"
                         android:textOff="Set Obstacle"
                         android:textOn="Cancel"
                         android:textSize="14sp" />
@@ -297,7 +303,7 @@
                         android:layout_alignParentEnd="true"
                         android:layout_marginTop="5dp"
                         android:background="@drawable/roundedbutton"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/duke_blue"
                         android:textOff="Set Obs Direction"
                         android:textOn="Cancel"
                         android:textSize="14sp"
@@ -319,6 +325,7 @@
                         android:id="@+id/forwardImageBtn"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
+                        app:tint="@color/duke_blue"
                         android:layout_alignParentTop="true"
                         android:layout_alignParentEnd="true"
                         android:layout_gravity="center"
@@ -336,6 +343,7 @@
                         android:id="@+id/forwardRightBtn"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
+                        app:tint="@color/duke_blue"
                         android:layout_alignParentTop="true"
                         android:layout_alignParentEnd="true"
                         android:layout_gravity="center"
@@ -365,7 +373,8 @@
                         android:background="@drawable/roundedbutton"
                         android:elevation="5dp"
                         android:rotation="315"
-                        app:srcCompat="@drawable/arrow_left" />
+                        app:srcCompat="@drawable/arrow_left"
+                        app:tint="@color/duke_blue" />
 
                     <ImageButton
 
@@ -384,12 +393,14 @@
                         android:background="@drawable/roundedbutton"
                         android:elevation="5dp"
                         android:rotation="45"
-                        app:srcCompat="@drawable/arrow_left" />
+                        app:srcCompat="@drawable/arrow_left"
+                        app:tint="@color/duke_blue" />
 
                     <ImageButton
                         android:id="@+id/backRightBtn"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
+                        app:tint="@color/duke_blue"
                         android:layout_below="@+id/forwardRightBtn"
                         android:layout_alignParentEnd="true"
                         android:layout_alignParentRight="true"
@@ -410,6 +421,7 @@
                         android:id="@+id/backImageBtn"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
+                        app:tint="@color/duke_blue"
                         android:layout_below="@+id/forwardImageBtn"
                         android:layout_alignParentEnd="true"
                         android:layout_alignParentBottom="true"
