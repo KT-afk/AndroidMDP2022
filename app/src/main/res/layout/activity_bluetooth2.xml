@@ -10,7 +10,7 @@
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@color/baby_blue"
+        android:background="@color/beige"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:text="Disconnected"
             android:textAlignment="center"
-            android:textColor="#FF6961"
+            android:textColor="@color/mulberry"
             android:textSize="34sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -49,7 +49,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/deviceStatus"
-        android:background="@color/baby_blue"
+        android:background="@color/beige"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
@@ -96,7 +96,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/unconnectedBTContainer"
         android:layout_width="match_parent"
-        android:background="@color/baby_blue"
+        android:background="@color/beige"
         android:layout_height="0dp"
         android:layout_marginTop="50dp"
         android:visibility="visible"
@@ -124,6 +124,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="50dp"
             android:text="My Devices"
+            android:textColor="@color/mulberry"
             android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -151,6 +152,7 @@
             android:layout_marginTop="20dp"
             android:text="Other Devices"
             android:textSize="24sp"
+            android:textColor="@color/mulberry"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"

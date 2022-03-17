@@ -14,11 +14,11 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/linearLayout"
-            android:layout_width="0dp"
-            android:background="@color/beau_blue"
-            android:layout_height="wrap_content"
+            android:layout_width="598dp"
+            android:layout_height="481dp"
             android:layout_marginTop="10dp"
             android:layout_weight="1"
+            android:background="@color/beige"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -34,8 +34,8 @@
 
             <LinearLayout
                 android:id="@+id/linearLayout3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="66dp"
+                android:layout_height="475dp"
                 android:layout_marginEnd="30dp"
                 android:layout_marginBottom="30dp"
                 android:orientation="vertical"
@@ -48,60 +48,55 @@
 
                 <ImageButton
                     android:id="@+id/sendToRPIBtn"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="25dp"
-                    android:background="@drawable/imagebuttonrpi"
-                    android:backgroundTint="@color/oxford_blue" />
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="35dp"
+                    android:background="@mipmap/grid_other_foreground" />
 
                 <ToggleButton
                     android:id="@+id/imgRecToogleButton"
                     style="@style/toggleButton"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="35dp"
-                    android:background="@drawable/img_toggle"
-                    android:backgroundTint="@color/oxford_blue" />
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="25dp"
+                    android:background="@mipmap/raspberry_foreground" />
 
                 <ImageButton
                     android:id="@+id/timerButton"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="35dp"
-                    android:background="@drawable/imagebuttonclock"
-                    android:backgroundTint="@color/oxford_blue" />
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="25dp"
+                    android:background="@mipmap/timer_foreground" />
 
                 <ImageButton
                     android:id="@+id/resetButton"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="35dp"
-                    android:background="@drawable/imagebuttonreset"
-                    android:backgroundTint="@color/oxford_blue" />
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="25dp"
+                    android:background="@mipmap/reset_foreground" />
 
                 <ToggleButton
                     android:id="@+id/startingPointButton"
                     style="@style/toggleButton"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="35dp"
-                    android:background="@drawable/ic_toggle"
-                    android:backgroundTint="@color/oxford_blue" />
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="25dp"
+                    android:background="@mipmap/car_other_foreground" />
             </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
             android:id="@+id/linearLayout2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="601dp"
+            android:layout_height="272dp"
             android:layout_marginTop="10dp"
+            android:background="@color/beige"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-            android:background="@color/lavender_blue"
             app:layout_constraintVertical_bias="0.0">
 
             <LinearLayout
@@ -114,9 +109,9 @@
                     android:id="@+id/textView2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="List of Obstacles"
                     android:layout_marginTop="5dp"
-                    android:textColor="@color/duke_blue"
+                    android:text="List of Obstacles"
+                    android:textColor="@color/mulberry"
                     android:textSize="20sp"
                     android:textStyle="normal|bold" />
 
@@ -126,9 +121,9 @@
                     android:layout_height="200dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginRight="10dp"
-                    android:stackFromBottom="false"
                     android:background="@drawable/border"
                     android:divider="@android:color/transparent"
+                    android:stackFromBottom="false"
                     android:transcriptMode="alwaysScroll" />
             </LinearLayout>
 
@@ -153,7 +148,7 @@
                         android:gravity="center_horizontal"
                         android:text="Robot Status"
                         android:textAlignment="center"
-                        android:textColor="@color/duke_blue"
+                        android:textColor="@color/white"
                         android:textSize="14sp"
                         android:textStyle="bold" />
 
@@ -167,7 +162,7 @@
                         android:gravity="center"
                         android:text="Not Available"
                         android:textAlignment="center"
-                        android:textColor="@color/duke_blue"
+                        android:textColor="@color/white"
                         android:textSize="14sp" />
                 </RelativeLayout>
 
@@ -194,7 +189,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="5dp"
                             android:text="Direction :"
-                            android:textColor="@color/duke_blue"
+                            android:textColor="@color/white"
                             android:textStyle="bold" />
 
                         <TextView
@@ -203,7 +198,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="75dp"
                             android:text="None"
-                            android:textColor="@color/duke_blue" />
+                            android:textColor="@color/white" />
                     </RelativeLayout>
 
                     <RelativeLayout
@@ -226,7 +221,7 @@
                             android:layout_marginEnd="15dp"
                             android:gravity="center_horizontal"
                             android:text="X :"
-                            android:textColor="@color/duke_blue"
+                            android:textColor="@color/white"
                             android:textSize="15sp"
                             android:textStyle="bold" />
 
@@ -238,7 +233,7 @@
                             android:layout_toRightOf="@id/xTitle"
                             android:text="0"
                             android:textAlignment="center"
-                            android:textColor="@color/duke_blue"
+                            android:textColor="@color/white"
                             android:textSize="15sp" />
 
                         <TextView
@@ -252,7 +247,7 @@
                             android:layout_marginEnd="15dp"
                             android:gravity="center_horizontal"
                             android:text="Y :"
-                            android:textColor="@color/duke_blue"
+                            android:textColor="@color/white"
                             android:textSize="15sp"
                             android:textStyle="bold" />
 
@@ -265,7 +260,7 @@
                             android:layout_toRightOf="@+id/yTitle"
                             android:text="0"
                             android:textAlignment="center"
-                            android:textColor="@color/duke_blue"
+                            android:textColor="@color/white"
                             android:textSize="15sp" />
 
 
@@ -276,10 +271,10 @@
                 <RelativeLayout
                     android:id="@+id/obstacleDetailsLayout"
                     android:layout_width="150dp"
-                    android:layout_marginTop="10dp"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentEnd="true"
+                    android:layout_marginTop="10dp"
                     android:layout_marginRight="10dp">
 
                     <ToggleButton
@@ -289,7 +284,7 @@
                         android:layout_alignParentTop="true"
                         android:layout_alignParentEnd="true"
                         android:background="@drawable/roundedbutton"
-                        android:textColor="@color/duke_blue"
+                        android:textColor="@color/white"
                         android:textOff="Set Obstacle"
                         android:textOn="Cancel"
                         android:textSize="14sp" />
@@ -303,7 +298,7 @@
                         android:layout_alignParentEnd="true"
                         android:layout_marginTop="5dp"
                         android:background="@drawable/roundedbutton"
-                        android:textColor="@color/duke_blue"
+                        android:textColor="@color/white"
                         android:textOff="Set Obs Direction"
                         android:textOn="Cancel"
                         android:textSize="14sp"
@@ -325,7 +320,6 @@
                         android:id="@+id/forwardImageBtn"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        app:tint="@color/duke_blue"
                         android:layout_alignParentTop="true"
                         android:layout_alignParentEnd="true"
                         android:layout_gravity="center"
@@ -337,13 +331,13 @@
                         android:background="@drawable/roundedbutton"
                         android:elevation="5dp"
                         android:padding="5dp"
-                        app:srcCompat="@drawable/arrow_up" />
+                        app:srcCompat="@drawable/arrow_up"
+                        app:tint="@color/white" />
 
                     <ImageButton
                         android:id="@+id/forwardRightBtn"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        app:tint="@color/duke_blue"
                         android:layout_alignParentTop="true"
                         android:layout_alignParentEnd="true"
                         android:layout_gravity="center"
@@ -354,7 +348,8 @@
                         android:elevation="5dp"
                         android:padding="5dp"
                         android:rotation="45"
-                        app:srcCompat="@drawable/arrow_up" />
+                        app:srcCompat="@drawable/arrow_up"
+                        app:tint="@color/white" />
 
                     <ImageButton
                         android:id="@+id/backLeftBtn"
@@ -374,7 +369,7 @@
                         android:elevation="5dp"
                         android:rotation="315"
                         app:srcCompat="@drawable/arrow_left"
-                        app:tint="@color/duke_blue" />
+                        app:tint="@color/white" />
 
                     <ImageButton
 
@@ -394,13 +389,12 @@
                         android:elevation="5dp"
                         android:rotation="45"
                         app:srcCompat="@drawable/arrow_left"
-                        app:tint="@color/duke_blue" />
+                        app:tint="@color/white" />
 
                     <ImageButton
                         android:id="@+id/backRightBtn"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        app:tint="@color/duke_blue"
                         android:layout_below="@+id/forwardRightBtn"
                         android:layout_alignParentEnd="true"
                         android:layout_alignParentRight="true"
@@ -415,13 +409,13 @@
                         android:background="@drawable/roundedbutton"
                         android:elevation="5dp"
                         android:rotation="45"
-                        app:srcCompat="@drawable/arrow_right" />
+                        app:srcCompat="@drawable/arrow_right"
+                        app:tint="@color/white" />
 
                     <ImageButton
                         android:id="@+id/backImageBtn"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        app:tint="@color/duke_blue"
                         android:layout_below="@+id/forwardImageBtn"
                         android:layout_alignParentEnd="true"
                         android:layout_alignParentBottom="true"
@@ -434,7 +428,8 @@
                         android:background="@drawable/roundedbutton"
                         android:elevation="5dp"
                         android:rotation="180"
-                        app:srcCompat="@drawable/arrow_up" />
+                        app:srcCompat="@drawable/arrow_up"
+                        app:tint="@color/white" />
 
 
                 </RelativeLayout>

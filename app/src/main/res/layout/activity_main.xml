@@ -26,15 +26,15 @@
             android:id="@+id/tabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/baby_blue"
-            app:tabTextColor="@color/medium_purple"
-            app:tabSelectedTextColor="@color/majorelle_blue"/>
+            android:background="@color/beige"
+            app:tabTextColor="@color/black"
+            app:tabSelectedTextColor="@color/mulberry"/>
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.viewpager2.widget.ViewPager2
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/view_pager"
-        android:background="@color/baby_blue"
+        android:background="@color/beige"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />

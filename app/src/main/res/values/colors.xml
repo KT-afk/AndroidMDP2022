@@ -19,4 +19,10 @@
     <color name="cornflower_blue">#888AFB</color>
     <color name="lavender_blue">#D8D9FE</color>
     <color name="beau_blue">#C3DDFD</color>
+    <color name="beige">#FAF0E6</color>
+    <color name="champagne">#f0e7cD</color>
+    <color name="mulberry">#630727</color>
+    <color name="mimi_pink">#FDD8E3</color>
+    <color name="lavender_blush">#FEECF1</color>
+    <color name="light_gray">#EBECF0</color>
 </resources>

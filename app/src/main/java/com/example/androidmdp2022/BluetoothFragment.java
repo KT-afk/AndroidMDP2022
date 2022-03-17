@@ -153,17 +153,17 @@ public class BluetoothFragment extends Fragment {
         //  Instantiate connected layout
         disconnectBTButton = view.findViewById(R.id.disconnectBTButton);
         mBTMessages = view.findViewById(R.id.BTMessages);
-        mBTMessagesListAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1);
+        mBTMessagesListAdapter = new ArrayAdapter<>(getContext(), R.layout.obstacleitem);
         mBTMessages.setAdapter(mBTMessagesListAdapter);
         sendMessageField = view.findViewById(R.id.sendMessageField);
         sendMessageButton = view.findViewById(R.id.sendMessageButton);
 
         // set the adapter for paired devices
-        pairedDevicesListAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1);
+        pairedDevicesListAdapter = new ArrayAdapter<>(getContext(), R.layout.obstacleitem);
         pairedDevicesListView.setAdapter(pairedDevicesListAdapter);
 
         // set the adapter for discovered devices
-        availableDevicesListAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1);
+        availableDevicesListAdapter = new ArrayAdapter<>(getContext(), R.layout.obstacleitem);
         availableDevicesListView.setAdapter(availableDevicesListAdapter);
 
         getPairedDevices();
