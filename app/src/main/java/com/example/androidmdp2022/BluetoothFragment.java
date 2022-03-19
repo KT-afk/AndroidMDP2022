@@ -1,6 +1,7 @@
 package com.example.androidmdp2022;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -19,6 +20,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -317,7 +319,7 @@ public class BluetoothFragment extends Fragment {
             public void onClick(View view) {
                 showLog("Clicked sendTextBtn");
                 String sentText = "" + sendMessageField.getText().toString();
-
+                showSoftwareKeyboard(false);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString("message", sharedPreferences.getString("message", "") + '\n' + sentText);
                 editor.commit();
@@ -346,7 +348,12 @@ public class BluetoothFragment extends Fragment {
         });
         return view;
     }
+    protected void showSoftwareKeyboard(boolean showKeyboard){
+        final Activity activity = getActivity();
+        final InputMethodManager inputManager = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
 
+        inputManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), showKeyboard ? InputMethodManager.SHOW_FORCED : InputMethodManager.HIDE_NOT_ALWAYS);
+    }
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -384,10 +391,10 @@ public class BluetoothFragment extends Fragment {
         mUnconnectedLayout.setVisibility(View.GONE);
         mConnectedLayout.setVisibility(View.VISIBLE);
 
-        //this is pastel green
-        tv_DeviceName.setTextColor(Color.rgb(119,221,119));
+        //this is dark forest green
+        tv_DeviceName.setTextColor(Color.parseColor("#055303"));
         //this is pastel red
-        tv_ConStatus.setTextColor(Color.rgb(119,221,119));
+        tv_ConStatus.setTextColor(Color.parseColor("#055303"));
 
         /*Intent intent = new Intent(getContext(), ArenaFragment.class);
         intent.putExtra("BT_Status", "CONNECTED");
@@ -408,8 +415,8 @@ public class BluetoothFragment extends Fragment {
         mUnconnectedLayout.setVisibility(View.VISIBLE);
         mConnectedLayout.setVisibility(View.GONE);
         //this is pastel red
-        tv_DeviceName.setTextColor(Color.rgb(255,105,97));
-        tv_ConStatus.setTextColor(Color.rgb(255,105,97));
+        tv_DeviceName.setTextColor(Color.parseColor("#630727"));
+        tv_ConStatus.setTextColor(Color.parseColor("#630727"));
 
         mBTMessagesListAdapter.clear();
 

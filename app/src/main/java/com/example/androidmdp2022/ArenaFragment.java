@@ -156,7 +156,6 @@ public class ArenaFragment extends Fragment implements SensorEventListener {
 
         View view = inflater.inflate(R.layout.fragment_arena, container, false);
 
-
         // Map
         gridMap = new GridMap(getContext());
         gridMap = view.findViewById(R.id.MapView);

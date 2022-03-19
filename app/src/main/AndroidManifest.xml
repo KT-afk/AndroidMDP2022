@@ -38,6 +38,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AndroidMDP2022"
+        android:windowSoftInputMode="adjustPan"
         android:usesCleartextTraffic="true">
         <activity
             android:name=".MainActivity"
