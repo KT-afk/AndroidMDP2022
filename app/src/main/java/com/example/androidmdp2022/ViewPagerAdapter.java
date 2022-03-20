@@ -9,9 +9,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class ViewPagerAdapter extends FragmentStateAdapter {
 
-    // TODO: to be deleted after building the Arena
-    //private static final String[] TAB_TITLES = new String[]{ "Arena"};
-
     // TODO: original tab
     private static final String[] TAB_TITLES = new String[]{ "Arena", "Bluetooth"};
 
@@ -19,13 +16,9 @@ public class ViewPagerAdapter extends FragmentStateAdapter {
         super(fragmentActivity);
     }
 
-    //private final Context mContext;
-
-
     @NotNull
     @Override
     public Fragment createFragment(int position) {
-        //return null;
         Fragment fragment = null;
 
         switch (position)
@@ -36,8 +29,6 @@ public class ViewPagerAdapter extends FragmentStateAdapter {
             case 1:
                 fragment = BluetoothFragment.newInstance("", "");
                 break;
-
-
         }
         return fragment;
     }

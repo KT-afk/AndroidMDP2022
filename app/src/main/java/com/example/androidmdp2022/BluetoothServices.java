@@ -203,7 +203,6 @@ public class BluetoothServices {
                 tmpIn = mSocket.getInputStream();
                 tmpOut = mSocket.getOutputStream();
             } catch (IOException e) {
-                //Log.d(TAG, ": "+ incomingmessage);
                 e.printStackTrace();
             }
 

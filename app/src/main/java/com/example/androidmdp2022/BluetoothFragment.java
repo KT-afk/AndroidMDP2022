@@ -181,7 +181,6 @@ public class BluetoothFragment extends Fragment {
         if(bluetoothAdapter.isEnabled())
         {
             switch_BT.setChecked(true);
-            //getPairedDevices();
             pairedDevicesListView.setVisibility(View.VISIBLE);
         }
         else
@@ -197,7 +196,6 @@ public class BluetoothFragment extends Fragment {
                     pairedDevicesListView.setVisibility(View.VISIBLE);
                     checkBluetoothPermission();
 
-                    //getPairedDevices();
                     if(bluetoothAdapter == null)
                     {
                         switch_BT.setChecked(false);
@@ -207,7 +205,6 @@ public class BluetoothFragment extends Fragment {
                     {
                         if(!bluetoothAdapter.isEnabled())
                         {
-                            //getPairedDevices();
                             Intent enableBTintent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                             startActivity(enableBTintent);
 
@@ -305,7 +302,6 @@ public class BluetoothFragment extends Fragment {
         disconnectBTButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //bluetoothConnection.disconnect();
                 BluetoothFragment.printMessage("BT_DC");
                 //TODO: Disconnect function
                 mBluetoothConnection.disconnect();
@@ -323,8 +319,6 @@ public class BluetoothFragment extends Fragment {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString("message", sharedPreferences.getString("message", "") + '\n' + sentText);
                 editor.commit();
-                //MessageReceivedTV.setText(sharedPreferences.getString("message", ""));
-                //BTMessagesListAdapter.add("Group 18: " + sendingMessage);
                 mBTMessagesListAdapter.add("Group 18: " + sentText);
                 sendMessageField.setText("");
 
@@ -360,9 +354,6 @@ public class BluetoothFragment extends Fragment {
 
         //  Stop Bluetooth discovery
         bluetoothAdapter.cancelDiscovery();
-
-        //  Unregister receivers
-        //getActivity().unregisterReceiver(broadcastReceiver);
     }
 
     private void getPairedDevices()
@@ -395,15 +386,6 @@ public class BluetoothFragment extends Fragment {
         tv_DeviceName.setTextColor(Color.parseColor("#055303"));
         //this is pastel red
         tv_ConStatus.setTextColor(Color.parseColor("#055303"));
-
-        /*Intent intent = new Intent(getContext(), ArenaFragment.class);
-        intent.putExtra("BT_Status", "CONNECTED");
-
-        // update the textview from ArenaFragment
-        TextView btStatus = ((Activity)this.getContext()).findViewById(R.id.BTstatus);
-        btStatus.setText("CONNECTED");
-        btStatus.setTextColor(Color.rgb(119,221,119));
-        */
     }
 
     private void updateDisconnectStatus()
@@ -419,13 +401,6 @@ public class BluetoothFragment extends Fragment {
         tv_ConStatus.setTextColor(Color.parseColor("#630727"));
 
         mBTMessagesListAdapter.clear();
-
-        /*
-        // update the textview from ArenaFragment
-        TextView btStatus = ((Activity)this.getContext()).findViewById(R.id.BTstatus);
-        btStatus.setText("DISCONNECTED");
-        btStatus.setTextColor(getResources().getColor(R.color.red));
-         */
     }
 
     // Check Bluetooth permission
@@ -465,7 +440,6 @@ public class BluetoothFragment extends Fragment {
     // Send message to bluetooth
     public static void printMessage(String message) {
         showLog("Entering printMessage");
-//        }
         if (BluetoothServices.BluetoothConnectionStatus) {
             byte[] bytes = message.getBytes(Charset.defaultCharset());
             BluetoothServices.write(bytes);
@@ -473,15 +447,12 @@ public class BluetoothFragment extends Fragment {
         showLog(message);
         //for the message chat List
         mBTMessagesListAdapter.add("Grp 18: " + message);
-        //ArenaFragment.updateArenaBTMessage(message);
-        //refreshMessageReceived();
         showLog("Exiting printMessage");
     }
 
     // for waypoint message
     public static void printMessage(String name, int x, int y) throws JSONException {
         showLog("Entering printMessage");
-        //sharedPreferences();
 
         JSONObject jsonObject = new JSONObject();
         String message;
