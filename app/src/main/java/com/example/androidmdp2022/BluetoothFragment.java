@@ -283,39 +283,6 @@ public class BluetoothFragment extends Fragment {
         showLog("Exiting printMessage");
     }
 
-    // for waypoint message
-    public static void printMsg(String name, int x, int y) throws JSONException {
-        showLog("Entering printMessage");
-
-        JSONObject jsonObject = new JSONObject();
-        String message;
-
-        switch (name) {
-            //"starting" case:
-            case "waypoint":
-                jsonObject.put(name, name);
-                jsonObject.put("x", Integer.toString(x));
-                jsonObject.put("y", Integer.toString(y));
-                message = name + " (" + x + "," + y + ")";
-                break;
-            case "Obstacle":
-                jsonObject.put(name, name);
-                jsonObject.put("x", Integer.toString(x));
-                jsonObject.put("y", Integer.toString(y));
-                message = name + " (" + x + "," + y + ")";
-                break;
-            default:
-                message = "Unexpected default for printMessage: " + name;
-                break;
-        }
-        if (BluetoothService.btConnectStatus) {
-            byte[] bytes = message.getBytes(Charset.defaultCharset());
-            BluetoothService.write(bytes);
-        }
-        showLog("Exiting printMessage");
-        btMessagesListAdapter.add("Grp 18: " + message);
-    }
-
     // for obstacle message
     public static void printMsg(String name, int x, int y, String direction) throws JSONException {
         showLog("Entering printMessage");
@@ -325,12 +292,6 @@ public class BluetoothFragment extends Fragment {
 
         switch (name) {
             //"starting" case:
-            case "waypoint":
-                jsonObject.put(name, name);
-                jsonObject.put("x", Integer.toString(x));
-                jsonObject.put("y", Integer.toString(y));
-                message = name + " (" + x + "," + y + ")";
-                break;
             case "Obstacle":
                 jsonObject.put(name, name);
                 jsonObject.put("x", Integer.toString(x));
@@ -359,13 +320,6 @@ public class BluetoothFragment extends Fragment {
     public static void refreshMessageReceived() {
         btMessagesListAdapter.add(sharedPreferences.getString("message", ""));
         btMessagesListAdapter.notifyDataSetChanged();
-    }
-
-    public static void receiveMessage(String message) {
-        showLog("Entering receiveMessage");
-        editor.putString("message", sharedPreferences.getString("message", "") + "\n" + message);
-        editor.commit();
-        showLog("Exiting receiveMessage");
     }
 
     public static String getBTName() {

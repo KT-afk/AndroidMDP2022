@@ -21,7 +21,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -54,10 +53,8 @@ public class MapFragment extends Fragment implements SensorEventListener {
 
     private static SharedPreferences sharedPreferences;
     private static SharedPreferences.Editor editor;
-    private static final String ARG_SECTION_NUMBER = "section_number";
     static TextView xAxisTV, yAxisTV, directionAxisTV;
     // Declaration Variables
-    String[] directionOption = {"NONE", "UP", "DOWN", "LEFT", "RIGHT"};
     ImageButton resetGridMapBtn;
 
     String fobsstring, fexpstring;
@@ -67,15 +64,13 @@ public class MapFragment extends Fragment implements SensorEventListener {
 
     // Control Button
     ImageButton forwardBtn, backRightBtn, backBtn, backLeftBtn, forwardRightBtn, forwardLeftBtn, timerButton;
-    private static long exploreTimer, fastestTimer;
+
     ToggleButton imgRecButton;
 
-    TextView exploreTimeTextView, fastestTimeTextView, robotStatusTextView;
+    TextView robotStatusTextView;
 
     // for RPI
     ImageButton sendToRPIBtn;
-
-    TextView btStatus;
 
     private ListView mObstacleList;
     private static ArrayAdapter<String> mObstacleListAdapter;
@@ -83,20 +78,12 @@ public class MapFragment extends Fragment implements SensorEventListener {
     private Sensor mSensor;
     private SensorManager mSensorManager;
 
-    // Timer
-    static Handler timerHandler = new Handler();
-
-    AutoCompleteTextView dropdownlist;
-
-    static Boolean isSetStartingPiont = false;
+    static Boolean isSetStartingPoint = false;
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
     BroadcastReceiver messageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -245,10 +232,6 @@ public class MapFragment extends Fragment implements SensorEventListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(messageReceiver, new IntentFilter("incomingMessage"));
     }
 
@@ -433,22 +416,25 @@ public class MapFragment extends Fragment implements SensorEventListener {
         forwardRightBtn = view.findViewById(R.id.forwardRightBtn);
         forwardLeftBtn = view.findViewById(R.id.forwardLeftBtn);
 
-          imgRecButton = view.findViewById(R.id.imgRecToogleButton);
-          timerButton = view.findViewById(R.id.timerButton);
+        imgRecButton = view.findViewById(R.id.imgRecToogleButton);
+        timerButton = view.findViewById(R.id.timerButton);
 
         // Button Listener
         forwardBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showLog("Clicked moveForwardImageBtn");
-                if (gridMap.getAutoUpdate())
-                    updateStatus("Please press 'MANUAL'");
-                else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
-                    gridMap.moveRobot("back");
-                    // TODO: uncommand for bluetooth and send command to RPI
+                if (gridMap.getCanDrawRobot()) {
+                    if(gridMap.getRobotDirection() == "left")
+                    {
+                        gridMap.moveRobot("forward");
+                    }
+                    else
+                    {
+                        gridMap.moveRobot("back");
+                    }
                     BluetoothFragment.printMsg("S");
                     refreshLabel();
-                    //"W" is used for communication with AMDTOOL
                     if (gridMap.getValidPosition())
                         updateStatus("moving forward");
                     else
@@ -463,9 +449,7 @@ public class MapFragment extends Fragment implements SensorEventListener {
             @Override
             public void onClick(View view) {
                 showLog("Clicked forwardRightBtn");
-                if (gridMap.getAutoUpdate())
-                    updateStatus("Please press 'MANUAL'");
-                else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
+                if (gridMap.getCanDrawRobot()) {
                     gridMap.moveRobot("right");
                     gridMap.moveRobot("forward");
                     gridMap.moveRobot("left");
@@ -482,9 +466,7 @@ public class MapFragment extends Fragment implements SensorEventListener {
             @Override
             public void onClick(View view) {
                 showLog("Clicked forwardLeftBtn");
-                if (gridMap.getAutoUpdate())
-                    updateStatus("Please press 'MANUAL'");
-                else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
+                if (gridMap.getCanDrawRobot()) {
                     gridMap.moveRobot("left");
                     gridMap.moveRobot("forward");
                     gridMap.moveRobot("right");
@@ -498,37 +480,39 @@ public class MapFragment extends Fragment implements SensorEventListener {
             }
         });
 
-        backRightBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showLog("Clicked backRightBtn");
-                if (gridMap.getAutoUpdate())
-                    updateStatus("Please press 'MANUAL'");
-                else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
-                    gridMap.moveRobot("back");
-                    gridMap.moveRobot("left");
-                    gridMap.moveRobot("back");
-                    gridMap.moveRobot("back");
-                    gridMap.moveRobot("back");
-                    gridMap.moveRobot("back");
-                    // TODO: uncommand for bluetooth and send command to RPI
-                    BluetoothFragment.printMsg("D");
-                    refreshLabel();
-                }
-                else
-                    updateStatus("Please press 'STARTING POINT'");
-                showLog("Exiting backRightBtn");
-            }
-        });
+//        backRightBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                showLog("Clicked backRightBtn");
+//                if (gridMap.getCanDrawRobot()) {
+//                    gridMap.moveRobot("forward");
+//                    gridMap.moveRobot("left");
+//                    gridMap.moveRobot("forward");
+//                    gridMap.moveRobot("forward");
+//                    gridMap.moveRobot("forward");
+//                    gridMap.moveRobot("forward");
+//                    BluetoothFragment.printMsg("D");
+//                    refreshLabel();
+//                }
+//                else
+//                    updateStatus("Please press 'STARTING POINT'");
+//                showLog("Exiting backRightBtn");
+//            }
+//        });
 
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showLog("Clicked moveBackwardImageBtn");
-                if (gridMap.getAutoUpdate())
-                    updateStatus("Please press 'MANUAL'");
-                else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
-                    gridMap.moveRobot("forward");
+                if (gridMap.getCanDrawRobot()) {
+                    if(gridMap.getRobotDirection() == "left")
+                    {
+                        gridMap.moveRobot("back");
+                    }
+                    else
+                    {
+                        gridMap.moveRobot("forward");
+                    }
                     BluetoothFragment.printMsg("W");
                     refreshLabel();
                     if (gridMap.getValidPosition())
@@ -542,31 +526,28 @@ public class MapFragment extends Fragment implements SensorEventListener {
             }
         });
 
-        backLeftBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showLog("Clicked turnLeftImageBtn");
-                if (gridMap.getAutoUpdate())
-                    updateStatus("Please press 'MANUAL'");
-                else if (gridMap.getCanDrawRobot() && !gridMap.getAutoUpdate()) {
-                    gridMap.moveRobot("back");
-                    gridMap.moveRobot("right");
-                    gridMap.moveRobot("back");
-                    gridMap.moveRobot("back");
-                    gridMap.moveRobot("back");
-                    gridMap.moveRobot("back");
-                    // TODO: uncommand for bluetooth and send command to RPI
-                    BluetoothFragment.printMsg("A");
-                    refreshLabel();
-                    updateStatus("turning back left");
-
-                }
-                else
-                    updateStatus("Please press 'STARTING POINT'");
-                showLog("Exiting backLeftBtn" +
-                        "");
-            }
-        });
+//        backLeftBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                showLog("Clicked turnLeftImageBtn");
+//                if (gridMap.getCanDrawRobot()) {
+//                    gridMap.moveRobot("forward");
+//                    gridMap.moveRobot("right");
+//                    gridMap.moveRobot("forward");
+//                    gridMap.moveRobot("forward");
+//                    gridMap.moveRobot("forward");
+//                    gridMap.moveRobot("forward");
+//                    BluetoothFragment.printMsg("A");
+//                    refreshLabel();
+//                    updateStatus("turning back left");
+//
+//                }
+//                else
+//                    updateStatus("Please press 'STARTING POINT'");
+//                showLog("Exiting backLeftBtn" +
+//                        "");
+//            }
+//        });
 
         imgRecButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -597,31 +578,6 @@ public class MapFragment extends Fragment implements SensorEventListener {
         mObstacleList.setAdapter(mObstacleListAdapter);
         return view;
     }
-
-    // Timer
-    Runnable timerRunnableExplore = new Runnable() {
-        @Override
-        public void run() {
-            long millisExplore = System.currentTimeMillis() - exploreTimer;
-            int secondsExplore = (int) (millisExplore / 1000);
-            int minutesExplore = secondsExplore / 60;
-            secondsExplore = secondsExplore % 60;
-            exploreTimeTextView.setText(String.format("%02d:%02d", minutesExplore, secondsExplore));
-            timerHandler.postDelayed(this, 500);
-        }
-    };
-
-    Runnable timerRunnableFastest = new Runnable() {
-        @Override
-        public void run() {
-            long millisFastest = System.currentTimeMillis() - fastestTimer;
-            int secondsFastest = (int) (millisFastest / 1000);
-            int minutesFastest = secondsFastest / 60;
-            secondsFastest = secondsFastest % 60;
-            fastestTimeTextView.setText(String.format("%02d:%02d", minutesFastest, secondsFastest));
-            timerHandler.postDelayed(this, 500);
-        }
-    };
 
     Handler sensorHandler = new Handler();
     boolean sensorFlag= false;
@@ -667,11 +623,6 @@ public class MapFragment extends Fragment implements SensorEventListener {
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
-    }
-
-    public void refreshDirection(String direction) {
-        gridMap.setRobotDirection(direction);
-        directionAxisTV.setText(sharedPreferences.getString("direction", ""));
     }
 
     public void sharedPreferences() {

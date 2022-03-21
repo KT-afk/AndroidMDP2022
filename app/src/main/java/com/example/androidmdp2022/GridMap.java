@@ -10,7 +10,6 @@ import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -22,9 +21,7 @@ import android.widget.ToggleButton;
 import androidx.annotation.Nullable;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 
 public class GridMap extends View {
@@ -38,11 +35,7 @@ public class GridMap extends View {
 
     private final Paint blackPaint = new Paint();
     private static final boolean clearCellStatus = false;
-    private static JSONObject receiveJsonObject = new JSONObject();
-    private static JSONObject mapInfo;
-    private static JSONObject backupMapInfo;
     private static int[] startingCoord = new int[]{-1, -1};
-    private final Paint waypointColor = new Paint();
     private final Paint unexploredColor = new Paint();
     private final Paint exploredColor = new Paint();
     private final Paint arrowColor = new Paint();
@@ -55,18 +48,15 @@ public class GridMap extends View {
     private static boolean drawableRobot = false;
     private static boolean startingCoordStatus = false;
     private static boolean setObsStatus = false;
-    private static int[] waypointCoord = new int[]{-1, -1};
     private static ArrayList<String[]> arrowCoord = new ArrayList<>();
     private static boolean setObsDirection = false;
     private static boolean autoUpdate = false;
     private static ArrayList<Cell> cellArr = new ArrayList<Cell>();
-    private static boolean setWaypointStatus = false;
     private static String obsImageTargetID = null; // <-- newly added
     private static int[] obsNoArray = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
     private final Paint imageColour = new Paint();
     private static boolean setExploredStatus = false;
     private static boolean validPosition = false;
-    private static final boolean waypointNew = false;
     private boolean newEndCoord = false;
     private final Paint obsColour = new Paint();
 
@@ -75,11 +65,8 @@ public class GridMap extends View {
     private static final int ROW = 20;
     private static float cellSize;
     private static Cell[][] cells;
-    private Canvas can;
 
     private boolean mapDrawn = false;
-    public static String publicMDFExploration;
-    public static String publicMDFObstacle;
 
     private static final int[] selectedObsCoord = new int[3];
     private static boolean obsSelected = false;
@@ -105,8 +92,6 @@ public class GridMap extends View {
         robotColour.setColor(Color.CYAN);
         endingColour.setColor(Color.GREEN);
         startingColour.setColor(Color.CYAN);
-        waypointColor.setColor(Color.parseColor("#fefdca"));
-        waypointColor.setColor(Color.parseColor("#fefdca"));
         unexploredColor.setColor(0xa7bdff);
         exploredColor.setColor(Color.WHITE);
         arrowColor.setColor(Color.BLACK);
@@ -131,7 +116,6 @@ public class GridMap extends View {
     protected void onDraw(Canvas canvas) {
         showLog("Entering onDraw");
         super.onDraw(canvas);
-        showLog("Redrawing map");
 
         //CREATE CELL COORDINATES
         Log.d(TAG,"Creating Cell");
@@ -143,8 +127,6 @@ public class GridMap extends View {
             dummyArrowCoord[2] = "dummy";
             arrowCoord.add(dummyArrowCoord);
             this.createCell();
-            // TODO: Remove end coordinate
-            //this.setEndCoord(COL-1, ROW-1);
             newEndCoord = true;
             showLog("Map drawn");
         }
@@ -155,9 +137,6 @@ public class GridMap extends View {
         drawGridNo(canvas);
 
         if (newEndCoord == true) {
-            int endcol = COL - 1;
-            int endrow = ROW - 1;
-            RectF endrect = new RectF(endcol * cellSize, endrow * cellSize, (endcol + 1) * cellSize, (endrow + 1) * cellSize);
             mapDrawn = true;
             newEndCoord = false;
         }
@@ -318,9 +297,6 @@ public class GridMap extends View {
     private void drawRobot(Canvas canvas, int[] curCoord) {
         showLog("Entering drawRobot");
         if(newEndCoord){
-            int endcol = 19;
-            int endrow = 19;
-            RectF endrect = new RectF(endcol * cellSize, endrow * cellSize, (endcol + 1) * cellSize, (endrow + 1) * cellSize);
             newEndCoord=false;
         }
         for (int y = curCoord[1] - 1; y < curCoord[1] + 1; y++){
@@ -329,9 +305,6 @@ public class GridMap extends View {
         for (int x = curCoord[0] - 1; x < curCoord[0] + 1; x++){
             canvas.drawLine(cells[x][curCoord[1] - 1].startX - (cellSize / 30) + cellSize, cells[x][curCoord[1] - 1].startY, cells[x][curCoord[1] + 1].startX - (cellSize / 30) + cellSize, cells[x][curCoord[1] + 1].endY, robotColour);
         }
-        int col = curCoord[0];
-        int row = curCoord[1];
-        RectF rect = new RectF(col * cellSize, row * cellSize, (col + 1) * cellSize, (row + 1) * cellSize);
 
         switch (this.getRobotDirection()) {
             case "up":
@@ -394,17 +367,6 @@ public class GridMap extends View {
         return robotDirection;
     }
 
-    public void setNewDirection(int newDirection)
-    {
-        this.newDirection = newDirection;
-    }
-
-    public static String binaryToHex(String bin) {
-        String hex;
-        BigInteger b = new BigInteger(bin, 2);
-        hex=b.toString(16);
-        return hex;
-    }
     public boolean getAutoUpdate() {
         return autoUpdate;
     }
@@ -417,10 +379,6 @@ public class GridMap extends View {
         return validPosition;
     }
 
-    public boolean getSetObsDirection() {
-        return setObsDirection;
-    }
-
     public void setSetObsDirection(boolean status) {
         setObsDirection = status;
     }
@@ -429,17 +387,8 @@ public class GridMap extends View {
         setObsStatus = status;
     }
 
-    public boolean getSetObsStatus() {
-        return setObsStatus;
-    }
 
-    public void setExploredStatus(boolean status) {
-        setExploredStatus = status;
-    }
 
-    public boolean getExploredStatus() {
-        return setExploredStatus;
-    }
 
     private boolean getStartingCoordStatus() {
         return startingCoordStatus;
@@ -449,9 +398,6 @@ public class GridMap extends View {
         startingCoordStatus = status;
     }
 
-    public void setWaypointStatus(boolean status) {
-        setWaypointStatus = status;
-    }
 
     public boolean getCanDrawRobot() {
         return drawableRobot;
@@ -467,15 +413,6 @@ public class GridMap extends View {
             for (int y = 0; y <= ROW +1; y++)
                 cells[x][y] = new Cell(x * cellSize + (cellSize / 30), y * cellSize + (cellSize / 30), (x + 1) * cellSize, (y + 1) * cellSize, unexploredColor, "unexplored");
         showLog("Exiting createCell");
-    }
-
-    public void setEndCoord(int col, int row) {
-        showLog("Entering setEndCoord");
-        for (int x = col - 1; x <= col + 1; x++)
-            for (int y = row - 1; y <= row + 1; y++)
-                cells[x][y].setType("end");
-
-        showLog("Exiting setEndCoord");
     }
 
     public void setStartingCoord(int col, int row) {
@@ -502,7 +439,6 @@ public class GridMap extends View {
         this.setRobotDirection(direction);
         this.updateRobotAxis(col, row, direction);
 
-        //row = 20- row;
         for (int x = col - 1; x <= col + 1; x++)
             for (int y = row - 1; y <= row + 1; y++)
                 cells[x][y].setType("robot");
@@ -543,7 +479,6 @@ public class GridMap extends View {
         showLog("Entering unsetPreRobotCoord");
         previousCoord[0] = oldCol;
         previousCoord[1] = oldRow;
-        //oldRow = 20- oldRow;
         for (int x = oldCol - 1; x <= oldCol + 1; x++)
             for (int y = oldRow - 1; y <= oldRow + 1; y++)
                 cells[x][y].setType("unexplored");
@@ -700,16 +635,6 @@ public class GridMap extends View {
                     direction = "up";
                 }
                 try {
-                    int directionInt = 0;
-                    if (direction.equals("up")) {
-                        directionInt = 0;
-                    } else if (direction.equals("left")) {
-                        directionInt = 3;
-                    } else if (direction.equals("right")) {
-                        directionInt = 1;
-                    } else if (direction.equals("down")) {
-                        directionInt = 2;
-                    }
                     // TODO: uncoomand for Bluetooth
                     // For RPI
                     rpiRobot = "Al," + (row - 1) + "," + (column - 1) + "," + rpiConvertDirection(direction.toUpperCase()) + ",";
@@ -720,9 +645,8 @@ public class GridMap extends View {
                 updateRobotAxis(column, row, direction);
                 if (setStartPointToggleBtn.isChecked())
                     setStartPointToggleBtn.toggle();
-                // reset setStartPointFAB icon
-                if (MapFragment.isSetStartingPiont) {
-                    MapFragment.isSetStartingPiont = false;
+                if (MapFragment.isSetStartingPoint) {
+                    MapFragment.isSetStartingPoint = false;
                 }
 
                 this.invalidate();
@@ -750,7 +674,6 @@ public class GridMap extends View {
                 cells[column][row].setType("unexplored");
                 for (int i = 0; i < obstacleCoord.size(); i++) {
                     if (obstacleCoord.get(i)[0] == column && obstacleCoord.get(i)[1] == row) {
-                        // TODO: uncoomand for bluetooth
                         //BluetoothFragment.printMessage("RemovedObstacle, " + "<" + valueOf(obsCoord.get(i)[0] -1) + "," + valueOf(Math.abs(obsCoord.get(i)[1]) - 1) + ">");
                         //BluetoothFragment.printMessage("RemovedObstacle, " + "<" + valueOf(selectedObsCoord[0] - 1) + ">, <" + valueOf(Math.abs(selectedObsCoord[1]) - 1) + ">, <" + cells[selectedObsCoord[0]][20 - selectedObsCoord[1]].obstacleNo + ">");
                         obsNoArray[cells[column][row].obstacleNo - 1] = cells[column][row].obstacleNo; // unset obstacle no by assigning number back to array
@@ -949,33 +872,6 @@ public class GridMap extends View {
         return direction_NSEW;
     }
 
-    //For RPI
-    public void sendRPIMessage() {
-        if (rpiRobot.equals("") == false) {
-            String message = rpiRobot;
-
-            for (int x = 1; x <= COL; x++) {
-                for (int y = 1; y <= ROW; y++) {
-                    for (int i = 0; i < this.getArrowCoord().size(); i++) {
-
-                        if (cells[x][y].type.equals("obstacle") || cells[x][y].type.equals("image")) {
-
-                            message = message + (x - 1) + "," + (y - 1) + "," + rpiConvertDirection(cells[x][y].getobstacleFacing()) + ",";
-                        }
-
-                    }
-                }
-            }
-
-            // remove the last coma
-            StringBuffer messageBuffer = new StringBuffer(message);
-            messageBuffer.deleteCharAt(messageBuffer.length() - 1);
-        } else {
-            Toast.makeText(this.getContext(), "Please set the Starting Position of the robot", Toast.LENGTH_LONG).show();
-        }
-
-
-    }
 
     public void toggleCheckedBtn(String buttonName) {
         ToggleButton setStartPointToggleBtn = ((Activity) this.getContext()).findViewById(R.id.startingPointButton);
@@ -1003,8 +899,6 @@ public class GridMap extends View {
 
         this.toggleCheckedBtn("None");
 
-        receiveJsonObject = null;
-        backupMapInfo = null;
         startingCoord = new int[]{-1, -1};
         currentCoord = new int[]{-1, -1};
         previousCoord = new int[]{-1, -1};
@@ -1012,14 +906,12 @@ public class GridMap extends View {
         autoUpdate = false;
         arrowCoord = new ArrayList<>();
         obsCoord = new ArrayList<>();
-        waypointCoord = new int[]{-1, -1};
         mapDrawn = false;
         drawableRobot = false;
         validPosition = false;
         cellArr = new ArrayList<>();
         rpiObstacle = "";
         rpiRobot = "";
-        //oCellArrDirection = new ArrayList<>();
 
         // newly added
         obsNoArray = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}; //reset obstacle no array
@@ -1029,7 +921,6 @@ public class GridMap extends View {
         this.invalidate();
     }
 
-    // TODO: need find a way to make the turn like a car using angle (clock)
     public void moveRobot(String direction) {
         showLog("Entering moveRobot");
         setValidPosition(false);
@@ -1041,7 +932,6 @@ public class GridMap extends View {
         String backupDirection = robotDirection;
 
         switch (robotDirection) {
-            //Actual moveable space 2-19
             case "up":
                 switch (direction) {
                     case "forward":
@@ -1091,7 +981,7 @@ public class GridMap extends View {
                         robotDirection = "error right";
                 }
                 break;
-            case "down":
+            case "back":
                 switch (direction) {
                     case "forward":
                         if (curCoord[1] != 2) {
@@ -1171,66 +1061,7 @@ public class GridMap extends View {
         showLog("Exiting moveRobot");
     }
 
-    public void changeDirection(String direction) {
-        showLog("Entering changeDirection");
-        String robotDirection = getRobotDirection();
-        String backupDirection = robotDirection;
-        switch (robotDirection) {
-            case "up":
-                switch (direction) {
-                    case "forward right":
-                    case "back right":
-                        robotDirection = "right";
-                        break;
-                    case "forward left":
-                    case "back left":
-                        robotDirection = "left";
-                        break;
-                }
-                break;
-            case "right":
-                switch (direction) {
-                    case "forward right":
-                    case "back right":
-                        robotDirection = "down";
-                        break;
-                    case "forward left":
-                    case "back left":
-                        robotDirection = "up";
-                        break;
-                }
-                break;
-            case "left":
-                switch (direction) {
-                    case "forward right":
-                    case "back right":
-                        robotDirection = "up";
-                        break;
-                    case "forward left":
-                    case "back left":
-                        robotDirection = "down";
-                        break;
-                }
-                break;
-            case "down":
-                switch (direction) {
-                    case "forward right":
-                    case "back right":
-                        robotDirection = "left";
-                        break;
-                    case "forward left":
-                    case "back left":
-                        robotDirection = "right";
-                        break;
-                }
-                break;
-        }
-    }
 
-    public void printRobotStatus(String message) {
-        TextView robotStatusTextView = ((Activity) this.getContext()).findViewById(R.id.robotStatusText);
-        robotStatusTextView.setText(message);
-    }
 
     private class Cell {
         float startX, startY, endX, endY;
@@ -1268,9 +1099,6 @@ public class GridMap extends View {
                 case "start":
                     this.paint = startingColour;
                     break;
-                case "waypoint":
-                    this.paint = waypointColor;
-                    break;
                 case "unexplored":
                     this.paint = unexploredColor;
                     break;
@@ -1280,14 +1108,8 @@ public class GridMap extends View {
                 case "arrow":
                     this.paint = arrowColor;
                     break;
-                /*case "fastestPath":
-                    this.paint = fastestPathColor;
-                    break;*/
                 case "image":
                     this.paint = imageColour;
-                    break;
-                case "id":
-                    this.paint = obsColour;
                     break;
                 default:
                     showLog("setTtype default: " + type);
@@ -1295,7 +1117,6 @@ public class GridMap extends View {
             }
         }
 
-        // Obstacle Face @ GridMap.Java -> class Cell
         public void setobstacleFacing(String obstacleFacing) {
             this.obstacleFacing = obstacleFacing;
         }
@@ -1312,22 +1133,5 @@ public class GridMap extends View {
             this.id = id;
         }
     }
-
-    public static void setPublicMDFExploration(String msg) {
-        publicMDFExploration = msg;
-    }
-
-    public static void setPublicMDFObstacle(String msg) {
-        publicMDFObstacle = msg;
-    }
-
-    public static String getPublicMDFExploration() {
-        return publicMDFExploration;
-    }
-
-    public static String getPublicMDFObstacle() {
-        return publicMDFObstacle;
-    }
-
 
 }
