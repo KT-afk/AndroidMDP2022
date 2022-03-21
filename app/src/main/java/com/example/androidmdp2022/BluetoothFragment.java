@@ -56,33 +56,133 @@ public class BluetoothFragment extends Fragment {
     private Set<BluetoothDevice> pairedDevices;
     private Set<BluetoothDevice> availableDevices;
 
-    //NEW
-    BluetoothServices mBluetoothConnection;
-    //private static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-    private static final UUID myUUID = UUID.fromString("94f39d29-7d6d-437d-973b-fba39e49d4ee");
+    private static final UUID theUUID = UUID.fromString("94f39d29-7d6d-437d-973b-fba39e49d4ee");
+    private static BluetoothDevice btDevice;
 
     private String connectedDeviceName;
-    private Switch switch_BT;
-    private TextView tv_ConStatus;
-    private TextView tv_DeviceName;
-    private static BluetoothDevice mDevice;
+    private static ArrayAdapter<String> btMessagesListAdapter;
+    private final BroadcastReceiver broadcastReceiver1 = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
+                final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR);
 
-    // Unconnected devices
-    private ConstraintLayout mUnconnectedLayout;
+                switch (state) {
+                    case BluetoothAdapter.STATE_OFF:
+                        Log.d(MY_TAG, "broadcastReceiver1: STATE OFF");
+                        break;
+                    case BluetoothAdapter.STATE_TURNING_OFF:
+                        Log.d(MY_TAG, "broadcastReceiver1: STATE TURNING OFF");
+                        break;
+                    case BluetoothAdapter.STATE_ON:
+                        Log.d(MY_TAG, "broadcastReceiver1: STATE ON");
+
+                        break;
+                    case BluetoothAdapter.STATE_TURNING_ON:
+                        Log.d(MY_TAG, "broadcastReceiver1: STATE TURNING ON");
+                        break;
+                }
+            }
+        }
+    };
+    private final BroadcastReceiver broadcastReceiver2 = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (action.equals(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED)) {
+                final int mode = intent.getIntExtra(BluetoothAdapter.EXTRA_SCAN_MODE, BluetoothAdapter.ERROR);
+
+                switch (mode) {
+                    case BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE:
+                        Log.d(MY_TAG, "broadcastReceiver2: Discoverability Enabled.");
+                        break;
+                    case BluetoothAdapter.SCAN_MODE_CONNECTABLE:
+                        Log.d(MY_TAG, "broadcastReceiver2: Discoverability Disabled. Able to receive connections.");
+                        break;
+                    case BluetoothAdapter.SCAN_MODE_NONE:
+                        Log.d(MY_TAG, "broadcastReceiver2: Discoverability Disabled. Not able to receive connections.");
+                        break;
+                    case BluetoothAdapter.STATE_CONNECTING:
+                        Log.d(MY_TAG, "broadcastReceiver2: Connecting...");
+                        break;
+                    case BluetoothAdapter.STATE_CONNECTED:
+                        Log.d(MY_TAG, "broadcastReceiver2: Connected.");
+                        break;
+                }
+            }
+        }
+    };
+    // To discover bluetooth devices
+    private final BroadcastReceiver broadcastReceiver3 = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+            Log.d(MY_TAG, "onReceive: ACTION FOUND.");
+
+            if (action.equals(BluetoothDevice.ACTION_FOUND)) {
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                String deviceName = device.getName();
+                if (deviceName == null) {
+                    Log.d(MY_TAG, "the device address: " + device.getAddress());
+                    availableDevices.add(device);
+                    availableDevicesListAdapter.add(device.getAddress());
+                } else {
+                    availableDevices.add(device);
+                    availableDevicesListAdapter.add(device.getName());
+                    Log.d(MY_TAG, "the device name: " + device.getName());
+                }
+                availableDevicesListAdapter.notifyDataSetChanged();
+                Log.d(MY_TAG, "onReceive: " + device.getName() + " : " + device.getAddress());
+            }
+        }
+    };
+    // for bluetooth pairing
+    private final BroadcastReceiver broadcastReceiver4 = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+
+            if (action.equals(BluetoothDevice.ACTION_BOND_STATE_CHANGED)) {
+                BluetoothDevice mDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                if (mDevice.getBondState() == BluetoothDevice.BOND_BONDED) {
+                    Log.d(MY_TAG, "BOND_BONDED.");
+                    Toast.makeText(getContext(), "Successfully paired with " + mDevice.getName(), Toast.LENGTH_SHORT).show();
+                    BluetoothFragment.btDevice = mDevice;
+                }
+                if (mDevice.getBondState() == BluetoothDevice.BOND_BONDING) {
+                    Log.d(MY_TAG, "BOND_BONDING.");
+                }
+                if (mDevice.getBondState() == BluetoothDevice.BOND_NONE) {
+                    Log.d(MY_TAG, "BOND_NONE.");
+                }
+            }
+        }
+    };
     private Button scanBTbutton;
     private ArrayAdapter<String> pairedDevicesListAdapter;
     private ArrayAdapter<String> availableDevicesListAdapter;
     private ListView pairedDevicesListView;
     private ListView availableDevicesListView;
-
-    // connected devices
-    private ConstraintLayout mConnectedLayout;
-    //private TextView mConnectedDeviceText;
+    //NEW
+    BluetoothService bluetoothConnection;
     private Button disconnectBTButton;
     private EditText sendMessageField;
     private ImageButton sendMessageButton;
-    private ListView mBTMessages;
-    private static ArrayAdapter<String> mBTMessagesListAdapter;
+    Runnable reconnectionRunnable = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                if (!BluetoothService.btConnectStatus) {
+                    startBTConnect(btDevice, theUUID);
+                    Toast.makeText(getContext(), "Reconnection Success", Toast.LENGTH_SHORT).show();
+                }
+                reconnectionHandler.removeCallbacks(reconnectionRunnable);
+                retryConnection = false;
+            } catch (Exception e) {
+                Toast.makeText(getContext(), "Failed to reconnect, trying in 5 second", Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
+    private Switch switchBT;
 
     // Declaration Variables
     private static SharedPreferences sharedPreferences;
@@ -107,33 +207,206 @@ public class BluetoothFragment extends Fragment {
         return fragment;
     }
 
-    public BluetoothFragment() {}
+    private TextView tvConStatus;
 
     boolean retryConnection = false;
     Handler reconnectionHandler = new Handler();
-
-    Runnable reconnectionRunnable = new Runnable() {
+    private TextView tvDeviceName;
+    // Unconnected devices
+    private ConstraintLayout unconnectedLayout;
+    // connected devices
+    private ConstraintLayout connectedLayout;
+    // for auto reconnecting bluetooth
+    private final BroadcastReceiver broadcastReceiver5 = new BroadcastReceiver() {
         @Override
-        public void run() {
-            try {
-                if (!BluetoothServices.BluetoothConnectionStatus) {
-                    startBTConnection(mDevice, myUUID);
-                    Toast.makeText(getContext(), "Reconnection Success", Toast.LENGTH_SHORT).show();
+        public void onReceive(Context context, Intent intent) {
+            BluetoothDevice mDevice = intent.getParcelableExtra("Device");
+            String status = intent.getStringExtra("Status");
+            sharedPreferences = getActivity().getApplicationContext().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
+            editor = sharedPreferences.edit();
+
+            if (status.equals("connected")) {
+                try {
+                    myDialog.dismiss();
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
                 }
-                reconnectionHandler.removeCallbacks(reconnectionRunnable);
-                retryConnection = false;
-            } catch (Exception e) {
-                Toast.makeText(getContext(), "Failed to reconnect, trying in 5 second", Toast.LENGTH_SHORT).show();
+
+                Log.d(MY_TAG, "broadcastReceiver5: Device now connected to " + mDevice.getName());
+                Toast.makeText(getContext(), "Device now connected to " + mDevice.getName(), Toast.LENGTH_LONG).show();
+                editor.putString("conStatus", "Connected to " + mDevice.getName());
+                updateConnectedStatus(mDevice.getName());
+            } else if (status.equals("disconnected") && !retryConnection) {
+                Log.d(MY_TAG, "broadcastReceiver5: Disconnected from " + mDevice.getName());
+                Toast.makeText(getContext(), "Disconnected from " + mDevice.getName(), Toast.LENGTH_LONG).show();
+                bluetoothConnection = new BluetoothService(getContext());
+                sharedPreferences = getActivity().getApplicationContext().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
+                editor = sharedPreferences.edit();
+                editor.putString("conStatus", "Disconnected");
+                updateDisconnectStatus();
+                editor.commit();
+
+                if (!isDisconnectBtn) {
+                    try {
+
+                        myDialog.show();
+                    } catch (Exception e) {
+                        Log.d(MY_TAG, "BluetoothPopUp: broadcastReceiver5 Dialog show failure");
+                    }
+
+                    retryConnection = true;
+                    reconnectionHandler.postDelayed(reconnectionRunnable, 5000);
+                }
             }
+            editor.commit();
         }
     };
+    private ListView btMessages;
+
+    public BluetoothFragment() {
+    }
+
+    private static void showLog(String message) {
+        Log.d(MY_TAG, message);
+    }
+
+    // Send message to bluetooth
+    public static void printMsg(String message) {
+        showLog("Entering printMessage");
+        if (BluetoothService.btConnectStatus) {
+            byte[] bytes = message.getBytes(Charset.defaultCharset());
+            BluetoothService.write(bytes);
+        }
+        showLog(message);
+        //for the message chat List
+        btMessagesListAdapter.add("Grp 18: " + message);
+        showLog("Exiting printMessage");
+    }
+
+    // for waypoint message
+    public static void printMsg(String name, int x, int y) throws JSONException {
+        showLog("Entering printMessage");
+
+        JSONObject jsonObject = new JSONObject();
+        String message;
+
+        switch (name) {
+            //"starting" case:
+            case "waypoint":
+                jsonObject.put(name, name);
+                jsonObject.put("x", Integer.toString(x));
+                jsonObject.put("y", Integer.toString(y));
+                message = name + " (" + x + "," + y + ")";
+                break;
+            case "Obstacle":
+                jsonObject.put(name, name);
+                jsonObject.put("x", Integer.toString(x));
+                jsonObject.put("y", Integer.toString(y));
+                message = name + " (" + x + "," + y + ")";
+                break;
+            default:
+                message = "Unexpected default for printMessage: " + name;
+                break;
+        }
+        if (BluetoothService.btConnectStatus) {
+            byte[] bytes = message.getBytes(Charset.defaultCharset());
+            BluetoothService.write(bytes);
+        }
+        showLog("Exiting printMessage");
+        btMessagesListAdapter.add("Grp 18: " + message);
+    }
+
+    // for obstacle message
+    public static void printMsg(String name, int x, int y, String direction) throws JSONException {
+        showLog("Entering printMessage");
+
+        JSONObject jsonObject = new JSONObject();
+        String message;
+
+        switch (name) {
+            //"starting" case:
+            case "waypoint":
+                jsonObject.put(name, name);
+                jsonObject.put("x", Integer.toString(x));
+                jsonObject.put("y", Integer.toString(y));
+                message = name + " (" + x + "," + y + ")";
+                break;
+            case "Obstacle":
+                jsonObject.put(name, name);
+                jsonObject.put("x", Integer.toString(x));
+                jsonObject.put("y", Integer.toString(y));
+                message = name + " (" + x + "," + y + "," + direction + ")";
+                break;
+            case "Obstacle direction change":
+                jsonObject.put(name, name);
+                jsonObject.put("x", Integer.toString(x));
+                jsonObject.put("y", Integer.toString(y));
+                message = name + " (" + x + "," + y + "," + direction + ")";
+                break;
+            default:
+                message = "Unexpected default for printMessage: " + name;
+                break;
+        }
+
+        if (BluetoothService.btConnectStatus) {
+            byte[] bytes = message.getBytes(Charset.defaultCharset());
+            BluetoothService.write(bytes);
+        }
+        showLog("Exiting printMessage");
+        btMessagesListAdapter.add("Grp 18: " + message);
+    }
+
+    public static void refreshMessageReceived() {
+        btMessagesListAdapter.add(sharedPreferences.getString("message", ""));
+        btMessagesListAdapter.notifyDataSetChanged();
+    }
+
+    public static void receiveMessage(String message) {
+        showLog("Entering receiveMessage");
+        editor.putString("message", sharedPreferences.getString("message", "") + "\n" + message);
+        editor.commit();
+        showLog("Exiting receiveMessage");
+    }
+
+    public static String getBTName() {
+        return btDevice.getName();
+    }
+
+    protected void showSoftwareKeyboard(boolean showKeyboard) {
+        final Activity activity = getActivity();
+        final InputMethodManager inputManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        inputManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), showKeyboard ? InputMethodManager.SHOW_FORCED : InputMethodManager.HIDE_NOT_ALWAYS);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        //  Stop Bluetooth discovery
+        bluetoothAdapter.cancelDiscovery();
+    }
+
+    private void getPairedDevices() {
+        // set bluetooth adapter
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        //  Get paired devices and display on list
+        pairedDevices = bluetoothAdapter.getBondedDevices();
+        Log.d("pairedDevices", Integer.toString(pairedDevices.size()));
+        if (pairedDevices.size() > 0) {
+            for (BluetoothDevice pairedDevice : pairedDevices) {
+                pairedDevicesListAdapter.add(pairedDevice.getName());
+            }
+            pairedDevicesListAdapter.notifyDataSetChanged();
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         availableDevices = new HashSet<>();
-        mBluetoothConnection = new BluetoothServices(getContext());
-        checkBluetoothPermission();
+        bluetoothConnection = new BluetoothService(getContext());
+        checkBTPermission();
     }
 
     //@Override
@@ -142,21 +415,21 @@ public class BluetoothFragment extends Fragment {
         View view = inflater.inflate(R.layout.activity_bluetooth2, container, false);
 
         //  Instantiate layouts
-        mUnconnectedLayout = view.findViewById(R.id.unconnectedBTContainer);
-        mConnectedLayout = view.findViewById(R.id.connectedBTContainer);
+        unconnectedLayout = view.findViewById(R.id.unconnectedBTContainer);
+        connectedLayout = view.findViewById(R.id.connectedBTContainer);
 
-        switch_BT = view.findViewById(R.id.switch_BT);
+        switchBT = view.findViewById(R.id.switch_BT);
         scanBTbutton = view.findViewById(R.id.scanBTbutton);
-        tv_DeviceName = view.findViewById(R.id.deviceName);
-        tv_ConStatus = view.findViewById(R.id.connectionStatus);
+        tvDeviceName = view.findViewById(R.id.deviceName);
+        tvConStatus = view.findViewById(R.id.connectionStatus);
         pairedDevicesListView = view.findViewById(R.id.pairedBTDevicesList);
         availableDevicesListView = view.findViewById(R.id.connectedBTDevicesList);
 
         //  Instantiate connected layout
         disconnectBTButton = view.findViewById(R.id.disconnectBTButton);
-        mBTMessages = view.findViewById(R.id.BTMessages);
-        mBTMessagesListAdapter = new ArrayAdapter<>(getContext(), R.layout.obstacleitem);
-        mBTMessages.setAdapter(mBTMessagesListAdapter);
+        btMessages = view.findViewById(R.id.BTMessages);
+        btMessagesListAdapter = new ArrayAdapter<>(getContext(), R.layout.obstacleitem);
+        btMessages.setAdapter(btMessagesListAdapter);
         sendMessageField = view.findViewById(R.id.sendMessageField);
         sendMessageButton = view.findViewById(R.id.sendMessageButton);
 
@@ -172,15 +445,15 @@ public class BluetoothFragment extends Fragment {
 
         //NEW
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
-        getContext().registerReceiver(mBroadcastReceiver4, filter);
+        getContext().registerReceiver(broadcastReceiver4, filter);
 
         IntentFilter filter2 = new IntentFilter("ConnectionStatus");
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mBroadcastReceiver5, filter2);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(broadcastReceiver5, filter2);
 
         Log.d("bluetoothAdapter", Boolean.toString(bluetoothAdapter.isEnabled()));
         if(bluetoothAdapter.isEnabled())
         {
-            switch_BT.setChecked(true);
+            switchBT.setChecked(true);
             pairedDevicesListView.setVisibility(View.VISIBLE);
         }
         else
@@ -188,38 +461,33 @@ public class BluetoothFragment extends Fragment {
             updateDisconnectStatus();
             pairedDevicesListView.setVisibility(View.GONE);
         }
-        switch_BT.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        switchBT.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if(switch_BT.isChecked())
-                {
+                if (switchBT.isChecked()) {
                     pairedDevicesListView.setVisibility(View.VISIBLE);
-                    checkBluetoothPermission();
+                    checkBTPermission();
 
-                    if(bluetoothAdapter == null)
-                    {
-                        switch_BT.setChecked(false);
+                    if (bluetoothAdapter == null) {
+                        switchBT.setChecked(false);
                         Toast.makeText(getContext(), "Bluetooth is not supported in this device.", Toast.LENGTH_SHORT).show();
-                    }
-                    else
-                    {
-                        if(!bluetoothAdapter.isEnabled())
-                        {
+                    } else {
+                        if (!bluetoothAdapter.isEnabled()) {
                             Intent enableBTintent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                             startActivity(enableBTintent);
 
                             IntentFilter BTIntent = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
-                            getContext().registerReceiver(mBroadcastReceiver1, BTIntent);
+                            getContext().registerReceiver(broadcastReceiver1, BTIntent);
 
                             IntentFilter discoverIntent = new IntentFilter(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
-                            getContext().registerReceiver(mBroadcastReceiver2, discoverIntent);
+                            getContext().registerReceiver(broadcastReceiver2, discoverIntent);
                         }
                         if (bluetoothAdapter.isEnabled()) {
                             Log.d(MY_TAG, "enableDisableBT: disabling Bluetooth");
                             bluetoothAdapter.disable();
 
                             IntentFilter BTIntent = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
-                            getContext().registerReceiver(mBroadcastReceiver1, BTIntent);
+                            getContext().registerReceiver(broadcastReceiver1, BTIntent);
                         }
                     }
                 }
@@ -251,11 +519,11 @@ public class BluetoothFragment extends Fragment {
                 if (bluetoothAdapter.isDiscovering()) {
                     bluetoothAdapter.cancelDiscovery();
                 }
-                checkBluetoothPermission();
+                checkBTPermission();
                 bluetoothAdapter.startDiscovery();
 
                 IntentFilter discoverDevicesIntent = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-                getContext().registerReceiver(mBroadcastReceiver3, discoverDevicesIntent);
+                getContext().registerReceiver(broadcastReceiver3, discoverDevicesIntent);
             }
         });
 
@@ -268,10 +536,10 @@ public class BluetoothFragment extends Fragment {
                 for (BluetoothDevice pairedDevice : pairedDevices) {
                     if (pairedDevice.getName().equalsIgnoreCase(chosenDeviceName)) {
                         //bluetoothConnection.connect(pairedDevice);
-                        mDevice = pairedDevice;
-                        showLog("pairedDevicesListView on click "+mDevice.getName());
+                        btDevice = pairedDevice;
+                        showLog("pairedDevicesListView on click " + btDevice.getName());
                         isDisconnectBtn = false;
-                        startConnection();
+                        startConnect();
                         break;
                     }
                 }
@@ -289,9 +557,9 @@ public class BluetoothFragment extends Fragment {
                     if (device.getName().equalsIgnoreCase(chosenDeviceName)) {
                         availableDevicesListAdapter.clear();
                         availableDevices.clear();
-                        mDevice = device;
+                        btDevice = device;
                         isDisconnectBtn = false;
-                        startConnection();
+                        startConnect();
                         break;
                     }
                 }
@@ -302,9 +570,9 @@ public class BluetoothFragment extends Fragment {
         disconnectBTButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BluetoothFragment.printMessage("BT_DC");
+                BluetoothFragment.printMsg("BT_DC");
                 //TODO: Disconnect function
-                mBluetoothConnection.disconnect();
+                bluetoothConnection.disconnect();
                 isDisconnectBtn = true;
             }
         });
@@ -319,12 +587,12 @@ public class BluetoothFragment extends Fragment {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString("message", sharedPreferences.getString("message", "") + '\n' + sentText);
                 editor.commit();
-                mBTMessagesListAdapter.add("Group 18: " + sentText);
+                btMessagesListAdapter.add("Group 18: " + sentText);
                 sendMessageField.setText("");
 
-                if (BluetoothServices.BluetoothConnectionStatus) {
+                if (BluetoothService.btConnectStatus) {
                     byte[] bytes = sentText.getBytes(Charset.defaultCharset());
-                    BluetoothServices.write(bytes);
+                    BluetoothService.write(bytes);
                 }
                 showLog("Exiting sendTextBtn");
 
@@ -342,79 +610,49 @@ public class BluetoothFragment extends Fragment {
         });
         return view;
     }
-    protected void showSoftwareKeyboard(boolean showKeyboard){
-        final Activity activity = getActivity();
-        final InputMethodManager inputManager = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
 
-        inputManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), showKeyboard ? InputMethodManager.SHOW_FORCED : InputMethodManager.HIDE_NOT_ALWAYS);
-    }
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        //  Stop Bluetooth discovery
-        bluetoothAdapter.cancelDiscovery();
-    }
-
-    private void getPairedDevices()
-    {
-        // set bluetooth adapter
-        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        //  Get paired devices and display on list
-        pairedDevices = bluetoothAdapter.getBondedDevices();
-        Log.d("pairedDevices", Integer.toString(pairedDevices.size()));
-        if (pairedDevices.size() > 0) {
-            for (BluetoothDevice pairedDevice : pairedDevices) {
-                pairedDevicesListAdapter.add(pairedDevice.getName());
-            }
-            pairedDevicesListAdapter.notifyDataSetChanged();
-        }
-    }
-
-    private void updateConnectedStatus(String deviceName)
-    {
-        tv_DeviceName.setText(deviceName);
-        tv_ConStatus.setText("CONNECTED");
+    private void updateConnectedStatus(String deviceName) {
+        tvDeviceName.setText(deviceName);
+        tvConStatus.setText("CONNECTED");
 
         connectedDeviceName = deviceName;
 
         scanBTbutton.setVisibility(View.GONE);
-        mUnconnectedLayout.setVisibility(View.GONE);
-        mConnectedLayout.setVisibility(View.VISIBLE);
+        unconnectedLayout.setVisibility(View.GONE);
+        connectedLayout.setVisibility(View.VISIBLE);
 
         //this is dark forest green
-        tv_DeviceName.setTextColor(Color.parseColor("#055303"));
+        tvDeviceName.setTextColor(Color.parseColor("#055303"));
         //this is pastel red
-        tv_ConStatus.setTextColor(Color.parseColor("#055303"));
+        tvConStatus.setTextColor(Color.parseColor("#055303"));
     }
 
-    private void updateDisconnectStatus()
-    {
-        tv_DeviceName.setText("No Device");
-        tv_ConStatus.setText("DISCONNECTED");
+    private void updateDisconnectStatus() {
+        tvDeviceName.setText("No Device");
+        tvConStatus.setText("DISCONNECTED");
 
         scanBTbutton.setVisibility(View.VISIBLE);
-        mUnconnectedLayout.setVisibility(View.VISIBLE);
-        mConnectedLayout.setVisibility(View.GONE);
+        unconnectedLayout.setVisibility(View.VISIBLE);
+        connectedLayout.setVisibility(View.GONE);
         //this is pastel red
-        tv_DeviceName.setTextColor(Color.parseColor("#630727"));
-        tv_ConStatus.setTextColor(Color.parseColor("#630727"));
+        tvDeviceName.setTextColor(Color.parseColor("#630727"));
+        tvConStatus.setTextColor(Color.parseColor("#630727"));
 
-        mBTMessagesListAdapter.clear();
+        btMessagesListAdapter.clear();
     }
 
     // Check Bluetooth permission
-    public void checkBluetoothPermission() {
+    public void checkBTPermission() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
             int permissionCheck = ContextCompat.checkSelfPermission(getActivity().getApplicationContext(),
                     Manifest.permission.ACCESS_BACKGROUND_LOCATION) + ContextCompat.checkSelfPermission(getActivity().getApplicationContext(),
                     Manifest.permission.ACCESS_COARSE_LOCATION) + ContextCompat.checkSelfPermission(getActivity().getApplicationContext(),
-                    Manifest.permission.ACCESS_FINE_LOCATION ) + ContextCompat.checkSelfPermission(getActivity().getApplicationContext(),
-                    Manifest.permission.ACCESS_COARSE_LOCATION ) + ContextCompat.checkSelfPermission(getActivity().getApplicationContext(),
-                    Manifest.permission.BLUETOOTH_ADMIN ) + ContextCompat.checkSelfPermission(getActivity().getApplicationContext(),
-                    Manifest.permission.BLUETOOTH );
+                    Manifest.permission.ACCESS_FINE_LOCATION) + ContextCompat.checkSelfPermission(getActivity().getApplicationContext(),
+                    Manifest.permission.ACCESS_COARSE_LOCATION) + ContextCompat.checkSelfPermission(getActivity().getApplicationContext(),
+                    Manifest.permission.BLUETOOTH_ADMIN) + ContextCompat.checkSelfPermission(getActivity().getApplicationContext(),
+                    Manifest.permission.BLUETOOTH);
 
             if(permissionCheck != PackageManager.PERMISSION_GRANTED)
             {
@@ -427,271 +665,19 @@ public class BluetoothFragment extends Fragment {
                                 Manifest.permission.BLUETOOTH_ADMIN,
                                 Manifest.permission.BLUETOOTH
 
-                        },1);
+                        }, 1);
             }
 
         }
     }
 
-    private static void showLog(String message) {
-        Log.d(MY_TAG, message);
+    public void startConnect() {
+        startBTConnect(btDevice, theUUID);
     }
 
-    // Send message to bluetooth
-    public static void printMessage(String message) {
-        showLog("Entering printMessage");
-        if (BluetoothServices.BluetoothConnectionStatus) {
-            byte[] bytes = message.getBytes(Charset.defaultCharset());
-            BluetoothServices.write(bytes);
-        }
-        showLog(message);
-        //for the message chat List
-        mBTMessagesListAdapter.add("Grp 18: " + message);
-        showLog("Exiting printMessage");
-    }
-
-    // for waypoint message
-    public static void printMessage(String name, int x, int y) throws JSONException {
-        showLog("Entering printMessage");
-
-        JSONObject jsonObject = new JSONObject();
-        String message;
-
-        switch(name) {
-            //"starting" case:
-            case "waypoint":
-                jsonObject.put(name, name);
-                jsonObject.put("x", Integer.toString(x));
-                jsonObject.put("y", Integer.toString(y));
-                message = name + " (" + x + "," + y + ")";
-                break;
-            case "Obstacle":
-                jsonObject.put(name, name);
-                jsonObject.put("x", Integer.toString(x));
-                jsonObject.put("y", Integer.toString(y));
-                message = name + " (" + x + "," + y + ")";
-                break;
-            default:
-                message = "Unexpected default for printMessage: " + name;
-                break;
-        }
-        if (BluetoothServices.BluetoothConnectionStatus) {
-            byte[] bytes = message.getBytes(Charset.defaultCharset());
-            BluetoothServices.write(bytes);
-        }
-        showLog("Exiting printMessage");
-        mBTMessagesListAdapter.add("Grp 18: " + message);
-    }
-
-    // for obstacle message
-    public static void printMessage(String name, int x, int y, String direction) throws JSONException {
-        showLog("Entering printMessage");
-
-        JSONObject jsonObject = new JSONObject();
-        String message;
-
-        switch(name) {
-            //"starting" case:
-            case "waypoint":
-                jsonObject.put(name, name);
-                jsonObject.put("x", Integer.toString(x));
-                jsonObject.put("y", Integer.toString(y));
-                message = name + " (" + x + "," + y + ")";
-                break;
-            case "Obstacle":
-                jsonObject.put(name, name);
-                jsonObject.put("x", Integer.toString(x));
-                jsonObject.put("y", Integer.toString(y));
-                message = name + " (" + x + "," + y + ","+ direction + ")";
-                break;
-            case "Obstacle direction change":
-                jsonObject.put(name, name);
-                jsonObject.put("x", Integer.toString(x));
-                jsonObject.put("y", Integer.toString(y));
-                message = name + " (" + x + "," + y + ","+ direction + ")";
-                break;
-            default:
-                message = "Unexpected default for printMessage: " + name;
-                break;
-        }
-
-        if (BluetoothServices.BluetoothConnectionStatus) {
-            byte[] bytes = message.getBytes(Charset.defaultCharset());
-            BluetoothServices.write(bytes);
-        }
-        showLog("Exiting printMessage");
-        mBTMessagesListAdapter.add("Grp 18: " + message);
-    }
-
-    public static void refreshMessageReceived() {
-        mBTMessagesListAdapter.add(sharedPreferences.getString("message", ""));
-        mBTMessagesListAdapter.notifyDataSetChanged();
-    }
-
-    public static void receiveMessage(String message) {
-        showLog("Entering receiveMessage");
-        editor.putString("message", sharedPreferences.getString("message", "") + "\n" + message);
-        editor.commit();
-        showLog("Exiting receiveMessage");
-    }
-
-
-    private final BroadcastReceiver mBroadcastReceiver1 = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
-                final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR);
-
-                switch (state) {
-                    case BluetoothAdapter.STATE_OFF:
-                        Log.d(MY_TAG, "mBroadcastReceiver1: STATE OFF");
-                        break;
-                    case BluetoothAdapter.STATE_TURNING_OFF:
-                        Log.d(MY_TAG, "mBroadcastReceiver1: STATE TURNING OFF");
-                        break;
-                    case BluetoothAdapter.STATE_ON:
-                        Log.d(MY_TAG, "mBroadcastReceiver1: STATE ON");
-
-                        break;
-                    case BluetoothAdapter.STATE_TURNING_ON:
-                        Log.d(MY_TAG, "mBroadcastReceiver1: STATE TURNING ON");
-                        break;
-                }
-            }
-        }
-    };
-
-    private final BroadcastReceiver mBroadcastReceiver2 = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (action.equals(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED)) {
-                final int mode = intent.getIntExtra(BluetoothAdapter.EXTRA_SCAN_MODE, BluetoothAdapter.ERROR);
-
-                switch (mode) {
-                    case BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE:
-                        Log.d(MY_TAG, "mBroadcastReceiver2: Discoverability Enabled.");
-                        break;
-                    case BluetoothAdapter.SCAN_MODE_CONNECTABLE:
-                        Log.d(MY_TAG, "mBroadcastReceiver2: Discoverability Disabled. Able to receive connections.");
-                        break;
-                    case BluetoothAdapter.SCAN_MODE_NONE:
-                        Log.d(MY_TAG, "mBroadcastReceiver2: Discoverability Disabled. Not able to receive connections.");
-                        break;
-                    case BluetoothAdapter.STATE_CONNECTING:
-                        Log.d(MY_TAG, "mBroadcastReceiver2: Connecting...");
-                        break;
-                    case BluetoothAdapter.STATE_CONNECTED:
-                        Log.d(MY_TAG, "mBroadcastReceiver2: Connected.");
-                        break;
-                }
-            }
-        }
-    };
-
-    // To discover bluetooth devices
-    private final BroadcastReceiver mBroadcastReceiver3 = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            final String action = intent.getAction();
-            Log.d(MY_TAG, "onReceive: ACTION FOUND.");
-
-            if(action.equals(BluetoothDevice.ACTION_FOUND)) {
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                String deviceName = device.getName();
-                if(deviceName == null)
-                {
-                    Log.d(MY_TAG, "the device address: " + device.getAddress());
-                    availableDevices.add(device);
-                    availableDevicesListAdapter.add(device.getAddress());
-                }
-                else {
-                    availableDevices.add(device);
-                    availableDevicesListAdapter.add(device.getName());
-                    Log.d(MY_TAG, "the device name: " + device.getName());
-                }
-                availableDevicesListAdapter.notifyDataSetChanged();
-                Log.d(MY_TAG, "onReceive: "+ device.getName() +" : " + device.getAddress());
-            }
-        }
-    };
-
-    // for bluetooth pairing
-    private final BroadcastReceiver mBroadcastReceiver4 = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            final String action = intent.getAction();
-
-            if(action.equals(BluetoothDevice.ACTION_BOND_STATE_CHANGED)){
-                BluetoothDevice mDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                if(mDevice.getBondState() == BluetoothDevice.BOND_BONDED){
-                    Log.d(MY_TAG, "BOND_BONDED.");
-                    Toast.makeText(getContext(), "Successfully paired with " + mDevice.getName(), Toast.LENGTH_SHORT).show();
-                    BluetoothFragment.mDevice = mDevice;
-                }
-                if(mDevice.getBondState() == BluetoothDevice.BOND_BONDING){
-                    Log.d(MY_TAG, "BOND_BONDING.");
-                }
-                if(mDevice.getBondState() == BluetoothDevice.BOND_NONE){
-                    Log.d(MY_TAG, "BOND_NONE.");
-                }
-            }
-        }
-    };
-
-    // for auto reconnecting bluetooth
-    private final BroadcastReceiver mBroadcastReceiver5 = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            BluetoothDevice mDevice = intent.getParcelableExtra("Device");
-            String status = intent.getStringExtra("Status");
-            sharedPreferences = getActivity().getApplicationContext().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
-            editor = sharedPreferences.edit();
-
-            if(status.equals("connected")){
-                try {
-                    myDialog.dismiss();
-                } catch(NullPointerException e){
-                    e.printStackTrace();
-                }
-
-                Log.d(MY_TAG, "mBroadcastReceiver5: Device now connected to "+mDevice.getName());
-                Toast.makeText(getContext(), "Device now connected to "+mDevice.getName(), Toast.LENGTH_LONG).show();
-                editor.putString("conStatus", "Connected to " + mDevice.getName());
-                updateConnectedStatus(mDevice.getName());
-            }
-            else if(status.equals("disconnected") && !retryConnection){
-                Log.d(MY_TAG, "mBroadcastReceiver5: Disconnected from "+mDevice.getName());
-                Toast.makeText(getContext(), "Disconnected from "+mDevice.getName(), Toast.LENGTH_LONG).show();
-                mBluetoothConnection = new BluetoothServices(getContext());
-                sharedPreferences = getActivity().getApplicationContext().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
-                editor = sharedPreferences.edit();
-                editor.putString("conStatus", "Disconnected");
-                updateDisconnectStatus();
-                editor.commit();
-
-                if(!isDisconnectBtn) {
-                    try {
-
-                        myDialog.show();
-                    }catch (Exception e){
-                        Log.d(MY_TAG, "BluetoothPopUp: mBroadcastReceiver5 Dialog show failure");
-                    }
-
-                    retryConnection = true;
-                    reconnectionHandler.postDelayed(reconnectionRunnable, 5000);
-                }
-            }
-            editor.commit();
-        }
-    };
-
-    public void startConnection(){
-        startBTConnection(mDevice,myUUID);
-    }
-
-    public void startBTConnection(BluetoothDevice device, UUID uuid){
+    public void startBTConnect(BluetoothDevice device, UUID uuid) {
         Log.d(MY_TAG, "startBTConnection: Initializing RFCOM Bluetooth Connection");
-        mBluetoothConnection.startClientThread(device, uuid);
+        bluetoothConnection.startClientThread(device, uuid);
     }
 
     @Override
@@ -699,15 +685,13 @@ public class BluetoothFragment extends Fragment {
         Log.d(MY_TAG, "onPause: called");
         super.onPause();
         try {
-            getContext().unregisterReceiver(mBroadcastReceiver1);
-            getContext().unregisterReceiver(mBroadcastReceiver2);
-            getContext().unregisterReceiver(mBroadcastReceiver3);
-            getContext().unregisterReceiver(mBroadcastReceiver4);
-            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mBroadcastReceiver5);
+            getContext().unregisterReceiver(broadcastReceiver1);
+            getContext().unregisterReceiver(broadcastReceiver2);
+            getContext().unregisterReceiver(broadcastReceiver3);
+            getContext().unregisterReceiver(broadcastReceiver4);
+            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(broadcastReceiver5);
         } catch(IllegalArgumentException e){
             e.printStackTrace();
         }
     }
-
-    public static String getBTdeviceName() {return mDevice.getName();}
 }

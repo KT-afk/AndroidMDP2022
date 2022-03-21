@@ -24,7 +24,7 @@ public class ViewPagerAdapter extends FragmentStateAdapter {
         switch (position)
         {
             case 0:
-                fragment = ArenaFragment.newInstance("", "");
+                fragment = MapFragment.newInstance("", "");
                 break;
             case 1:
                 fragment = BluetoothFragment.newInstance("", "");
